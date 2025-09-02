@@ -61,6 +61,21 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
+# Django specific files and folders
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+static/
+.env
+.env.*
+*.pot
+*.pyc
+__pycache__/
+migrations/
+
 # Flask stuff:
 instance/
 .webassets-cache
