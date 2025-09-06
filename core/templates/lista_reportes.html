@@ -13,4 +13,22 @@
         <th>Acciones</th>
       </tr>
     </thead>
-    
+    <tbody>
+      {% for r in reportes %}
+      <tr>
+        <td>{{ r._titulo }}</td>
+        <td>{{ r._estado }}</td>
+        <td>{{ r._ubicacion }}</td>
+        <td>{{ r._fecha }}</td>
+        <td>
+          <a href="{% url 'editar_reporte' r.id %}" class="btn btn-warning btn-sm">Editar</a>
+          <a href="{% url 'eliminar_reporte' r.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5">No tienes reportes.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
