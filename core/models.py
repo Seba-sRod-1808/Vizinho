@@ -101,7 +101,6 @@ class Reporte(models.Model):
     _fecha = models.DateTimeField(auto_now_add=True)
     _ubicacion = models.CharField(max_length=200)
 
-    # Relación con Vecino (un vecino puede tener varios reportes)
     _vecino = models.ForeignKey(Vecino, on_delete=models.CASCADE, related_name="reportes")
 
     def get_estado(self):
