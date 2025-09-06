@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Mis Reportes</h2>
+  <a href="{% url 'crear_reporte' %}" class="btn btn-primary mb-3">Nuevo Reporte</a>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Estado</th>
+        <th>Ubicación</th>
+        <th>Fecha</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    
