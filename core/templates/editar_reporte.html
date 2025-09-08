@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Editar Reporte{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Editar Reporte</h2>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-warning">Actualizar</button>
+    <a href="{% url 'lista_reportes' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}
