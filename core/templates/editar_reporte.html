@@ -6,6 +6,7 @@
   <h2>Editar Reporte</h2>
   <form method="post">
     {% csrf_token %}
+    {{ form.as_p }}
     <button type="submit" class="btn btn-warning">Actualizar</button>
     <a href="{% url 'lista_reportes' %}" class="btn btn-secondary">Cancelar</a>
   </form>
