@@ -12,11 +12,17 @@ class Usuario(AbstractUser):
     """
     _telefono = models.CharField(max_length=20, null=True, blank=True)
 
+    # Getters/Setters
     def get_telefono(self):
         return self._telefono
 
     def set_telefono(self, tel):
         self._telefono = tel
+
+    # decorador property para acceso directo en plantillas
+    @property
+    def telefono(self):
+        return self._telefono
 
     def __str__(self):
         return f"{self.username} ({self.email})"
@@ -41,6 +47,14 @@ class Vecino(Usuario):
     def set_zona(self, zona):
         self._zona = zona
 
+    @property
+    def direccion(self):
+        return self._direccion
+
+    @property
+    def zona(self):
+        return self._zona
+
     def __str__(self):
         return f"Vecino: {self.username} - {self._direccion}"
 
@@ -56,6 +70,10 @@ class Administrador(Usuario):
 
     def set_cargo(self, cargo):
         self._cargo = cargo
+
+    @property
+    def cargo(self):
+        return self._cargo
 
     def __str__(self):
         return f"Administrador: {self.username} ({self._cargo})"
@@ -80,6 +98,18 @@ class Condominio(models.Model):
 
     def set_reglas(self, reglas):
         self._reglas = reglas
+
+    @property
+    def nombre(self):
+        return self._nombre
+
+    @property
+    def ubicacion(self):
+        return self._ubicacion
+
+    @property
+    def reglas(self):
+        return self._reglas
 
     def __str__(self):
         return f"Condominio: {self._nombre}"
@@ -109,6 +139,27 @@ class Reporte(models.Model):
     def set_estado(self, estado):
         if estado in dict(self.ESTADOS):
             self._estado = estado
+
+    # Properties publicas para plantillas, se utiliza el decorador property para evitar conflictos con el campo
+    @property
+    def titulo(self):
+        return self._titulo
+
+    @property
+    def descripcion(self):
+        return self._descripcion
+
+    @property
+    def estado(self):
+        return self._estado
+
+    @property
+    def fecha(self):
+        return self._fecha
+
+    @property
+    def ubicacion(self):
+        return self._ubicacion
 
     def __str__(self):
         return f"Reporte: {self._titulo} ({self._estado})"
