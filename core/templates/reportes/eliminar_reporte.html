@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container mt-4">
   <h2>¿Seguro que deseas eliminar este reporte?</h2>
-  <p><strong>{{ object._titulo }}</strong> - {{ object._descripcion }}</p>
+  <p><strong>{{ object.titulo }}</strong> - {{ object.descripcion }}</p>
   <form method="post">
     {% csrf_token %}
     <button type="submit" class="btn btn-danger">Eliminar</button>
