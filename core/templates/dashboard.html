@@ -2,8 +2,133 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2>Bienvenido a Vizinho</h2>
-  <p class="lead">Selecciona una opción en el menú para comenzar.</p>
-</div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Vecinos en Red</title>
+  
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .sidebar {
+      height: 100vh;
+      background-color: #fff;
+      border-right: 1px solid #ddd;
+    }
+    .sidebar a {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      color: #333;
+      border-radius: 6px;
+      margin-bottom: 5px;
+      font-size: 1rem;
+    }
+    .sidebar a:hover {
+      background-color: #f97316;
+      color: white;
+    }
+    .card-orange {
+      background-color: #f97316;
+      color: white;
+    }
+    .card-red {
+      background-color: #dc2626;
+      color: white;
+    }
+    .card h5 {
+      font-size: 1.2rem;
+    }
+    .large-btn {
+      font-size: 1.1rem;
+      padding: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#f97316;">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="#">Vecinos en Red</a>
+      <div class="d-flex">
+        <a href="#" class="nav-link text-white">Inicio</a>
+        <a href="#" class="nav-link text-white">Perfil</a>
+        <a href="#" class="nav-link text-white">Cerrar Sesión</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Estructura principal -->
+  <div class="container-fluid">
+    <div class="row">
+      
+      <!-- Sidebar -->
+      <div class="col-md-3 col-lg-2 sidebar p-3">
+        <h5 class="fw-bold mb-3">Menú</h5>
+        <a href="#"><i class="bi bi-chat-left-text"></i> Publicaciones</a>
+        <a href="#"><i class="bi bi-exclamation-triangle"></i> Reportes</a>
+        <a href="#"><i class="bi bi-bag"></i> Objetos Perdidos</a>
+        <a href="#"><i class="bi bi-shield-exclamation"></i> Botón de Pánico</a>
+      </div>
+
+      <!-- Contenido principal -->
+      <div class="col-md-9 col-lg-10 p-4">
+        <h2 class="fw-bold mb-4">Bienvenido al Dashboard</h2>
+
+        <!-- Tarjetas de resumen -->
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="card card-orange shadow">
+              <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-chat-left-text"></i> Publicaciones</h5>
+                <p class="card-text">Ver y crear publicaciones de vecinos.</p>
+                <button class="btn btn-light large-btn w-100">Abrir</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="card card-orange shadow">
+              <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-exclamation-triangle"></i> Reportes</h5>
+                <p class="card-text">Reportar incidentes en la colonia.</p>
+                <button class="btn btn-light large-btn w-100">Abrir</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="card card-red shadow">
+              <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-shield-exclamation"></i> Botón de Pánico</h5>
+                <p class="card-text">Usar solo en emergencias.</p>
+                <button class="btn btn-light large-btn w-100">Activar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
 {% endblock %}
