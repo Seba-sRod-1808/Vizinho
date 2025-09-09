@@ -6,6 +6,9 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Reporte
+from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 class LoginView(View):
     template_name = "login.html"
@@ -65,3 +68,5 @@ class ReporteDeleteView(LoginRequiredMixin, DeleteView):
     template_name = "reportes/eliminar_reporte.html"
     success_url = reverse_lazy("lista_reportes")
 
+class DashboardView(LoginRequiredMixin, TemplateView):
+    template_name = "dashboard.html"
