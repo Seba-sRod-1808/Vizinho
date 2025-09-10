@@ -80,3 +80,12 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
 
     def get_object(self):
         return PerfilUsuario.objects.get(_usuario=self.request.user)
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = PerfilUsuario
+    form_class = ProfileForm
+    template_name = "perfil/editar_perfil.html"
+    success_url = reverse_lazy("ver_perfil")
+
+    def get_object(self):
+        return PerfilUsuario.objects.get(_usuario=self.request.user)
