@@ -2,6 +2,7 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -17,12 +18,13 @@
   
   <style>
     body {
-      background-color: #f8f9fa;
+      background-color: #f97316; /* Fondo naranja predominante */
+      color: white;
     }
     .sidebar {
       height: 100vh;
-      background-color: #fff;
-      border-right: 1px solid #ddd;
+      background-color: #dc2626; /* Sidebar rojo */
+      color: white;
     }
     .sidebar a {
       text-decoration: none;
@@ -30,14 +32,18 @@
       align-items: center;
       gap: 10px;
       padding: 12px;
-      color: #333;
+      color: white;
       border-radius: 6px;
       margin-bottom: 5px;
       font-size: 1rem;
     }
     .sidebar a:hover {
-      background-color: #f97316;
-      color: white;
+      background-color: white;
+      color: #dc2626;
+    }
+    .card {
+      border: none;
+      border-radius: 12px;
     }
     .card-orange {
       background-color: #f97316;
@@ -47,25 +53,40 @@
       background-color: #dc2626;
       color: white;
     }
-    .card h5 {
-      font-size: 1.2rem;
+    .card-light {
+      background-color: #fff;
+      color: #333;
     }
-    .large-btn {
-      font-size: 1.1rem;
-      padding: 12px;
+    .publication-container {
+      background: white;
+      color: black;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .publication-container h4 {
+      font-weight: bold;
+      color: #f97316;
+    }
+
+    .text-orange {
+      color: #f97316 !important;
+    }
+
+    .text-red {
+      color: #dc2626 !important;
     }
   </style>
 </head>
 <body>
 
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#f97316;">
+  <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#dc2626;">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="#">Vecinos en Red</a>
+      <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">Vecinos en Red</a>
       <div class="d-flex">
-        <a href="#" class="nav-link text-white">Inicio</a>
-        <a href="#" class="nav-link text-white">Perfil</a>
-        <a href="#" class="nav-link text-white">Cerrar Sesión</a>
+        <a href="{% url 'dashboard' %}" class="nav-link text-white">Inicio</a>
+        <a href="{% url 'logout' %}" class="nav-link text-white">Cerrar Sesión</a>
       </div>
     </div>
   </nav>
@@ -77,34 +98,41 @@
       <!-- Sidebar -->
       <div class="col-md-3 col-lg-2 sidebar p-3">
         <h5 class="fw-bold mb-3">Menú</h5>
-        <a href="#"><i class="bi bi-chat-left-text"></i> Publicaciones</a>
-        <a href="#"><i class="bi bi-exclamation-triangle"></i> Reportes</a>
+        <a href="{% url 'dashboard' %}"><i class="bi bi-chat-left-text"></i> Publicaciones</a>
+        <a href="{% url 'lista_reportes' %}"><i class="bi bi-exclamation-triangle"></i> Reportes</a>
+        <a href="#"><i class="bi bi-cash-coin"></i> Multas</a>
         <a href="#"><i class="bi bi-bag"></i> Objetos Perdidos</a>
         <a href="#"><i class="bi bi-shield-exclamation"></i> Botón de Pánico</a>
       </div>
 
       <!-- Contenido principal -->
       <div class="col-md-9 col-lg-10 p-4">
-        <h2 class="fw-bold mb-4">Bienvenido al Dashboard</h2>
+        <h2 class="fw-bold mb-4 text-orange">Publicaciones de Vecinos</h2>
 
-        <!-- Tarjetas de resumen -->
-        <div class="row g-4">
+        <!-- Contenedor vacío para publicaciones (se llenará dinámicamente con Django más adelante) -->
+        <div class="publication-container">
+          <h4><i class="bi bi-chat-left-text"></i> Publicaciones</h4>
+          <p>Aquí aparecerán las publicaciones recientes de la comunidad.</p>
+        </div>
+
+        <!-- Tarjetas de acceso rápido -->
+        <div class="row g-4 mt-4">
           <div class="col-md-4">
             <div class="card card-orange shadow">
               <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-chat-left-text"></i> Publicaciones</h5>
-                <p class="card-text">Ver y crear publicaciones de vecinos.</p>
-                <button class="btn btn-light large-btn w-100">Abrir</button>
+                <h5 class="card-title"><i class="bi bi-exclamation-triangle"></i> Reportes</h5>
+                <p class="card-text">Revisa y crea reportes de incidentes.</p>
+                <a href="{% url 'lista_reportes' %}" class="btn btn-light w-100">Abrir</a>
               </div>
             </div>
           </div>
 
           <div class="col-md-4">
-            <div class="card card-orange shadow">
+            <div class="card card-light shadow">
               <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-exclamation-triangle"></i> Reportes</h5>
-                <p class="card-text">Reportar incidentes en la colonia.</p>
-                <button class="btn btn-light large-btn w-100">Abrir</button>
+                <h5 class="card-title"><i class="bi bi-cash-coin"></i> Multas</h5>
+                <p class="card-text">Consulta y paga tus multas.</p>
+                <a href="#" class="btn btn-warning w-100">Ver Multas</a>
               </div>
             </div>
           </div>
@@ -114,7 +142,7 @@
               <div class="card-body">
                 <h5 class="card-title"><i class="bi bi-shield-exclamation"></i> Botón de Pánico</h5>
                 <p class="card-text">Usar solo en emergencias.</p>
-                <button class="btn btn-light large-btn w-100">Activar</button>
+                <a href="#" class="btn btn-light w-100">Activar</a>
               </div>
             </div>
           </div>
