@@ -1,5 +1,6 @@
 from django import forms
 from .models import Reporte
+from .models import PerfilUsuario
 
 class LoginForm(forms.Form):
     username = forms.CharField(label="Usuario", max_length=100)
@@ -21,3 +22,8 @@ class ReporteForm(forms.ModelForm):
         if len(titulo) < 5:
             raise forms.ValidationError("El título debe tener al menos 5 caracteres.")
         return titulo
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = PerfilUsuario
+        fields = ["_foto", "_bio"]
