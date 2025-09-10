@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 # ========================
@@ -163,3 +166,8 @@ class Reporte(models.Model):
 
     def __str__(self):
         return f"Reporte: {self._titulo} ({self._estado})"
+
+class PerfilUsuario(models.Model):
+    _usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    _foto = models.ImageField(upload_to="perfiles/", null=True, blank=True)
+    _bio = models.TextField(null=True, blank=True)
