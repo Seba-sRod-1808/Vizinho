@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import (
     LoginView, LogoutView, 
-    ReporteListView, ReporteCreateView, ReporteUpdateView, ReporteDeleteView, DashboardView
+    ReporteListView, ReporteCreateView, ReporteUpdateView, ReporteDeleteView, 
+    DashboardView, ProfileDetailView, ProfileUpdateView
     )
 
 urlpatterns = [
@@ -12,4 +13,6 @@ urlpatterns = [
     path("reportes/nuevo/", ReporteCreateView.as_view(), name="crear_reporte"),
     path("reportes/<int:pk>/editar/", ReporteUpdateView.as_view(), name="editar_reporte"),
     path("reportes/<int:pk>/eliminar/", ReporteDeleteView.as_view(), name="eliminar_reporte"),
+    path("perfil/", ProfileDetailView.as_view(), name="ver_perfil"),
+    path("perfil/editar/", ProfileUpdateView.as_view(), name="editar_perfil"),
 ]
