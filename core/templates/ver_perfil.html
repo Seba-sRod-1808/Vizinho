@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Perfil de Usuario{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Mi Perfil</h2>
+  <div class="card p-3">
+    {% if object.foto %}
+      <img src="{{ object.foto.url }}" class="img-thumbnail mb-3" width="150">
+    {% endif %}
+    <p><strong>Usuario:</strong> {{ object.usuario.username }}</p>
+    <p><strong>Email:</strong> {{ object.usuario.email }}</p>
+    <p><strong>Bio:</strong> {{ object.bio }}</p>
+    <a href="{% url 'editar_perfil' %}" class="btn btn-warning">Editar Perfil</a>
+  </div>
+</div>
+{% endblock %}
