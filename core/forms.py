@@ -1,9 +1,8 @@
 from django import forms
 
-from .models import Reporte
-from .models import PerfilUsuario
-from .models import Publicacion
-from .models import Reporte, PerfilUsuario, Multa
+from .models import (
+    Reporte, PerfilUsuario, Publicacion, Multa
+)
 
 class LoginForm(forms.Form):
     username = forms.CharField(label="Usuario", max_length=100)
