@@ -137,7 +137,7 @@ class PublicacionListView(LoginRequiredMixin, ListView):
     model = Publicacion
     template_name = "publicaciones/lista_publicaciones.html"
     context_object_name = "publicaciones"
-    ordering = ["- _fecha"]
+    ordering = ["-_fecha"]
 
 class PublicacionCreateView(LoginRequiredMixin, CreateView):
     model = Publicacion

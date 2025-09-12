@@ -10,26 +10,42 @@ from django.dispatch import receiver
 # ========================
 class Usuario(AbstractUser):
     """
-    Clase base de usuario del sistema.
-    Extiende AbstractUser e incluye getters/setters para encapsulamiento.
+    Modelo de usuario base del sistema.
+    Contiene roles para diferenciar entre vecinos y administradores, de el heredan los modelos específicos.
     """
-    _telefono = models.CharField(max_length=20, null=True, blank=True)
+    ROLES = [
+        ("vecino", "Vecino"),
+        ("admin", "Administrador"),
+    ]
 
-    # Getters/Setters
+    _telefono = models.CharField(max_length=20, null=True, blank=True)
+    _rol = models.CharField(max_length=20, choices=ROLES, default="vecino")
+
+    # Getters y setters (encapsulamiento)
     def get_telefono(self):
         return self._telefono
 
     def set_telefono(self, tel):
         self._telefono = tel
 
-    # decorador property para acceso directo en plantillas
+    def get_rol(self):
+        return self._rol
+
+    def set_rol(self, rol):
+        if rol in dict(self.ROLES):
+            self._rol = rol
+
+    # propiedades públicas
     @property
     def telefono(self):
         return self._telefono
 
-    def __str__(self):
-        return f"{self.username} ({self.email})"
+    @property
+    def rol(self):
+        return self._rol
 
+    def __str__(self):
+        return f"{self.username} ({self._rol})"
 
 # ========================
 # VECINO
@@ -124,7 +140,7 @@ class Publicacion(models.Model):
     _titulo = models.CharField(max_length=200)
     _contenido = models.TextField()
     _fecha = models.DateTimeField(auto_now_add=True)
-    _vecino = models.ForeignKey(Vecino, on_delete=models.CASCADE, related_name="publicaciones")
+    _vecino = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="publicaciones")
     
     @property
     def titulo(self):
@@ -162,7 +178,7 @@ class Reporte(models.Model):
     _fecha = models.DateTimeField(auto_now_add=True)
     _ubicacion = models.CharField(max_length=200)
 
-    _vecino = models.ForeignKey(Vecino, on_delete=models.CASCADE, related_name="reportes")
+    _vecino = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="reportes")
 
     def get_estado(self):
         return self._estado
@@ -238,7 +254,7 @@ class Multa(models.Model):
     _motivo = models.CharField(max_length=255)
     _estado = models.CharField(max_length=50, choices=ESTADOS, default="Pendiente")
     _fecha = models.DateTimeField(auto_now_add=True)
-    _vecino = models.ForeignKey(Vecino, on_delete=models.CASCADE, related_name="multas")
+    _vecino = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="multas")
 
  # DECORADORES PARA MANTENER ENCAPSULAMIENTO
     @property
