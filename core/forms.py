@@ -1,7 +1,5 @@
 from django import forms
-from .models import Reporte
-from .models import PerfilUsuario
-
+from .models import Reporte, PerfilUsuario, Multa
 class LoginForm(forms.Form):
     username = forms.CharField(label="Usuario", max_length=100)
     password = forms.CharField(label="Contraseña", widget=forms.PasswordInput)
@@ -27,3 +25,8 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = PerfilUsuario
         fields = ["_foto", "_bio"]
+
+class MultaForm(forms.ModelForm):
+    class Meta:
+        model = Multa
+        fields = ["_monto", "_motivo"]
