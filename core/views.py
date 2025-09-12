@@ -132,3 +132,9 @@ class PagarMultaView(LoginRequiredMixin, View):
         multa = get_object_or_404(Multa, pk=pk, _vecino=request.user)
         multa.pagar()
         return redirect("lista_multas")
+
+class PublicacionListView(LoginRequiredMixin, ListView):
+    model = Publicacion
+    template_name = "publicaciones/lista_publicaciones.html"
+    context_object_name = "publicaciones"
+    ordering = ["- _fecha"]
