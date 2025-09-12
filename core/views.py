@@ -112,3 +112,8 @@ class MultaUpdateView(LoginRequiredMixin, UpdateView):
     form_class = MultaForm
     template_name = "multas/editar_multa.html"
     success_url = reverse_lazy("lista_multas")
+
+class MultaDeleteView(LoginRequiredMixin, DeleteView):
+    model = Multa
+    template_name = "multas/eliminar_multa.html"
+    success_url = reverse_lazy("lista_multas")
