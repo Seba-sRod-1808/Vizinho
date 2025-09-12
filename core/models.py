@@ -126,6 +126,7 @@ class Publicacion(models.Model):
     _fecha = models.DateTimeField(auto_now_add=True)
     _vecino = models.ForeignKey(Vecino, on_delete=models.CASCADE, related_name="publicaciones")
     
+    
 
 # ========================
 # REPORTE
