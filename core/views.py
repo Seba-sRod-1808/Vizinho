@@ -1,5 +1,5 @@
 from django.views import View
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm, ReporteForm
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
@@ -117,3 +117,11 @@ class MultaDeleteView(LoginRequiredMixin, DeleteView):
     model = Multa
     template_name = "multas/eliminar_multa.html"
     success_url = reverse_lazy("lista_multas")
+
+#SIMULACION!! no es funcional, solamente es para mostrar la idea. No verifica fondos reales, aunque en un futuro
+# podria integrarse con una pasarela de pagos simulada.
+class PagarMultaView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        multa = get_object_or_404(Multa, pk=pk, _vecino=request.user)
+        multa.pagar()
+        return redirect("lista_multas")
