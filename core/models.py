@@ -192,3 +192,15 @@ class PerfilUsuario(models.Model):
 def crear_perfil(sender, instance, created, **kwargs):
     if created:
         PerfilUsuario.objects.create(_usuario=instance)
+
+class Multa(models.Model):
+    ESTADOS = [
+        ("Pendiente", "Pendiente"),
+        ("Pagada", "Pagada"),
+    ]
+
+    _monto = models.FloatField()
+    _motivo = models.CharField(max_length=255)
+    _estado = models.CharField(max_length=50, choices=ESTADOS, default="Pendiente")
+    _fecha = models.DateTimeField(auto_now_add=True)
+    _vecino = models.ForeignKey(Vecino, on_delete=models.CASCADE, related_name="multas")
