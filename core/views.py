@@ -8,6 +8,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Reporte
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import DetailView, UpdateView
+from .models import PerfilUsuario
+from .forms import ProfileForm
 
 
 class LoginView(View):
@@ -70,3 +73,19 @@ class ReporteDeleteView(LoginRequiredMixin, DeleteView):
 
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "dashboard.html"
+
+class ProfileDetailView(LoginRequiredMixin, DetailView):
+    model = PerfilUsuario
+    template_name = "perfil/ver_perfil.html"
+
+    def get_object(self):
+        return PerfilUsuario.objects.get(_usuario=self.request.user)
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = PerfilUsuario
+    form_class = ProfileForm
+    template_name = "perfil/editar_perfil.html"
+    success_url = reverse_lazy("ver_perfil")
+
+    def get_object(self):
+        return PerfilUsuario.objects.get(_usuario=self.request.user)

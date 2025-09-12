@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 # ========================
@@ -163,3 +166,29 @@ class Reporte(models.Model):
 
     def __str__(self):
         return f"Reporte: {self._titulo} ({self._estado})"
+
+class PerfilUsuario(models.Model):
+    _usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    _foto = models.ImageField(upload_to="perfiles/", null=True, blank=True)
+    _bio = models.TextField(null=True, blank=True)
+
+    @property
+    def usuario(self):
+        return self._usuario
+
+    @property
+    def foto(self):
+        return self._foto
+
+    @property
+    def bio(self):
+        return self._bio
+
+    def _str_(self):
+        return f"Perfil de {self._usuario.username}"
+
+# Crear perfil automático al crear usuario
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def crear_perfil(sender, instance, created, **kwargs):
+    if created:
+        PerfilUsuario.objects.create(_usuario=instance)
