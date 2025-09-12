@@ -117,6 +117,15 @@ class Condominio(models.Model):
     def __str__(self):
         return f"Condominio: {self._nombre}"
 
+# ========================
+# PUBLICACION
+# ========================
+class Publicacion(models.Model):
+    _titulo = models.CharField(max_length=200)
+    _contenido = models.TextField()
+    _fecha = models.DateTimeField(auto_now_add=True)
+    _vecino = models.ForeignKey(Vecino, on_delete=models.CASCADE, related_name="publicaciones")
+    
 
 # ========================
 # REPORTE
