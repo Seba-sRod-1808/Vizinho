@@ -164,3 +164,11 @@ class ActivarBotonPanicoView(LoginRequiredMixin, View):
     def post(self, request):
         BotonPanico.objects.create(_usuario=request.user)
         return redirect("historial_panico")
+
+class HistorialBotonPanicoView(LoginRequiredMixin, ListView):
+    model = BotonPanico
+    template_name = "panico/historial_panico.html"
+    context_object_name = "alertas"
+
+    def get_queryset(self):
+        return BotonPanico.objects.filter(_usuario=self.request.user).order_by("-_fecha")
