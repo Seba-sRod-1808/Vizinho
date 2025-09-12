@@ -12,7 +12,7 @@ from django.views.generic import (
 )
 
 # local models
-from .models import Reporte, PerfilUsuario, Publicacion, Multa
+from .models import Reporte, PerfilUsuario, Publicacion, Multa, BotonPanico
 
 # local forms
 from .forms import (
@@ -159,4 +159,8 @@ class PublicacionDeleteView(LoginRequiredMixin, DeleteView):
     model = Publicacion
     template_name = "publicaciones/eliminar_publicacion.html"
     success_url = reverse_lazy("lista_publicaciones")
-
+    
+class ActivarBotonPanicoView(LoginRequiredMixin, View):
+    def post(self, request):
+        BotonPanico.objects.create(_usuario=request.user)
+        return redirect("historial_panico")
