@@ -138,3 +138,13 @@ class PublicacionListView(LoginRequiredMixin, ListView):
     template_name = "publicaciones/lista_publicaciones.html"
     context_object_name = "publicaciones"
     ordering = ["- _fecha"]
+
+class PublicacionCreateView(LoginRequiredMixin, CreateView):
+    model = Publicacion
+    form_class = PublicacionForm
+    template_name = "publicaciones/crear_publicacion.html"
+    success_url = reverse_lazy("lista_publicaciones")
+
+    def form_valid(self, form):
+        form.instance._vecino = self.request.user
+        return super().form_valid(form)
