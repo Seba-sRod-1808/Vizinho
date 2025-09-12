@@ -96,3 +96,13 @@ class MultaListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Multa.objects.filter(_vecino=self.request.user)
+
+class MultaCreateView(LoginRequiredMixin, CreateView):
+    model = Multa
+    form_class = MultaForm
+    template_name = "multas/crear_multa.html"
+    success_url = reverse_lazy("lista_multas")
+
+    def form_valid(self, form):
+        form.instance._vecino = self.request.user
+        return super().form_valid(form)
