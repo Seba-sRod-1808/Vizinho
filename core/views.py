@@ -148,3 +148,10 @@ class PublicacionCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance._vecino = self.request.user
         return super().form_valid(form)
+
+class PublicacionUpdateView(LoginRequiredMixin, UpdateView):
+    model = Publicacion
+    form_class = PublicacionForm
+    template_name = "publicaciones/editar_publicacion.html"
+    success_url = reverse_lazy("lista_publicaciones")
+
