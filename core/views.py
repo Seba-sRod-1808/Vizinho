@@ -1,21 +1,24 @@
-from django.views import View
+# Django core
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login, logout
-from .forms import LoginForm, ReporteForm
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Reporte
-from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView, UpdateView
-from .models import PerfilUsuario
-from .forms import ProfileForm
-from .models import Publicacion
-from .forms import PublicacionForm
-from .models import PerfilUsuario, Multa
-from .forms import ProfileForm, MultaForm
 
+# Django views
+from django.views import View
+from django.views.generic import (
+    TemplateView, ListView, CreateView,
+    UpdateView, DeleteView, DetailView
+)
+
+# local models
+from .models import Reporte, PerfilUsuario, Publicacion, Multa
+
+# local forms
+from .forms import (
+    LoginForm, ReporteForm,
+    ProfileForm, PublicacionForm, MultaForm
+)
 
 class LoginView(View):
     template_name = "login.html"
