@@ -9,9 +9,8 @@ from .models import Reporte
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView, UpdateView
-from .models import PerfilUsuario
-from .forms import ProfileForm
-
+from .models import PerfilUsuario, Multa
+from .forms import ProfileForm, MultaForm
 
 class LoginView(View):
     template_name = "login.html"
@@ -89,3 +88,11 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         return PerfilUsuario.objects.get(_usuario=self.request.user)
+
+class MultaListView(LoginRequiredMixin, ListView):
+    model = Multa
+    template_name = "multas/lista_multas.html"
+    context_object_name = "multas"
+
+    def get_queryset(self):
+        return Multa.objects.filter(_vecino=self.request.user)
