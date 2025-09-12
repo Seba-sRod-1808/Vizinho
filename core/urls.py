@@ -6,7 +6,8 @@ from .views import (
     )
 from .views import (
     MultaListView, MultaCreateView, MultaUpdateView,
-    MultaDeleteView, PagarMultaView
+    MultaDeleteView, PagarMultaView, PublicacionListView, PublicacionCreateView, 
+    PublicacionUpdateView, PublicacionDeleteView
 )
 
 urlpatterns = [
