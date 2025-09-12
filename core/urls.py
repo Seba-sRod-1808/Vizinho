@@ -11,6 +11,8 @@ from .views import (
     LoginView, LogoutView, 
     # Perfiles
     ProfileDetailView, ProfileUpdateView
+    # Boton Panico
+    ActivarBotonPanicoView, HistorialBotonPanicoView
 )
 
 urlpatterns = [
@@ -39,5 +41,9 @@ urlpatterns = [
 
     # Perfil usuario
     path("perfil/", ProfileDetailView.as_view(), name="ver_perfil"),
-    path("perfil/editar/", ProfileUpdateView.as_view(), name="editar_perfil")
+    path("perfil/editar/", ProfileUpdateView.as_view(), name="editar_perfil"),
+
+    #Boton Panico
+    path("panico/activar/", ActivarBotonPanicoView.as_view(), name="activar_panico"),
+    path("panico/historial/", HistorialBotonPanicoView.as_view(), name="historial_panico")
 ]
