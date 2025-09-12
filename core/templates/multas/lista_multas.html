@@ -16,3 +16,27 @@
       </tr>
     </thead>
     <tbody>
+    {% for m in multas %}
+      <tr>
+        <td>Q{{ m.monto }}</td>
+        <td>{{ m.motivo }}</td>
+        <td>{{ m.estado }}</td>
+        <td>{{ m.fecha }}</td>
+        <td>
+          {% if m.estado == "Pendiente" %}
+          <form method="post" action="{% url 'pagar_multa' m.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success btn-sm">Pagar</button>
+          </form>
+          {% endif %}
+          <a href="{% url 'editar_multa' m.id %}" class="btn btn-warning btn-sm">Editar</a>
+          <a href="{% url 'eliminar_multa' m.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5">No tienes multas.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
