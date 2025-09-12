@@ -195,6 +195,9 @@ class Reporte(models.Model):
     def __str__(self):
         return f"Reporte: {self._titulo} ({self._estado})"
 
+# ========================
+# PERFIL DE USUARIO
+# ========================
 class PerfilUsuario(models.Model):
     _usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     _foto = models.ImageField(upload_to="perfiles/", null=True, blank=True)
@@ -220,3 +223,47 @@ class PerfilUsuario(models.Model):
 def crear_perfil(sender, instance, created, **kwargs):
     if created:
         PerfilUsuario.objects.create(_usuario=instance)
+
+# ========================
+# MULTAS
+# ========================
+
+class Multa(models.Model):
+    ESTADOS = [
+        ("Pendiente", "Pendiente"),
+        ("Pagada", "Pagada"),
+    ]
+
+    _monto = models.FloatField()
+    _motivo = models.CharField(max_length=255)
+    _estado = models.CharField(max_length=50, choices=ESTADOS, default="Pendiente")
+    _fecha = models.DateTimeField(auto_now_add=True)
+    _vecino = models.ForeignKey(Vecino, on_delete=models.CASCADE, related_name="multas")
+
+ # DECORADORES PARA MANTENER ENCAPSULAMIENTO
+    @property
+    def monto(self):
+        return self._monto
+
+    @property
+    def motivo(self):
+        return self._motivo
+
+    @property
+    def estado(self):
+        return self._estado
+
+    @property
+    def fecha(self):
+        return self._fecha
+
+    @property
+    def vecino(self):
+        return self._vecino
+
+    def pagar(self):
+        self._estado = "Pagada"
+        self.save()
+
+    def __str__(self):
+        return f"Multa de {self._vecino.username}: {self._motivo} ({self._estado})"

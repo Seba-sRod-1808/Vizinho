@@ -1,5 +1,5 @@
 from django.views import View
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm, ReporteForm
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
@@ -13,6 +13,9 @@ from .models import PerfilUsuario
 from .forms import ProfileForm
 from .models import Publicacion
 from .forms import PublicacionForm
+from .models import PerfilUsuario, Multa
+from .forms import ProfileForm, MultaForm
+
 
 class LoginView(View):
     template_name = "login.html"
@@ -90,4 +93,39 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         return PerfilUsuario.objects.get(_usuario=self.request.user)
+class MultaListView(LoginRequiredMixin, ListView):
+    model = Multa
+    template_name = "multas/lista_multas.html"
+    context_object_name = "multas"
 
+    def get_queryset(self):
+        return Multa.objects.filter(_vecino=self.request.user)
+
+class MultaCreateView(LoginRequiredMixin, CreateView):
+    model = Multa
+    form_class = MultaForm
+    template_name = "multas/crear_multa.html"
+    success_url = reverse_lazy("lista_multas")
+
+    def form_valid(self, form):
+        form.instance._vecino = self.request.user
+        return super().form_valid(form)
+
+class MultaUpdateView(LoginRequiredMixin, UpdateView):
+    model = Multa
+    form_class = MultaForm
+    template_name = "multas/editar_multa.html"
+    success_url = reverse_lazy("lista_multas")
+
+class MultaDeleteView(LoginRequiredMixin, DeleteView):
+    model = Multa
+    template_name = "multas/eliminar_multa.html"
+    success_url = reverse_lazy("lista_multas")
+
+#SIMULACION!! no es funcional, solamente es para mostrar la idea. No verifica fondos reales, aunque en un futuro
+# podria integrarse con una pasarela de pagos simulada.
+class PagarMultaView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        multa = get_object_or_404(Multa, pk=pk, _vecino=request.user)
+        multa.pagar()
+        return redirect("lista_multas")

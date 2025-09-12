@@ -1,7 +1,9 @@
 from django import forms
+
 from .models import Reporte
 from .models import PerfilUsuario
 from .models import Publicacion
+from .models import Reporte, PerfilUsuario, Multa
 
 class LoginForm(forms.Form):
     username = forms.CharField(label="Usuario", max_length=100)
@@ -29,7 +31,14 @@ class ProfileForm(forms.ModelForm):
         model = PerfilUsuario
         fields = ["_foto", "_bio"]
 
+<<<<<<< HEAD
 class PublicacionForm(forms.ModelForm):
     class Meta:
         model = Publicacion
         fields = ["_titulo", "_contenido"]
+=======
+class MultaForm(forms.ModelForm):
+    class Meta:
+        model = Multa
+        fields = ["_monto", "_motivo"]
+>>>>>>> develop
