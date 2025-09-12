@@ -1,13 +1,16 @@
 from django.urls import path
 from .views import (
+    DashboardView,
+    # Reportes
+    ReporteListView, ReporteCreateView, ReporteUpdateView, ReporteDeleteView,
+    # Publicaciones
+    PublicacionListView, PublicacionCreateView, PublicacionUpdateView, PublicacionDeleteView,
+    # Multas
+    MultaListView, MultaCreateView, MultaUpdateView, MultaDeleteView, PagarMultaView,
+    # Auth
     LoginView, LogoutView, 
-    ReporteListView, ReporteCreateView, ReporteUpdateView, ReporteDeleteView, 
-    DashboardView, ProfileDetailView, ProfileUpdateView
-    )
-from .views import (
-    MultaListView, MultaCreateView, MultaUpdateView,
-    MultaDeleteView, PagarMultaView, PublicacionListView, PublicacionCreateView, 
-    PublicacionUpdateView, PublicacionDeleteView
+    # Perfiles
+    ProfileDetailView, ProfileUpdateView
 )
 
 urlpatterns = [
@@ -36,3 +39,14 @@ urlpatterns += [
     path("publicaciones/<int:pk>/editar/", PublicacionUpdateView.as_view(), name="editar_publicacion"),
     path("publicaciones/<int:pk>/eliminar/", PublicacionDeleteView.as_view(), name="eliminar_publicacion"),
 ]
+
+urlpatterns = [
+    path("", DashboardView.as_view(), name="dashboard"),
+    path("login/", LoginView.as_view(), name="login"),
+    path("logout/", LogoutView.as_view(), name="logout"),
+
+    # Reportes
+    path("reportes/", ReporteListView.as_view(), name="lista_reportes"),
+    path("reportes/nuevo/", ReporteCreateView.as_view(), name="crear_reporte"),
+    path("reportes/<int:pk>/editar/", ReporteUpdateView.as_view(), name="editar_reporte"),
+    path("reportes/<int:pk>/eliminar/", ReporteDeleteView.as_view(), name="eliminar_reporte"),
