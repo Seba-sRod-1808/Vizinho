@@ -1,6 +1,7 @@
 from django import forms
 from .models import Reporte
 from .models import PerfilUsuario
+from .models import Publicacion
 
 class LoginForm(forms.Form):
     username = forms.CharField(label="Usuario", max_length=100)
