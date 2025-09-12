@@ -28,3 +28,10 @@ urlpatterns += [
     path("multas/<int:pk>/eliminar/", MultaDeleteView.as_view(), name="eliminar_multa"),
     path("multas/<int:pk>/pagar/", PagarMultaView.as_view(), name="pagar_multa"),
 ]
+
+urlpatterns += [
+    path("publicaciones/", PublicacionListView.as_view(), name="lista_publicaciones"),
+    path("publicaciones/nueva/", PublicacionCreateView.as_view(), name="crear_publicacion"),
+    path("publicaciones/<int:pk>/editar/", PublicacionUpdateView.as_view(), name="editar_publicacion"),
+    path("publicaciones/<int:pk>/eliminar/", PublicacionDeleteView.as_view(), name="eliminar_publicacion"),
+]
