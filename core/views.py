@@ -155,3 +155,8 @@ class PublicacionUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "publicaciones/editar_publicacion.html"
     success_url = reverse_lazy("lista_publicaciones")
 
+class PublicacionDeleteView(LoginRequiredMixin, DeleteView):
+    model = Publicacion
+    template_name = "publicaciones/eliminar_publicacion.html"
+    success_url = reverse_lazy("lista_publicaciones")
+
