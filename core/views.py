@@ -106,3 +106,9 @@ class MultaCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance._vecino = self.request.user
         return super().form_valid(form)
+
+class MultaUpdateView(LoginRequiredMixin, UpdateView):
+    model = Multa
+    form_class = MultaForm
+    template_name = "multas/editar_multa.html"
+    success_url = reverse_lazy("lista_multas")
