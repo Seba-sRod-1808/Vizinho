@@ -27,3 +27,8 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = PerfilUsuario
         fields = ["_foto", "_bio"]
+
+class PublicacionForm(forms.ModelForm):
+    class Meta:
+        model = Publicacion
+        fields = ["_titulo", "_contenido"]

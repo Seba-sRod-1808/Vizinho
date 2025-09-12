@@ -11,7 +11,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView, UpdateView
 from .models import PerfilUsuario
 from .forms import ProfileForm
-
+from .models import Publicacion
+from .forms import PublicacionForm
 
 class LoginView(View):
     template_name = "login.html"
@@ -89,3 +90,4 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         return PerfilUsuario.objects.get(_usuario=self.request.user)
+

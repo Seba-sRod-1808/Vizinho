@@ -126,6 +126,24 @@ class Publicacion(models.Model):
     _fecha = models.DateTimeField(auto_now_add=True)
     _vecino = models.ForeignKey(Vecino, on_delete=models.CASCADE, related_name="publicaciones")
     
+    @property
+    def titulo(self):
+        return self._titulo
+
+    @property
+    def contenido(self):
+        return self._contenido
+
+    @property
+    def fecha(self):
+        return self._fecha
+
+    @property
+    def vecino(self):
+        return self._vecino
+    
+    def _str_(self):
+        return f"{self._titulo} ({self._vecino.username})"
     
 
 # ========================
