@@ -10,7 +10,7 @@ from .views import (
     # Auth
     LoginView, LogoutView, 
     # Perfiles
-    ProfileDetailView, ProfileUpdateView
+    ProfileDetailView, ProfileUpdateView,
     # Boton Panico
     ActivarBotonPanicoView, HistorialBotonPanicoView
 )
