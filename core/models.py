@@ -267,3 +267,36 @@ class Multa(models.Model):
 
     def __str__(self):
         return f"Multa de {self._vecino.username}: {self._motivo} ({self._estado})"
+
+# ========================
+# BOTON DE PANICO
+# ========================
+
+class BotonPanico(models.Model):
+    _usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="alertas_panico")
+    _mensaje = models.CharField(max_length=255, default="Alerta de pánico activada")
+    _fecha = models.DateTimeField(auto_now_add=True)
+    _activo = models.BooleanField(default=True)
+
+    @property
+    def usuario(self):
+        return self._usuario
+
+    @property
+    def mensaje(self):
+        return self._mensaje
+
+    @property
+    def fecha(self):
+        return self._fecha
+
+    @property
+    def activo(self):
+        return self._activo
+
+    def desactivar(self):
+        self._activo = False
+        self.save()
+
+    def __str(self):
+        return f"Alerta de {self._usuario.username} - {self._fecha}"
