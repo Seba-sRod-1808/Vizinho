@@ -70,15 +70,7 @@
           <div class="card-body">
             <h5 class="card-title"><i class="bi bi-shield-exclamation"></i> Botón de Pánico</h5>
             <p class="card-text">Usar solo en emergencias.</p>
-            <form method="post" action="{% url 'activar_panico' %}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-light w-100">
-                Activar
-              </button>
-            </form>
-              <a href="{% url 'historial_panico' %}" class="btn btn-outline-light w-100 mt-2">
-                Ver Historial
-            </a>
+            <a href="#" class="btn btn-light w-100">Activar</a>
           </div>
         </div>
       </div>
