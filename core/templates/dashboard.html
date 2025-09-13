@@ -4,20 +4,25 @@
 {% block extra_head %}
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <style>
-    body { background-color: #f5f6fa; color: #333; }
-    .sidebar { min-height: 100vh; background-color: #2563eb; color: white; }
+    body { background-color: #fffaf5; color: #333; }
+    .sidebar { min-height: 100vh; background-color: #e63946; color: white; }
     .sidebar h5 { color: #fff; }
     .sidebar a { text-decoration: none; display: flex; align-items: center; gap: 10px;
                  padding: 12px; color: white; border-radius: 6px; margin-bottom: 5px; font-size: 1rem; }
-    .sidebar a:hover { background-color: #1e40af; color: #fff; }
+    .sidebar a:hover { background-color: #b71c1c; color: #fff; }
+
     .card { border: none; border-radius: 12px; }
-    .card-blue { background-color: #3b82f6; color: white; }
-    .card-green { background-color: #10b981; color: white; }
-    .card-red { background-color: #ef4444; color: white; }
+
+    /* Paleta personalizada */
+    .card-orange { background-color: #f97316; color: white; }  /* naranja */
+    .card-red { background-color: #dc2626; color: white; }     /* rojo */
+    .card-yellow { background-color: #facc15; color: #333; }   /* amarillo */
     .card-light { background-color: #fff; color: #333; border: 1px solid #ddd; }
+
     .publication-container { background: white; color: #333; border-radius: 10px; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; }
-    .publication-container h4 { font-weight: bold; color: #2563eb; }
-    .text-blue { color: #2563eb !important; }
+    .publication-container h4 { font-weight: bold; color: #e63946; }
+
+    .text-accent { color: #f97316 !important; } /* títulos en naranja */
   </style>
 {% endblock %}
 
@@ -35,19 +40,19 @@
 
   <!-- Contenido principal -->
   <div class="col-md-9 col-lg-10 p-4">
-    <h2 class="fw-bold mb-4 text-blue">Bienvenido al Panel de Vecinos</h2>
+    <h2 class="fw-bold mb-4 text-accent">Bienvenido al Panel de Vecinos</h2>
 
     <!-- Contenedor publicaciones -->
     <div class="publication-container shadow-sm">
       <h4><i class="bi bi-chat-left-text"></i> Últimas Publicaciones</h4>
       <p>Aquí aparecerán las publicaciones recientes de la comunidad.</p>
-      <a href="{% url 'lista_publicaciones' %}" class="btn btn-outline-primary btn-sm">Ir a Publicaciones</a>
+      <a href="{% url 'lista_publicaciones' %}" class="btn btn-outline-danger btn-sm">Ir a Publicaciones</a>
     </div>
 
     <!-- Tarjetas de acceso rápido -->
     <div class="row g-4 mt-4">
       <div class="col-md-4">
-        <div class="card card-blue shadow">
+        <div class="card card-orange shadow">
           <div class="card-body">
             <h5 class="card-title"><i class="bi bi-exclamation-triangle"></i> Reportes</h5>
             <p class="card-text">Revisa y crea reportes de incidentes.</p>
@@ -57,11 +62,11 @@
       </div>
 
       <div class="col-md-4">
-        <div class="card card-green shadow">
+        <div class="card card-yellow shadow">
           <div class="card-body">
             <h5 class="card-title"><i class="bi bi-cash-coin"></i> Multas</h5>
             <p class="card-text">Consulta y paga tus multas.</p>
-            <a href="{% url 'lista_multas' %}" class="btn btn-light w-100">Ver Multas</a>
+            <a href="{% url 'lista_multas' %}" class="btn btn-dark w-100">Ver Multas</a>
           </div>
         </div>
       </div>
