@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Pago Exitoso{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+  <h2 class="text-success">✅ Pago realizado con éxito</h2>
+  <p>Tu multa <strong>{{ multa.concepto }}</strong> ha sido marcada como pagada.</p>
+  <a href="{% url 'lista_multas' %}" class="btn btn-primary mt-3">Volver a Mis Multas</a>
+</div>
+{% endblock %}

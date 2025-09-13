@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Pagar Multa{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Pagar Multa</h2>
+  <p><strong>Concepto:</strong> {{ multa.concepto }}</p>
+  <p><strong>Monto:</strong> Q {{ multa.monto }}</p>
+  <p><strong>Fecha:</strong> {{ multa.fecha }}</p>
+  <p><strong>Estado:</strong> 
+    {% if multa.pagada %}
+      <span class="badge bg-success">Pagada</span>
+    {% else %}
+      <span class="badge bg-danger">Pendiente</span>
+    {% endif %}
+  </p>
+
+  {% if not multa.pagada %}
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">Confirmar Pago</button>
+    <a href="{% url 'lista_multas' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+  {% else %}
+  <a href="{% url 'lista_multas' %}" class="btn btn-primary">Regresar</a>
+  {% endif %}
+</div>
+{% endblock %}

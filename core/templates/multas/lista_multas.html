@@ -3,38 +3,42 @@
 
 {% block content %}
 <div class="container mt-4">
-  <h2>Mis Multas</h2>
-  <a href="{% url 'crear_multa' %}" class="btn btn-primary mb-3">Nueva Multa</a>
+  <h2 class="fw-bold mb-3">Mis Multas</h2>
   <table class="table table-bordered">
-    <thead>
+    <thead class="table-light">
       <tr>
+        <th>Concepto</th>
         <th>Monto</th>
-        <th>Motivo</th>
-        <th>Estado</th>
         <th>Fecha</th>
+        <th>Estado</th>
         <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
-    {% for m in multas %}
+      {% for multa in multas %}
       <tr>
-        <td>Q{{ m.monto }}</td>
-        <td>{{ m.motivo }}</td>
-        <td>{{ m.estado }}</td>
-        <td>{{ m.fecha }}</td>
+        <td>{{ multa.concepto }}</td>
+        <td>Q {{ multa.monto }}</td>
+        <td>{{ multa.fecha }}</td>
         <td>
-          {% if m.estado == "Pendiente" %}
-          <form method="post" action="{% url 'pagar_multa' m.id %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-success btn-sm">Pagar</button>
-          </form>
+          {% if multa.pagada %}
+            <span class="badge bg-success">Pagada</span>
+          {% else %}
+            <span class="badge bg-danger">Pendiente</span>
           {% endif %}
-          <a href="{% url 'editar_multa' m.id %}" class="btn btn-warning btn-sm">Editar</a>
-          <a href="{% url 'eliminar_multa' m.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+        </td>
+        <td>
+          {% if not multa.pagada %}
+            <a href="{% url 'pagar_multa' multa.id %}" class="btn btn-warning btn-sm">Pagar</a>
+          {% else %}
+            <button class="btn btn-secondary btn-sm" disabled>Pagada</button>
+          {% endif %}
         </td>
       </tr>
       {% empty %}
-      <tr><td colspan="5">No tienes multas.</td></tr>
+      <tr>
+        <td colspan="5" class="text-center">No tienes multas registradas.</td>
+      </tr>
       {% endfor %}
     </tbody>
   </table>
