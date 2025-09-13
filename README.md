@@ -1,6 +1,6 @@
 # 🏘️ Vizinho
 
-**Vizinho** es una aplicación web orientada a objetos desarrollada en **Python con Django** bajo el patrón **MVC (Modelo-Vista-Controlador)**.  
+**Vizinho** es una aplicación web orientada a objetos desarrollada en **Python con Django** bajo el patrón **MVC**.  
 Su propósito es mejorar la **gestión comunitaria** en condominios o vecindarios mediante herramientas de participación ciudadana, seguridad y transparencia.
 
 ---

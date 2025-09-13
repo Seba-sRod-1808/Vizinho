@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Editar Multa{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="fw-bold mb-3">Editar Multa</h2>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+      <div class="mb-3">
+        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+        {% if field.errors %}
+          <div class="small text-danger">{{ field.errors|striptags }}</div>
+        {% endif %}
+        {{ field }}
+        {% if field.help_text %}
+          <div class="form-text">{{ field.help_text }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-success">Guardar cambios</button>
+    <a href="{% url 'lista_multas' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

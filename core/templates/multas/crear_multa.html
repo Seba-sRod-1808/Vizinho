@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Crear Multa{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="fw-bold mb-3">Crear Multa</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a href="{% url 'lista_multas' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}
