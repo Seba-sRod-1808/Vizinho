@@ -194,3 +194,13 @@ class ListaObjetosPerdidosView(LoginRequiredMixin, ListView):
     template_name = "" # Pendiente la template
     context_object_name = "objetos"
     ordering = ["-_fecha"]
+
+class CrearObjetoPerdidoView(LoginRequiredMixin, CreateView):
+    model = ObjetoPerdido
+    template_name = "" # Pendiente la template
+    form_class = ObjetoPerdidoForm
+    success_url = reverse_lazy() # Pendiente de template
+
+    def form_valid(self, form):
+        form.instance._usuario = self.request.user
+        return super().form_valid(form)
