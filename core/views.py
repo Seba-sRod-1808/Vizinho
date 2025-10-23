@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 # Django views
 from django.views import View
@@ -172,3 +172,19 @@ class HistorialBotonPanicoView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return BotonPanico.objects.filter(_usuario=self.request.user).order_by("-_fecha")
+
+class SoloAdminMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.rol == "admin"
+
+class DashboardAdminView(LoginRequiredMixin, SoloAdminMixin, TemplateView):
+    template_name = "admin/dashboard_admin.html"
+
+    def get_context_data(self, **kwargs):
+        from .models import Reporte, Multa, Publicacion, BotonPanico
+        context = super().get_context_data(**kwargs)
+        context["reportes_pendientes"] = Reporte.objects.filter(_estado="Recibido").count()
+        context["multas_pendientes"] = Multa.objects.filter(_pagada=False).count()
+        context["publicaciones_recientes"] = Publicacion.objects.order_by("-_fecha")[:5]
+        context["alertas_activas"] = BotonPanico.objects.filter(_activo=True).count()
+        return context
