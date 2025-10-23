@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Panel de Administrador{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="fw-bold text-primary mb-4">Panel de Administración</h2>
+
+  <div class="row g-4">
+    <div class="col-md-3">
+      <div class="card shadow-sm border-0 bg-light">
+        <div class="card-body text-center">
+          <h5 class="text-secondary">Reportes Pendientes</h5>
+          <h2 class="fw-bold text-danger">{{ reportes_pendientes }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm border-0 bg-light">
+        <div class="card-body text-center">
+          <h5 class="text-secondary">Multas Pendientes</h5>
+          <h2 class="fw-bold text-warning">{{ multas_pendientes }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm border-0 bg-light">
+        <div class="card-body text-center">
+          <h5 class="text-secondary">Alertas Activas</h5>
+          <h2 class="fw-bold text-danger">{{ alertas_activas }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <h4 class="text-primary mb-3">Últimas Publicaciones</h4>
+  <ul class="list-group">
+    {% for pub in publicaciones_recientes %}
+      <li class="list-group-item">
+        <strong>{{ pub._titulo }}</strong> - {{ pub._fecha|date:"d/m/Y H:i" }}
+      </li>
+    {% empty %}
+      <li class="list-group-item text-muted">No hay publicaciones recientes.</li>
+    {% endfor %}
+  </ul>
+
+  <div class="mt-4">
+    <a href="{% url 'lista_reportes' %}" class="btn btn-outline-primary me-2">Ver todos los reportes</a>
+    <a href="{% url 'lista_multas' %}" class="btn btn-outline-warning me-2">Ver todas las multas</a>
+    <a href="{% url 'lista_publicaciones' %}" class="btn btn-outline-secondary">Ver publicaciones</a>
+  </div>
+</div>
+{% endblock %}
