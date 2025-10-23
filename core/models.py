@@ -314,5 +314,34 @@ class BotonPanico(models.Model):
         self._activo = False
         self.save()
 
-    def __str(self):
+    def __str__(self):
         return f"Alerta de {self._usuario.username} - {self._fecha}"
+
+# ========================
+# OBJETOS PERDIDOS
+# ========================
+
+class ObjetoPerdido(models.Model):
+    _titulo = models.CharField(max_length=100)
+    _descripcion = models.TextField()
+    _imagen = models.ImageField(upload_to="objetos_perdidos/", null = True, blank=True)
+    _fecha = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def titulo(self):
+        return self._titulo
+    
+    @property
+    def descripcion(self):
+        return self._descripcion
+    
+    @property
+    def imagen(self):
+        return self._imagen
+    
+    @property
+    def fecha(self):
+        return self._fecha
+
+    def __str__(self):
+        return f"Objeto Perdido: {self._titulo} - {self._descripcion}"
