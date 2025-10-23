@@ -1,7 +1,7 @@
 from django import forms
 
 from .models import (
-    Reporte, PerfilUsuario, Publicacion, Multa
+    Reporte, PerfilUsuario, Publicacion, Multa, ObjetoPerdido
 )
 
 class LoginForm(forms.Form):
@@ -38,3 +38,8 @@ class MultaForm(forms.ModelForm):
     class Meta:
         model = Multa
         fields = ["_monto", "_motivo"]
+
+class ObjetoPerdidoForm(forms.ModelForm):
+    class Meta:
+        model = ObjetoPerdido
+        fileds = ["_titulo", "_descripcion", "_imagen"]
