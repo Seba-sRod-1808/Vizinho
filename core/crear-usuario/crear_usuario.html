@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Crear Usuario{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="fw-bold text-primary mb-4">Crear nuevo usuario</h2>
+
+  <form method="post" class="shadow p-4 bg-light rounded">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit" class="btn btn-success mt-3">Guardar Usuario</button>
+    <a href="{% url 'dashboard_admin' %}" class="btn btn-secondary mt-3">Cancelar</a>
+  </form>
+</div>
+{% endblock %}
