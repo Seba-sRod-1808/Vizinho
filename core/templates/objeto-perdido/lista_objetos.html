@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Objetos Perdidos{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="fw-bold text-primary mb-4">Objetos Perdidos</h2>
+
+  <a href="{% url 'crear_objeto_perdido' %}" class="btn btn-success mb-3">+ Publicar objeto perdido</a>
+
+  <div class="row g-4">
+    {% for obj in objetos %}
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          {% if obj._imagen %}
+            <img src="{{ obj._imagen.url }}" class="card-img-top" alt="{{ obj._titulo }}">
+          {% else %}
+            <img src="https://via.placeholder.com/400x250?text=Sin+Imagen" class="card-img-top" alt="Sin imagen">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ obj._titulo }}</h5>
+            <p class="card-text">{{ obj._descripcion|truncatechars:100 }}</p>
+            <small class="text-muted">Publicado por {{ obj._usuario.username }} el {{ obj._fecha|date:"d/m/Y" }}</small>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted">No hay objetos reportados actualmente.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
