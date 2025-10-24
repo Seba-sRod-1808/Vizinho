@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Publicar Objeto Perdido{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="fw-bold text-primary mb-4">Reportar Objeto Perdido</h2>
+
+  <form method="post" enctype="multipart/form-data" class="shadow p-4 bg-light rounded">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit" class="btn btn-success mt-3">Publicar</button>
+    <a href="{% url 'lista_objetos_perdidos' %}" class="btn btn-secondary mt-3">Cancelar</a>
+  </form>
+</div>
+{% endblock %}
