@@ -42,4 +42,9 @@ class MultaForm(forms.ModelForm):
 class ObjetoPerdidoForm(forms.ModelForm):
     class Meta:
         model = ObjetoPerdido
-        fileds = ["_titulo", "_descripcion", "_imagen"]
+        fields = ["_titulo", "_descripcion", "_imagen"]
+        labels = {
+            "_titulo": "Título del objeto",
+            "_descripcion": "Descripción",
+            "_imagen": "Fotografía",
+        }

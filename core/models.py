@@ -326,6 +326,7 @@ class ObjetoPerdido(models.Model):
     _descripcion = models.TextField()
     _imagen = models.ImageField(upload_to="objetos_perdidos/", null = True, blank=True)
     _fecha = models.DateTimeField(auto_now_add=True)
+    _usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="objetos_perdidos")
 
     @property
     def titulo(self):
@@ -344,4 +345,4 @@ class ObjetoPerdido(models.Model):
         return self._fecha
 
     def __str__(self):
-        return f"Objeto Perdido: {self._titulo} - {self._descripcion}"
+        return f"Objeto Perdido: {self._titulo} - {self._usuario}"
