@@ -12,12 +12,13 @@ from django.views.generic import (
 )
 
 # local models
-from .models import Reporte, PerfilUsuario, Publicacion, Multa, BotonPanico, ObjetoPerdido
+from .models import Reporte, PerfilUsuario, Publicacion, Multa, BotonPanico, ObjetoPerdido, Usuario
 
 # local forms
 from .forms import (
     LoginForm, ReporteForm,
-    ProfileForm, PublicacionForm, MultaForm, ObjetoPerdidoForm
+    ProfileForm, PublicacionForm, MultaForm, ObjetoPerdidoForm,
+    CrearUsuarioForm
 )
 
 class LoginView(View):
@@ -204,3 +205,17 @@ class CrearObjetoPerdidoView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance._usuario = self.request.user
         return super().form_valid(form)
+
+class CrearUsuarioView(LoginRequiredMixin, SoloAdminMixin, CreateView):
+    model = Usuario
+    form_class = CrearUsuarioForm
+    template_name = "admin/crear_usuario.html"
+    success_url = reverse_lazy("dashboard_admin")
+
+    def form_valid(self, form):
+        # valida que solo admin o un superuser puedan crear usuarios
+        if self.request.user.rol == "admin" or self.request.user.is_superuser:
+            return super().form_valid(form)
+        else:
+            form.add_error(None, "No tienes permiso para crear usuarios.")
+            return self.form_invalid(form)

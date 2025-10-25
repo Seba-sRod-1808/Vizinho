@@ -16,7 +16,9 @@ from .views import (
     # Admin
     ,DashboardAdminView,
     # Objeto Perdido
-    ListaObjetosPerdidosView, CrearObjetoPerdidoView
+    ListaObjetosPerdidosView, CrearObjetoPerdidoView, 
+    #creacion de usuarios por admin
+    CrearUsuarioView,
 )
 
 urlpatterns = [
@@ -57,4 +59,7 @@ urlpatterns = [
     ##Objetos Perdidos 
     path("objetos-perdidos/", ListaObjetosPerdidosView.as_view(), name="lista_objetos_perdidos"),
     path("objetos-perdidos/nuevo/", CrearObjetoPerdidoView.as_view(), name="crear_objeto_perdido"),
+
+    #Creacion de usuarios por admin
+    path("admin/crear-usuario/", CrearUsuarioView.as_view(), name="crear_usuario"),
 ]

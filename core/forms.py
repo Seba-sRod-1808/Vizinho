@@ -1,7 +1,7 @@
 from django import forms
 
 from .models import (
-    Reporte, PerfilUsuario, Publicacion, Multa, ObjetoPerdido
+    Reporte, PerfilUsuario, Publicacion, Multa, ObjetoPerdido, Usuario
 )
 
 class LoginForm(forms.Form):
@@ -48,3 +48,24 @@ class ObjetoPerdidoForm(forms.ModelForm):
             "_descripcion": "Descripción",
             "_imagen": "Fotografía",
         }
+
+class CrearUsuarioForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput, label="Contraseña")
+
+    class Meta:
+        model = Usuario
+        fields = ["username", "email", "_telefono", "_rol", "password"]
+        labels = {
+            "username": "Nombre de usuario",
+            "email": "Correo electrónico",
+            "_telefono": "Teléfono",
+            "_rol": "Rol del usuario",
+        }
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password"])
+        if commit:
+            user.save()
+        return user
+    
