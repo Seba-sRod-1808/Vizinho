@@ -12,12 +12,12 @@ from django.views.generic import (
 )
 
 # local models
-from .models import Reporte, PerfilUsuario, Publicacion, Multa, BotonPanico
+from .models import Reporte, PerfilUsuario, Publicacion, Multa, BotonPanico, ObjetoPerdido
 
 # local forms
 from .forms import (
     LoginForm, ReporteForm,
-    ProfileForm, PublicacionForm, MultaForm
+    ProfileForm, PublicacionForm, MultaForm, ObjetoPerdidoForm
 )
 
 class LoginView(View):
@@ -188,3 +188,19 @@ class DashboardAdminView(LoginRequiredMixin, SoloAdminMixin, TemplateView):
         context["publicaciones_recientes"] = Publicacion.objects.order_by("-_fecha")[:5]
         context["alertas_activas"] = BotonPanico.objects.filter(_activo=True).count()
         return context
+
+class ListaObjetosPerdidosView(LoginRequiredMixin, ListView):
+    model = ObjetoPerdido
+    template_name = "" # Pendiente la template
+    context_object_name = "objetos"
+    ordering = ["-_fecha"]
+
+class CrearObjetoPerdidoView(LoginRequiredMixin, CreateView):
+    model = ObjetoPerdido
+    template_name = "" # Pendiente la template
+    form_class = ObjetoPerdidoForm
+    success_url = reverse_lazy() # Pendiente de template
+
+    def form_valid(self, form):
+        form.instance._usuario = self.request.user
+        return super().form_valid(form)

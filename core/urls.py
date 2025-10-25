@@ -15,6 +15,8 @@ from .views import (
     ActivarBotonPanicoView, HistorialBotonPanicoView
     # Admin
     ,DashboardAdminView,
+    # Objeto Perdido
+    ListaObjetosPerdidosView, CrearObjetoPerdidoView
 )
 
 urlpatterns = [
@@ -51,4 +53,8 @@ urlpatterns = [
 
     #Vista de administracion
     path("admin/dashboard/", DashboardAdminView.as_view(), name="dashboard_admin"),
+
+    ##Objetos Perdidos 
+    path("objetos-perdidos/", ListaObjetosPerdidosView.as_view(), name="lista_objetos_perdidos"),
+    path("objetos-perdidos/nuevo/", CrearObjetoPerdidoView.as_view(), name="crear_objeto_perdido"),
 ]
