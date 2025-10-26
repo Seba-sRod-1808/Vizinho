@@ -45,7 +45,7 @@
   <ul class="list-group">
     {% for pub in publicaciones_recientes %}
       <li class="list-group-item">
-        <strong>{{ pub._titulo }}</strong> - {{ pub._fecha|date:"d/m/Y H:i" }}
+        <strong>{{ pub.titulo }}</strong> - {{ pub.fecha|date:"d/m/Y H:i" }}
       </li>
     {% empty %}
       <li class="list-group-item text-muted">No hay publicaciones recientes.</li>

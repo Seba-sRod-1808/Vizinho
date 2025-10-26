@@ -38,8 +38,8 @@
         <a href="{% url 'lista_publicaciones' %}"><i class="bi bi-chat-left-text"></i> Publicaciones</a>
         <a href="{% url 'lista_reportes' %}"><i class="bi bi-exclamation-triangle"></i> Reportes</a>
         <a href="{% url 'lista_multas' %}"><i class="bi bi-cash-coin"></i> Multas</a>
-        <a href="#"><i class="bi bi-bag"></i> Objetos Perdidos</a>
-        <a href="#"><i class="bi bi-shield-exclamation"></i> Botón de Pánico</a>
+        <a href="{% url 'lista_objetos_perdidos' %}"><i class="bi bi-bag"></i> Objetos Perdidos</a>
+        <a href="{% url 'activar_panico' %}"><i class="bi bi-shield-exclamation"></i> Botón de Pánico</a>
 
         <hr>
         {% if user.is_authenticated %}

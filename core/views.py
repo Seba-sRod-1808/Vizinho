@@ -111,9 +111,13 @@ class MultaListView(LoginRequiredMixin, ListView):
     context_object_name = "multas"
 
     def get_queryset(self):
-        return Multa.objects.filter(_vecino=self.request.user)
+        user = self.request.user
+        if user.rol == "admin" or user.is_superuser:
+            return Multa.objects.all()
+        else:
+            return Multa.objects.filter(_vecino=user)
 
-class MultaCreateView(LoginRequiredMixin, CreateView, SoloAdminMixin):
+class MultaCreateView(LoginRequiredMixin, SoloAdminMixin, CreateView):
     model = Multa
     form_class = MultaForm
     template_name = "multas/crear_multa.html"
@@ -123,13 +127,13 @@ class MultaCreateView(LoginRequiredMixin, CreateView, SoloAdminMixin):
         form.instance._vecino = self.request.user
         return super().form_valid(form)
 
-class MultaUpdateView(LoginRequiredMixin, UpdateView):
+class MultaUpdateView(LoginRequiredMixin, SoloAdminMixin, UpdateView):
     model = Multa
     form_class = MultaForm
     template_name = "multas/editar_multa.html"
     success_url = reverse_lazy("lista_multas")
 
-class MultaDeleteView(LoginRequiredMixin, DeleteView):
+class MultaDeleteView(LoginRequiredMixin, SoloAdminMixin, DeleteView):
     model = Multa
     template_name = "multas/eliminar_multa.html"
     success_url = reverse_lazy("lista_multas")
@@ -174,7 +178,7 @@ class ActivarBotonPanicoView(LoginRequiredMixin, View):
         BotonPanico.objects.create(_usuario=request.user)
         return redirect("historial_panico")
 
-class HistorialBotonPanicoView(LoginRequiredMixin, ListView, SoloAdminMixin):
+class HistorialBotonPanicoView(LoginRequiredMixin, ListView):
     model = BotonPanico
     template_name = "panico/historial_panico.html"
     context_object_name = "alertas"
@@ -191,7 +195,7 @@ class DashboardAdminView(LoginRequiredMixin, SoloAdminMixin, TemplateView):
         # datos que se pasarán a la plantilla al renderizar el controlador y permite
         # personalizar el contexto que estará disponible en la plantilla.
         context["reportes_pendientes"] = Reporte.objects.filter(_estado="Recibido").count()
-        context["multas_pendientes"] = Multa.objects.filter(_pagada=False).count()
+        context["multas_pendientes"] = Multa.objects.filter(_estado=False).count()
         context["publicaciones_recientes"] = Publicacion.objects.order_by("-_fecha")[:5]
         context["alertas_activas"] = BotonPanico.objects.filter(_activo=True).count()
         return context
