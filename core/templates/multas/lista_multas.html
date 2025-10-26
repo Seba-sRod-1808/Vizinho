@@ -1,46 +1,53 @@
 {% extends "base.html" %}
-{% block title %}Multas{% endblock %}
-
+{% block title %}Lista de Multas{% endblock %}
 {% block content %}
-<div class="container mt-4">
-  <h2 class="fw-bold mb-3">Mis Multas</h2>
-  
-  <table class="table table-bordered">
-    <thead class="table-light">
-      <tr>
-        <th>Concepto</th>
-        <th>Monto</th>
-        <th>Fecha</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for multa in multas %}
-      <tr>
-        <td>{{ multa.concepto }}</td>
-        <td>Q {{ multa.monto }}</td>
-        <td>{{ multa.fecha }}</td>
-        <td>
-          {% if multa.pagada %}
-            <span class="badge bg-success">Pagada</span>
-          {% else %}
-            <span class="badge bg-danger">Pendiente</span>
-          {% endif %}
-        </td>
-        <td>
-          {% if not multa.pagada %}
-            <a href="{% url 'pagar_multa' multa.id %}" class="btn btn-warning btn-sm">Pagar</a>
-          {% else %}
-            <button class="btn btn-secondary btn-sm" disabled>Pagada</button>
-          {% endif %}
 
-          <a href="{% url 'editar_multa' multa.id %}" class="btn btn-info btn-sm">Editar</a>
-          <a href="{% url 'eliminar_multa' multa.id %}" class="btn btn-danger btn-sm">Eliminar</a>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="container mt-4">
+  <h2 class="fw-bold mb-3">Multas</h2>
+
+  {% if es_admin %}
+    <a href="{% url 'crear_multa' %}" class="btn btn-success mb-3">+ Crear Multa</a>
+  {% endif %}
+
+  <div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Vecino</th>
+          <th>Monto</th>
+          <th>Motivo</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for multa in multas %}
+        <tr>
+          <td>{{ multa.id }}</td>
+          <td>{{ multa.vecino.username }}</td>
+          <td>Q{{ multa.monto }}</td>
+          <td>{{ multa.motivo }}</td>
+          <td>{{ multa.estado }}</td>
+          <td>{{ multa.fecha|date:"d/m/Y" }}</td>
+          <td>
+            {% if es_admin %}
+              <a href="{% url 'editar_multa' multa.id %}" class="btn btn-warning btn-sm">Editar</a>
+              <a href="{% url 'eliminar_multa' multa.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+            {% else %}
+              {% if multa.estado == "Pendiente" %}
+                <a href="{% url 'pagar_multa' multa.id %}" class="btn btn-success btn-sm">Pagar</a>
+              {% endif %}
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center">No hay multas registradas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
+
 {% endblock %}

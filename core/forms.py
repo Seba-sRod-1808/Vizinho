@@ -35,9 +35,18 @@ class PublicacionForm(forms.ModelForm):
         model = Publicacion
         fields = ["_titulo", "_contenido"]
 class MultaForm(forms.ModelForm):
+    _vecino = forms.ModelChoiceField(
+        queryset=Usuario.objects.filter(_rol="vecino"),
+        label="Vecino afectado",
+        required=True
+    )
+
     class Meta:
         model = Multa
-        fields = ["_monto", "_motivo"]
+        fields = ["_vecino", "_monto", "_motivo", "_estado"]
+        widgets = {
+            "_motivo": forms.Textarea(attrs={"rows": 2}),
+        }
 
 class ObjetoPerdidoForm(forms.ModelForm):
     class Meta:

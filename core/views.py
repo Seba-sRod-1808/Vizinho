@@ -61,8 +61,16 @@ class ReporteListView(LoginRequiredMixin, ListView):
     context_object_name = "reportes"
 
     def get_queryset(self):
-        return Reporte.objects.filter(_vecino=self.request.user)
+        u = self.request.user
+        if u.is_superuser or u.rol == "admin":
+            return Reporte.objects.all().order_by("-_fecha")
+        return Reporte.objects.filter(_vecino=u).order_by("-_fecha")
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        u = self.request.user
+        ctx["es_admin"] = (u.is_superuser or u.rol == "admin")
+        return ctx
 
 class ReporteCreateView(LoginRequiredMixin, CreateView):
     model = Reporte
@@ -113,10 +121,15 @@ class MultaListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         if user.rol == "admin" or user.is_superuser:
-            return Multa.objects.all()
-        else:
-            return Multa.objects.filter(_vecino=user)
-
+            return Multa.objects.all().order_by("-_fecha")  
+        return Multa.objects.filter(_vecino=user).order_by("-_fecha")
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context["es_admin"] = (user.rol == "admin" or user.is_superuser)
+        return context
+    
 class MultaCreateView(LoginRequiredMixin, SoloAdminMixin, CreateView):
     model = Multa
     form_class = MultaForm
@@ -124,7 +137,7 @@ class MultaCreateView(LoginRequiredMixin, SoloAdminMixin, CreateView):
     success_url = reverse_lazy("lista_multas")
 
     def form_valid(self, form):
-        form.instance._vecino = self.request.user
+        form.instance._vecino = form.cleaned_data["_vecino"]
         return super().form_valid(form)
 
 class MultaUpdateView(LoginRequiredMixin, SoloAdminMixin, UpdateView):
@@ -143,6 +156,7 @@ class MultaDeleteView(LoginRequiredMixin, SoloAdminMixin, DeleteView):
 class PagarMultaView(LoginRequiredMixin, View):
     def post(self, request, pk):
         multa = get_object_or_404(Multa, pk=pk, _vecino=request.user)
+        multa.estado = "Pagada"
         multa.pagar()
         return redirect("lista_multas")
 
@@ -195,7 +209,7 @@ class DashboardAdminView(LoginRequiredMixin, SoloAdminMixin, TemplateView):
         # datos que se pasarán a la plantilla al renderizar el controlador y permite
         # personalizar el contexto que estará disponible en la plantilla.
         context["reportes_pendientes"] = Reporte.objects.filter(_estado="Recibido").count()
-        context["multas_pendientes"] = Multa.objects.filter(_estado=False).count()
+        context["multas_pendientes"] = Multa.objects.filter(_estado="Pendiente").count()
         context["publicaciones_recientes"] = Publicacion.objects.order_by("-_fecha")[:5]
         context["alertas_activas"] = BotonPanico.objects.filter(_activo=True).count()
         return context
@@ -219,7 +233,7 @@ class CrearObjetoPerdidoView(LoginRequiredMixin, CreateView):
 class CrearUsuarioView(LoginRequiredMixin, SoloAdminMixin, CreateView):
     model = Usuario
     form_class = CrearUsuarioForm
-    template_name = "administrador/crear_usuario.html"
+    template_name = "crear-usuario/crear_usuario.html"
     success_url = reverse_lazy("dashboard_admin")
 
     def form_valid(self, form):

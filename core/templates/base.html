@@ -34,7 +34,13 @@
       <!-- Sidebar -->
       <div class="col-md-3 col-lg-2 sidebar p-3">
         <h5 class="fw-bold mb-3">Menú</h5>
-        <a href="{% url 'dashboard' %}"><i class="bi bi-house"></i> Inicio</a>
+        {% if user.is_authenticated %}
+          {% if user.rol == "admin" or user.is_superuser %}
+            <a href="{% url 'dashboard_admin' %}" class="nav-link text-white">Inicio</a>
+          {% else %}
+            <a href="{% url 'dashboard' %}" class="nav-link text-white">Inicio</a>
+          {% endif %}
+        {% endif %}
         <a href="{% url 'lista_publicaciones' %}"><i class="bi bi-chat-left-text"></i> Publicaciones</a>
         <a href="{% url 'lista_reportes' %}"><i class="bi bi-exclamation-triangle"></i> Reportes</a>
         <a href="{% url 'lista_multas' %}"><i class="bi bi-cash-coin"></i> Multas</a>
