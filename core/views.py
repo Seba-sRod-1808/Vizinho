@@ -1,4 +1,5 @@
 # Django core
+from multiprocessing import context
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login, logout
@@ -171,6 +172,12 @@ class PublicacionListView(LoginRequiredMixin, ListView):
     context_object_name = "publicaciones"
     ordering = ["-_fecha"]
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context["es_admin"] = (user.rol == "admin" or user.is_superuser)
+        return context
+
 class PublicacionCreateView(LoginRequiredMixin, CreateView):
     model = Publicacion
     form_class = PublicacionForm
@@ -181,13 +188,13 @@ class PublicacionCreateView(LoginRequiredMixin, CreateView):
         form.instance._vecino = self.request.user
         return super().form_valid(form)
 
-class PublicacionUpdateView(LoginRequiredMixin, UpdateView):
+class PublicacionUpdateView(LoginRequiredMixin, SoloAdminMixin, UpdateView):
     model = Publicacion
     form_class = PublicacionForm
     template_name = "publicaciones/editar_publicacion.html"
     success_url = reverse_lazy("lista_publicaciones")
 
-class PublicacionDeleteView(LoginRequiredMixin, DeleteView):
+class PublicacionDeleteView(LoginRequiredMixin, SoloAdminMixin, DeleteView):
     model = Publicacion
     template_name = "publicaciones/eliminar_publicacion.html"
     success_url = reverse_lazy("lista_publicaciones")
