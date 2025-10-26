@@ -36,9 +36,9 @@
         <h5 class="fw-bold mb-3">Menú</h5>
         {% if user.is_authenticated %}
           {% if user.rol == "admin" or user.is_superuser %}
-            <a href="{% url 'dashboard_admin' %}" class="nav-link text-white">Inicio</a>
+            <a href="{% url 'dashboard_admin' %}" class="nav-link text-white"><i class="bi bi-house-door"></i> Inicio</a>
           {% else %}
-            <a href="{% url 'dashboard' %}" class="nav-link text-white">Inicio</a>
+            <a href="{% url 'dashboard' %}" class="nav-link text-white"><i class="bi bi-house-door"></i> Inicio</a>
           {% endif %}
         {% endif %}
         <a href="{% url 'lista_publicaciones' %}"><i class="bi bi-chat-left-text"></i> Publicaciones</a>
