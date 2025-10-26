@@ -97,6 +97,11 @@ class ReporteDeleteView(LoginRequiredMixin, DeleteView):
 
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "dashboard.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Obtener las últimas 5 publicaciones ordenadas por fecha descendente
+        context['ultimas_publicaciones'] = Publicacion.objects.all().order_by('-_fecha')[:5]
+        return context
 
 class ProfileDetailView(LoginRequiredMixin, DetailView):
     model = PerfilUsuario
