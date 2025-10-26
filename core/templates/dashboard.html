@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Dashboard{% endblock %}
+{% block title %}Panel de Vecinos{% endblock %}
 
 {% block extra_head %}
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -12,70 +12,81 @@
     .sidebar a:hover { background-color: #b71c1c; color: #fff; }
 
     .card { border: none; border-radius: 12px; }
-
-    /* Paleta personalizada */
-    .card-orange { background-color: #f97316; color: white; }  /* naranja */
-    .card-red { background-color: #dc2626; color: white; }     /* rojo */
-    .card-yellow { background-color: #facc15; color: #333; }   /* amarillo */
+    .card-orange { background-color: #f97316; color: white; }
+    .card-red { background-color: #dc2626; color: white; }
+    .card-yellow { background-color: #facc15; color: #333; }
     .card-light { background-color: #fff; color: #333; border: 1px solid #ddd; }
 
-    .publication-container { background: white; color: #333; border-radius: 10px; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; }
+    .publication-container { background: white; color: #333; border-radius: 10px;
+                              padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; }
     .publication-container h4 { font-weight: bold; color: #e63946; }
 
-    .text-accent { color: #f97316 !important; } /* títulos en naranja */
+    .text-accent { color: #f97316 !important; }
   </style>
 {% endblock %}
 
 {% block content %}
 <div class="row">
 
-  <!-- Contenido principal -->
   <div class="col-md-9 col-lg-10 p-4">
     <h2 class="fw-bold mb-4 text-accent">Bienvenido al Panel de Vecinos</h2>
 
-    <!-- Contenedor publicaciones -->
+    <!-- Publicaciones -->
     <div class="publication-container shadow-sm">
       <h4><i class="bi bi-chat-left-text"></i> Últimas Publicaciones</h4>
-      <p>Aquí aparecerán las publicaciones recientes de la comunidad.</p>
+      <p>Explora las publicaciones más recientes de tu comunidad.</p>
       <a href="{% url 'lista_publicaciones' %}" class="btn btn-outline-danger btn-sm">Ir a Publicaciones</a>
     </div>
 
-    <!-- Tarjetas de acceso rápido -->
+    <!-- Reportes -->
     <div class="row g-4 mt-4">
       <div class="col-md-4">
         <div class="card card-orange shadow">
           <div class="card-body">
             <h5 class="card-title"><i class="bi bi-exclamation-triangle"></i> Reportes</h5>
-            <p class="card-text">Revisa y crea reportes de incidentes.</p>
-            <a href="{% url 'lista_reportes' %}" class="btn btn-light w-100">Abrir</a>
+            <p class="card-text">Reporta incidencias o consulta el estado de tus reportes.</p>
+            <a href="{% url 'lista_reportes' %}" class="btn btn-light w-100">Ver Reportes</a>
           </div>
         </div>
       </div>
 
+      <!-- Multas -->
       <div class="col-md-4">
         <div class="card card-yellow shadow">
           <div class="card-body">
             <h5 class="card-title"><i class="bi bi-cash-coin"></i> Multas</h5>
-            <p class="card-text">Consulta y paga tus multas.</p>
+            <p class="card-text">Consulta y paga tus multas pendientes.</p>
             <a href="{% url 'lista_multas' %}" class="btn btn-dark w-100">Ver Multas</a>
           </div>
         </div>
       </div>
 
+      <!-- Botón de pánico -->
       <div class="col-md-4">
         <div class="card card-red shadow">
           <div class="card-body">
             <h5 class="card-title"><i class="bi bi-shield-exclamation"></i> Botón de Pánico</h5>
-            <p class="card-text">Usar solo en emergencias.</p>
+            <p class="card-text">Utiliza este botón solo en caso de emergencia.</p>
             <form method="post" action="{% url 'activar_panico' %}">
               {% csrf_token %}
-              <button type="submit" class="btn btn-light w-100 fw-bold">
-                🚨 Activar
-              </button>
+              <button type="submit" class="btn btn-light w-100 fw-bold">🚨 Activar</button>
             </form>
             <a href="{% url 'historial_panico' %}" class="btn btn-outline-light w-100 mt-2">
               Ver Historial
             </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Objetos perdidos -->
+    <div class="row g-4 mt-4">
+      <div class="col-md-4">
+        <div class="card card-light shadow">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-bag"></i> Objetos Perdidos</h5>
+            <p class="card-text">Publica o busca objetos extraviados en la comunidad.</p>
+            <a href="{% url 'lista_objetos_perdidos' %}" class="btn btn-danger w-100">Ver Objetos</a>
           </div>
         </div>
       </div>

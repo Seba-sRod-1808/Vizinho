@@ -32,6 +32,13 @@
     </div>
   </div>
 
+  <div class="mt-4">
+    <a href="{% url 'crear_usuario' %}" class="btn btn-outline-success">
+      ➕ Crear nuevo usuario
+    </a>
+  </div>
+
+
   <hr class="my-4">
 
   <h4 class="text-primary mb-3">Últimas Publicaciones</h4>
@@ -51,4 +58,16 @@
     <a href="{% url 'lista_publicaciones' %}" class="btn btn-outline-secondary">Ver publicaciones</a>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+  body { background-color: #f4f6f8; color: #333; }
+  .card { border-radius: 10px; border: none; }
+  .card-body h2 { font-size: 2rem; }
+  .btn-outline-primary, .btn-outline-warning, .btn-outline-secondary {
+    border-width: 2px;
+  }
+  h2, h4 { color: #1e40af; }
+</style>
 {% endblock %}

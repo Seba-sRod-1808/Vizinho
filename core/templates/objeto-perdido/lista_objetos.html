@@ -11,15 +11,15 @@
     {% for obj in objetos %}
       <div class="col-md-4">
         <div class="card shadow-sm">
-          {% if obj._imagen %}
-            <img src="{{ obj._imagen.url }}" class="card-img-top" alt="{{ obj._titulo }}">
+          {% if obj.imagen %}
+            <img src="{{ obj.imagen.url }}" class="card-img-top" alt="{{ obj.titulo }}">
           {% else %}
             <img src="https://via.placeholder.com/400x250?text=Sin+Imagen" class="card-img-top" alt="Sin imagen">
           {% endif %}
           <div class="card-body">
-            <h5 class="card-title">{{ obj._titulo }}</h5>
-            <p class="card-text">{{ obj._descripcion|truncatechars:100 }}</p>
-            <small class="text-muted">Publicado por {{ obj._usuario.username }} el {{ obj._fecha|date:"d/m/Y" }}</small>
+            <h5 class="card-title">{{ obj.titulo }}</h5>
+            <p class="card-text">{{ obj.descripcion|truncatechars:100 }}</p>
+            <small class="text-muted">Publicado por {{ obj.usuario.username }} el {{ obj.fecha|date:"d/m/Y" }}</small>
           </div>
         </div>
       </div>

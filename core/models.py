@@ -21,7 +21,7 @@ class Usuario(AbstractUser):
     _telefono = models.CharField(max_length=20, null=True, blank=True)
     _rol = models.CharField(max_length=20, choices=ROLES, default="vecino")
 
-    # Getters y setters (encapsulamiento)
+    # Getters y setters
     def get_telefono(self):
         return self._telefono
 
@@ -43,6 +43,10 @@ class Usuario(AbstractUser):
     @property
     def rol(self):
         return self._rol
+    
+    @rol.setter
+    def rol(self, value):
+        self._rol = value
 
     def __str__(self):
         return f"{self.username} ({self._rol})"
@@ -331,11 +335,11 @@ class ObjetoPerdido(models.Model):
     @property
     def titulo(self):
         return self._titulo
-    
+
     @property
     def descripcion(self):
         return self._descripcion
-    
+
     @property
     def imagen(self):
         return self._imagen
@@ -343,6 +347,10 @@ class ObjetoPerdido(models.Model):
     @property
     def fecha(self):
         return self._fecha
+
+    @property
+    def usuario(self):
+        return self._usuario
 
     def __str__(self):
         return f"Objeto Perdido: {self._titulo} - {self._usuario}"

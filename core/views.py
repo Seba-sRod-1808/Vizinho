@@ -34,19 +34,27 @@ class LoginView(View):
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
             user = authenticate(request, username=username, password=password)
-            if user:
-                login(request, user)
-                return redirect("dashboard") # aun no implementado // equipo de fabric y joseph
+        if user is not None:
+            login(request, user)
+            if user.rol == "admin" or user.is_superuser:
+                return redirect("dashboard_admin")
             else:
-                form.add_error(None, "Usuario o contraseña incorrectos")
-        return render(request, self.template_name, {"form": form})
+                return redirect("dashboard")
 
+        else:
+            form.add_error(None, "Usuario o contraseña incorrectos")
+        return render(request, self.template_name, {"form": form})
 
 class LogoutView(View):
     def get(self, request):
         logout(request)
         return redirect("login")
 
+class SoloAdminMixin(UserPassesTestMixin):
+    def test_func(self):
+        user = self.request.user
+        return user.is_superuser or user.rol == "admin"
+    
 class ReporteListView(LoginRequiredMixin, ListView):
     model = Reporte
     template_name = "reportes/lista_reportes.html"
@@ -105,7 +113,7 @@ class MultaListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Multa.objects.filter(_vecino=self.request.user)
 
-class MultaCreateView(LoginRequiredMixin, CreateView):
+class MultaCreateView(LoginRequiredMixin, CreateView, SoloAdminMixin):
     model = Multa
     form_class = MultaForm
     template_name = "multas/crear_multa.html"
@@ -166,7 +174,7 @@ class ActivarBotonPanicoView(LoginRequiredMixin, View):
         BotonPanico.objects.create(_usuario=request.user)
         return redirect("historial_panico")
 
-class HistorialBotonPanicoView(LoginRequiredMixin, ListView):
+class HistorialBotonPanicoView(LoginRequiredMixin, ListView, SoloAdminMixin):
     model = BotonPanico
     template_name = "panico/historial_panico.html"
     context_object_name = "alertas"
@@ -174,16 +182,14 @@ class HistorialBotonPanicoView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return BotonPanico.objects.filter(_usuario=self.request.user).order_by("-_fecha")
 
-class SoloAdminMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.rol == "admin"
-
 class DashboardAdminView(LoginRequiredMixin, SoloAdminMixin, TemplateView):
-    template_name = "admin/dashboard_admin.html"
+    template_name = "administrador/dashboard_admin.html"
 
     def get_context_data(self, **kwargs):
-        from .models import Reporte, Multa, Publicacion, BotonPanico
-        context = super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)  
+        # el get_context_data method es usado para agregar
+        # datos que se pasarán a la plantilla al renderizar el controlador y permite
+        # personalizar el contexto que estará disponible en la plantilla.
         context["reportes_pendientes"] = Reporte.objects.filter(_estado="Recibido").count()
         context["multas_pendientes"] = Multa.objects.filter(_pagada=False).count()
         context["publicaciones_recientes"] = Publicacion.objects.order_by("-_fecha")[:5]
@@ -192,15 +198,15 @@ class DashboardAdminView(LoginRequiredMixin, SoloAdminMixin, TemplateView):
 
 class ListaObjetosPerdidosView(LoginRequiredMixin, ListView):
     model = ObjetoPerdido
-    template_name = "" # Pendiente la template
+    template_name = "objeto-perdido/lista_objetos.html"
     context_object_name = "objetos"
     ordering = ["-_fecha"]
 
 class CrearObjetoPerdidoView(LoginRequiredMixin, CreateView):
     model = ObjetoPerdido
-    template_name = "" # Pendiente la template
+    template_name = "objeto-perdido/crear_objeto.html"
     form_class = ObjetoPerdidoForm
-    success_url = reverse_lazy() # Pendiente de template
+    success_url = reverse_lazy("lista_objetos_perdidos")
 
     def form_valid(self, form):
         form.instance._usuario = self.request.user
@@ -209,7 +215,7 @@ class CrearObjetoPerdidoView(LoginRequiredMixin, CreateView):
 class CrearUsuarioView(LoginRequiredMixin, SoloAdminMixin, CreateView):
     model = Usuario
     form_class = CrearUsuarioForm
-    template_name = "admin/crear_usuario.html"
+    template_name = "administrador/crear_usuario.html"
     success_url = reverse_lazy("dashboard_admin")
 
     def form_valid(self, form):

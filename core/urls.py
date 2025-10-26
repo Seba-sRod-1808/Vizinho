@@ -54,12 +54,12 @@ urlpatterns = [
     path("panico/historial/", HistorialBotonPanicoView.as_view(), name="historial_panico"),
 
     #Vista de administracion
-    path("admin/dashboard/", DashboardAdminView.as_view(), name="dashboard_admin"),
+    path("administrador/dashboard/", DashboardAdminView.as_view(), name="dashboard_admin"),
 
     ##Objetos Perdidos 
     path("objetos-perdidos/", ListaObjetosPerdidosView.as_view(), name="lista_objetos_perdidos"),
     path("objetos-perdidos/nuevo/", CrearObjetoPerdidoView.as_view(), name="crear_objeto_perdido"),
 
     #Creacion de usuarios por admin
-    path("admin/crear-usuario/", CrearUsuarioView.as_view(), name="crear_usuario"),
+    path("administrador/crear-usuario/", CrearUsuarioView.as_view(), name="crear_usuario"),
 ]
