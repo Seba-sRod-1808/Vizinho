@@ -54,14 +54,16 @@ git clone https://github.com/Seba-sRod-1808/Vizinho.git
 cd Vizinho
 ```
 ## Crea un entorno virtual
+```python
 python -m venv venv
 source venv/Scripts/activate     # En Windows
 # o
-source venv/bin/activate         # En Linux/Mac
-
+source venv/bin/activate         # En sistemas basados en UNIX
+```
 ## Instala las dependencias
+```powershell
 pip install -r requirements.txt
-
+```
 ## Aplica las migraciones necesarias
 
 ```powershell
