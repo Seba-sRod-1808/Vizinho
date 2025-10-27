@@ -405,6 +405,9 @@
           <a href="{% url 'lista_objetos_perdidos' %}" class="{% if request.resolver_match.url_name == 'lista_objetos_perdidos' %}active{% endif %}">
             <i class="bi bi-bag"></i> Objetos Perdidos
           </a>
+          <a class="{% if request.resolver_match.url_name == 'lista_areas_comunes' %}active{% endif %}">
+            <i class="bi bi-pin-map"></i> Area Comunes
+          </a>
         </div>
         
         <hr>
