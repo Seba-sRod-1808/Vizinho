@@ -356,6 +356,14 @@
       animation: spin 1s linear infinite;
     }
     
+    .user-photo {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-orange);
+}
+
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
@@ -423,27 +431,38 @@
         <hr>
         
         <!-- Usuario -->
-        {% if user.is_authenticated %}
-          <div class="user-section">
-            <div class="user-info">
-              <i class="bi bi-person-circle"></i>
-              <div class="user-info-text">
-                <h6>{{ user.username }}{% if user.rol == "admin" or user.is_superuser %}<span class="badge-admin">ADMIN</span>{% endif %}</h6>
-                <p>{{ user.email|default:"Usuario" }}</p>
-              </div>
-            </div>
-            <a href="{% url 'ver_perfil' %}">
-              <i class="bi bi-person-circle"></i> Mi Perfil
-            </a>
-            <a href="{% url 'logout' %}" style="color: #fca5a5;">
-              <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
-            </a>
-          </div>
-        {% else %}
-          <a href="{% url 'login' %}">
-            <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
-          </a>
-        {% endif %}
+{% if user.is_authenticated %}
+  <div class="user-section">
+    <div class="user-info">
+      {% if user.perfilusuario.foto %}
+        <img src="{{ user.perfilusuario.foto.url }}" alt="Foto de perfil" class="user-photo">
+      {% else %}
+        <i class="bi bi-person-circle"></i>
+      {% endif %}
+      <div class="user-info-text">
+        <h6>
+          {{ user.username }}
+          {% if user.rol == "admin" or user.is_superuser %}
+            <span class="badge-admin">ADMIN</span>
+          {% endif %}
+        </h6>
+        <p>{{ user.email|default:"Usuario" }}</p>
+      </div>
+    </div>
+
+    <a href="{% url 'ver_perfil' %}">
+      <i class="bi bi-person-circle"></i> Mi Perfil
+    </a>
+
+    <a href="{% url 'logout' %}" style="color: #fca5a5;">
+      <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+    </a>
+  </div>
+{% else %}
+  <a href="{% url 'login' %}">
+    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+  </a>
+{% endif %}
       </div>
       
       <!-- Contenido Principal -->
@@ -454,6 +473,7 @@
       </main>
     </div>
   </div>
+
   
   <!-- Footer Mejorado -->
   <footer>
