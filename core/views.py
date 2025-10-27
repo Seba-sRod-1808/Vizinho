@@ -1,5 +1,6 @@
 # Django core
 from multiprocessing import context
+from pyexpat.errors import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login, logout
@@ -200,8 +201,12 @@ class PublicacionDeleteView(LoginRequiredMixin, SoloAdminMixin, DeleteView):
     success_url = reverse_lazy("lista_publicaciones")
     
 class ActivarBotonPanicoView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, "panico/activar_panico.html")
+    
     def post(self, request):
         BotonPanico.objects.create(_usuario=request.user)
+        messages.success(request, "🚨 ¡Botón de pánico activado correctamente!")
         return redirect("historial_panico")
 
 class HistorialBotonPanicoView(LoginRequiredMixin, ListView):

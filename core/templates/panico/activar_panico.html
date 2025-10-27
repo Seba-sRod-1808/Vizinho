@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Botón de Pánico{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+  <h2 class="fw-bold text-danger mb-4">🚨 Botón de Pánico</h2>
+
+  <p class="lead mb-4">
+    Este botón debe usarse <strong>únicamente en situaciones de emergencia</strong> 
+    que requieran la atención inmediata de la administración o personal de seguridad.
+  </p>
+
+  <form method="post" class="mt-4">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger btn-lg px-5 py-3 shadow">
+      <i class="bi bi-exclamation-triangle"></i> ACTIVAR ALERTA
+    </button>
+  </form>
+
+  <div class="mt-5">
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+      <i class="bi bi-arrow-left-circle"></i> Volver al panel principal
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -25,6 +25,16 @@
   <!-- Contenido principal -->
   <div class="col-md-9 col-lg-10 p-4">
     <h2 class="fw-bold mb-4 text-accent">Bienvenido al Panel de Vecinos</h2>
+
+    <!-- Botón de Pánico -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <form method="post" action="{% url 'activar_panico' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger btn-lg shadow-sm">
+          <i class="bi bi-shield-exclamation"></i> Botón de Pánico
+        </button>
+      </form>
+    </div>
     
     <!-- Publicaciones -->
     <div class="publication-container shadow-sm">
