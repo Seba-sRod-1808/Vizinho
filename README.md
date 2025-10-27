@@ -1,28 +1,81 @@
-# 🏘️ Vizinho
+# 🏘️ Vizinho — Sistema de Gestión Comunitaria
 
-**Vizinho** es una aplicación web orientada a objetos desarrollada en **Python con Django** bajo el patrón **MVC**.  
-Su propósito es mejorar la **gestión comunitaria** en condominios o vecindarios mediante herramientas de participación ciudadana, seguridad y transparencia.
-
----
-
-## 🚀 Funcionalidades actuales (MVP)
-- **Login / Logout** (usuarios con rol por defecto: `vecino`).
-- **Publicaciones**: muro comunitario con CRUD de mensajes.
-- **Reportes**: registro de incidencias (baches, alumbrado, etc.).
-- **Multas**: consulta y pago simulado de multas.
-- **Botón de pánico**: alertas de emergencia e historial.
-- **Dashboard amigable**: accesible para todas las edades.
+**Versión:** v2.0  
+**Última actualización:** 26 de octubre de 2025  
+**Estado:** Estable y funcional  
+**Framework:** Django 5.2.3  
+**Lenguaje:** Python 3.13  
+**Paradigma:** Programación Orientada a Objetos
 
 ---
 
-## 🛠️ Arquitectura
-El sistema sigue los principios de **POO**:
-- **Encapsulamiento**: atributos privados con `@property` para acceso seguro.
-- **Herencia**: por ejemplo el modelo `Usuario` base con roles (`vecino` / `admin`).
-- **Asociaciones**: relaciones entre usuarios, reportes, multas y publicaciones.
+## ¿Qué es Vizinho?
 
-### Patrones aplicados
-- **MVC**: separación clara entre lógica, vistas y plantillas.
-- **SaaS Ready**: preparado para escalar a múltiples condominios.
+**Vizinho** es un sistema web diseñado para mejorar la convivencia y la gestión de comunidades, condominios o vecindarios.  
+Permite a los vecinos comunicarse, reportar incidencias, pagar multas, recuperar objetos perdidos y activar un botón de pánico en casos de emergencia.  
 
 ---
+
+## 🚀 Características principales
+
+### 👥 Roles de usuario
+| Rol | Permisos |
+|------|-----------|
+| **Vecino** | Crear reportes, pagar multas, publicar, activar botón de pánico, subir objetos perdidos |
+| **Administrador** | CRUD completo de usuarios, reportes, multas, objetos perdidos y alertas de pánico |
+| **Superusuario** | Acceso total al panel de Django admin |
+
+---
+
+### 🧩 Módulos del sistema
+- **Autenticación** con control de roles.
+- **Publicaciones comunitarias** con imágenes y descripciones.
+- **Reportes de incidencias** (baches, alumbrado, basura, etc.).
+- **Multas** con registro, edición y pago simulado.
+- **Objetos perdidos** con soporte para imágenes.
+- **Botón de pánico** con registro de alertas y panel de control para administradores.
+- **Dashboard personalizado** según el rol del usuario.
+
+---
+
+## ⚙️ Instalación
+
+### 🔧 Requisitos previos
+- Python 3.13 o superior  
+- Git  
+- pip y venv  
+- PostgreSQL o SQLite  
+
+---
+
+### 🖥️ Clonación del repositorio
+```bash
+git clone https://github.com/Seba-sRod-1808/Vizinho.git
+cd Vizinho
+```
+## Crea un entorno virtual
+python -m venv venv
+source venv/Scripts/activate     # En Windows
+# o
+source venv/bin/activate         # En Linux/Mac
+
+## Instala las dependencias
+pip install -r requirements.txt
+
+## Aplica las migraciones necesarias
+
+```powershell
+python manage.py makemigrations
+python manage.py migrate
+```
+
+## Crea un superusurario, recuerda usar un usuario y contraseña que recuerdes.
+```powershell
+python manage.py createsuperuser
+```
+
+## Corre la aplicacion en un entorno local
+```powershell
+python manage.py runserver
+```
+## En tu navegador, accede a [http://127.0.0.1:8000/]
