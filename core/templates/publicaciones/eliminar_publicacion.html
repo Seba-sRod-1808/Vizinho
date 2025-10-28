@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Eliminar Publicación{% endblock %}
 {% block extra_head %}
+{% load static %}
 <style>
   .delete-wrapper {
     max-width: 700px;
@@ -398,24 +399,6 @@
   </div>
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const deleteForm = document.getElementById('deleteForm');
-    const deleteButton = document.getElementById('deleteButton');
-    
-    deleteForm.addEventListener('submit', function(e) {
-      // Confirmación adicional de seguridad
-      const confirmDelete = confirm('⚠️ ÚLTIMA ADVERTENCIA\n\n¿Realmente deseas eliminar esta publicación?\n\nEsta acción NO se puede deshacer.');
-      
-      if (!confirmDelete) {
-        e.preventDefault();
-        return false;
-      }
-      
-      // Deshabilitar botón para evitar doble clic
-      deleteButton.disabled = true;
-      deleteButton.innerHTML = '<i class="bi bi-hourglass-split"></i> Eliminando...';
-    });
-  });
+<script src="{% static 'js/publicaciones/delete.js' %}">
 </script>
 {% endblock %}
