@@ -206,7 +206,6 @@ class ActivarBotonPanicoView(LoginRequiredMixin, View):
     
     def post(self, request):
         BotonPanico.objects.create(_usuario=request.user)
-        messages.success(request, "🚨 ¡Botón de pánico activado correctamente!")
         return redirect("historial_panico")
 
 class HistorialBotonPanicoView(LoginRequiredMixin, ListView):
