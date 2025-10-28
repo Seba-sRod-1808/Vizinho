@@ -3,73 +3,498 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Vizinho{% endblock %}</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <style>
-    body { background-color: #f5f6fa; color: #333; }
-    .sidebar { min-height: 100vh; background-color: #ff6600; color: white; }
-    .sidebar h5 { color: #fff; }
-    .sidebar a { 
-      text-decoration: none; 
-      display: flex; 
-      align-items: center; 
-      gap: 10px;
-      padding: 12px; 
-      color: white; 
-      border-radius: 6px; 
-      margin-bottom: 5px; 
-      font-size: 1rem; 
-      transition: background-color 0.2s ease;
+    :root {
+      --primary-orange: #f97316;
+      --primary-red: #dc2626;
+      --primary-yellow: #facc15;
+      --dark-gray: #1f2937;
+      --light-bg: #fffaf5;
+      --sidebar-bg: #1f2937;
+      --sidebar-hover: #374151;
     }
-    .sidebar a:hover { background-color: #e65c00; }
-    .content-area { background-color: #fff; border-radius: 10px; padding: 20px; min-height: 90vh; }
-    footer { background-color: #b22222; color: white; }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body { 
+      background: linear-gradient(135deg, #fff5eb 0%, #fffaf5 100%);
+      color: #333;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Animaciones */
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* Sidebar Mejorado */
+    .sidebar { 
+      min-height: 100vh;
+      background: linear-gradient(180deg, var(--sidebar-bg) 0%, #111827 100%);
+      color: white;
+      padding: 25px 15px;
+      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      animation: slideInLeft 0.5s ease-out;
+    }
+    
+    /* Logo/Header del Sidebar */
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 12px;
+      margin-bottom: 30px;
+      background: linear-gradient(135deg, var(--primary-orange) 0%, #ea580c 100%);
+      border-radius: 14px;
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+    }
+    
+    .sidebar-header i {
+      font-size: 2rem;
+    }
+    
+    .sidebar-header h5 { 
+      color: #fff;
+      font-weight: 800;
+      margin: 0;
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+    }
+    
+    /* Sección del Menú */
+    .menu-section {
+      margin-bottom: 25px;
+    }
+    
+    .menu-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #9ca3af;
+      margin-bottom: 12px;
+      padding-left: 12px;
+    }
+    
+    /* Links del Sidebar */
+    .sidebar a {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      color: #d1d5db;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .sidebar a::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 4px;
+      background: linear-gradient(135deg, var(--primary-orange) 0%, #ea580c 100%);
+      transform: scaleY(0);
+      transition: transform 0.3s ease;
+    }
+    
+    .sidebar a:hover::before {
+      transform: scaleY(1);
+    }
+    
+    .sidebar a:hover { 
+      background: var(--sidebar-hover);
+      color: white;
+      transform: translateX(5px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .sidebar a.active {
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.2) 0%, rgba(234, 88, 12, 0.2) 100%);
+      color: var(--primary-orange);
+      font-weight: 600;
+    }
+    
+    .sidebar a.active::before {
+      transform: scaleY(1);
+    }
+    
+    .sidebar a i {
+      font-size: 1.3rem;
+      width: 24px;
+      text-align: center;
+    }
+    
+    /* Separador */
+    .sidebar hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #374151, transparent);
+      margin: 20px 0;
+    }
+    
+    /* Sección de Usuario */
+    .user-section {
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid #374151;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(249, 115, 22, 0.1);
+      border-radius: 10px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(249, 115, 22, 0.2);
+    }
+    
+    .user-info i {
+      font-size: 2rem;
+      color: var(--primary-orange);
+    }
+    
+    .user-info-text h6 {
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .user-info-text p {
+      margin: 0;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+    
+    /* Área de Contenido */
+    .content-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .content-area { 
+      background-color: transparent;
+      border-radius: 0;
+      padding: 0;
+      min-height: auto;
+      flex: 1;
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    /* Footer Mejorado */
+    footer { 
+      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+      color: white;
+      padding: 25px 0;
+      margin-top: 40px;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    footer .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    footer .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+    
+    footer .footer-logo i {
+      font-size: 1.5rem;
+      color: var(--primary-orange);
+    }
+    
+    footer .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+    
+    footer .footer-links a {
+      color: #9ca3af;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+    }
+    
+    footer .footer-links a:hover {
+      color: var(--primary-orange);
+    }
+    
+    footer .footer-text {
+      color: #9ca3af;
+      font-size: 0.85rem;
+      text-align: center;
+      width: 100%;
+      margin-top: 10px;
+      padding-top: 15px;
+      border-top: 1px solid #374151;
+    }
+    
+    /* Badges especiales */
+    .badge-admin {
+      background: linear-gradient(135deg, var(--primary-red) 0%, #991b1b 100%);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    
+    /* Scroll personalizado para el sidebar */
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .sidebar::-webkit-scrollbar-track {
+      background: #111827;
+    }
+    
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--primary-orange);
+      border-radius: 3px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        min-height: auto;
+        position: relative;
+      }
+      
+      .sidebar-header h5 {
+        font-size: 1.2rem;
+      }
+      
+      .menu-label {
+        font-size: 0.7rem;
+      }
+      
+      footer .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      footer .footer-links {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+    
+    /* Efectos de carga */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 250, 245, 0.95);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+    
+    .loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #f3f4f6;
+      border-top-color: var(--primary-orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    .user-photo {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-orange);
+}
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
   {% block extra_head %}{% endblock %}
 </head>
 <body>
+  <!-- Loading Overlay -->
+  <div class="loading-overlay hidden" id="loadingOverlay">
+    <div class="spinner"></div>
+  </div>
+
   <div class="container-fluid">
     <div class="row">
       <!-- Sidebar -->
       <div class="col-md-3 col-lg-2 sidebar p-3">
-        <h5 class="fw-bold mb-3">Menú</h5>
-        {% if user.is_authenticated %}
-          {% if user.rol == "admin" or user.is_superuser %}
-            <a href="{% url 'dashboard_admin' %}" class="nav-link text-white"><i class="bi bi-house-door"></i> Inicio</a>
-          {% else %}
-            <a href="{% url 'dashboard' %}" class="nav-link text-white"><i class="bi bi-house-door"></i> Inicio</a>
+        <!-- Header/Logo -->
+        <div class="sidebar-header">
+          <i class="bi bi-house-heart-fill"></i>
+          <h5>Vizinho</h5>
+        </div>
+        
+        <!-- Menú Principal -->
+        <div class="menu-section">
+          <div class="menu-label">Navegación</div>
+          {% if user.is_authenticated %}
+            {% if user.rol == "admin" or user.is_superuser %}
+              <a href="{% url 'dashboard_admin' %}" class="{% if request.resolver_match.url_name == 'dashboard_admin' %}active{% endif %}">
+                <i class="bi bi-speedometer2"></i> Dashboard Admin
+              </a>
+            {% else %}
+              <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                <i class="bi bi-house-door"></i> Inicio
+              </a>
+            {% endif %}
           {% endif %}
-        {% endif %}
-        <a href="{% url 'lista_publicaciones' %}"><i class="bi bi-chat-left-text"></i> Publicaciones</a>
-        <a href="{% url 'lista_reportes' %}"><i class="bi bi-exclamation-triangle"></i> Reportes</a>
-        <a href="{% url 'lista_multas' %}"><i class="bi bi-cash-coin"></i> Multas</a>
-        <a href="{% url 'lista_objetos_perdidos' %}"><i class="bi bi-bag"></i> Objetos Perdidos</a>
-        <a href="{% url 'activar_panico' %}"><i class="bi bi-shield-exclamation"></i> Botón de Pánico</a>
-
+          
+          <a href="{% url 'lista_publicaciones' %}" class="{% if request.resolver_match.url_name == 'lista_publicaciones' %}active{% endif %}">
+            <i class="bi bi-chat-left-text"></i> Publicaciones
+          </a>
+          <a href="{% url 'lista_reportes' %}" class="{% if request.resolver_match.url_name == 'lista_reportes' %}active{% endif %}">
+            <i class="bi bi-exclamation-triangle"></i> Reportes
+          </a>
+          <a href="{% url 'lista_multas' %}" class="{% if request.resolver_match.url_name == 'lista_multas' %}active{% endif %}">
+            <i class="bi bi-cash-coin"></i> Multas
+          </a>
+          <a href="{% url 'lista_objetos_perdidos' %}" class="{% if request.resolver_match.url_name == 'lista_objetos_perdidos' %}active{% endif %}">
+            <i class="bi bi-bag"></i> Objetos Perdidos
+          </a>
+          <a class="{% if request.resolver_match.url_name == 'lista_areas_comunes' %}active{% endif %}">
+            <i class="bi bi-pin-map"></i> Area Comunes
+          </a>
+        </div>
+        
         <hr>
-        {% if user.is_authenticated %}
-          <a href="{% url 'ver_perfil' %}"><i class="bi bi-person-circle"></i> Mi Perfil</a>
-          <a href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Salir</a>
-        {% else %}
-          <a href="{% url 'login' %}"><i class="bi bi-box-arrow-in-right"></i> Iniciar sesión</a>
-        {% endif %}
+        
+        <!-- Emergencias -->
+        <div class="menu-section">
+          <div class="menu-label">Emergencias</div>
+          <a href="{% url 'activar_panico' %}" style="color: #fca5a5;">
+            <i class="bi bi-shield-exclamation"></i> Botón de Pánico
+          </a>
+        </div>
+        
+        <hr>
+        
+        <!-- Usuario -->
+{% if user.is_authenticated %}
+  <div class="user-section">
+    <div class="user-info">
+      {% if user.perfilusuario.foto %}
+        <img src="{{ user.perfilusuario.foto.url }}" alt="Foto de perfil" class="user-photo">
+      {% else %}
+        <i class="bi bi-person-circle"></i>
+      {% endif %}
+      <div class="user-info-text">
+        <h6>
+          {{ user.username }}
+          {% if user.rol == "admin" or user.is_superuser %}
+            <span class="badge-admin">ADMIN</span>
+          {% endif %}
+        </h6>
+        <p>{{ user.email|default:"Usuario" }}</p>
       </div>
+    </div>
 
-      <!-- Contenido -->
-      <main class="col-md-9 col-lg-10 p-4">
-        <div class="content-area shadow-sm">
+    <a href="{% url 'ver_perfil' %}">
+      <i class="bi bi-person-circle"></i> Mi Perfil
+    </a>
+
+    <a href="{% url 'logout' %}" style="color: #fca5a5;">
+      <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+    </a>
+  </div>
+{% else %}
+  <a href="{% url 'login' %}">
+    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+  </a>
+{% endif %}
+      </div>
+      
+      <!-- Contenido Principal -->
+      <main class="col-md-9 col-lg-10 p-4 content-wrapper">
+        <div class="content-area">
           {% block content %}{% endblock %}
         </div>
       </main>
     </div>
   </div>
 
-  <!-- FOOTER -->
-  <footer class="text-center py-3 mt-4">
-    <p class="mb-0">© 2025 Vizinho - Vizinho Team </p>
+  
+  <!-- Footer Mejorado -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-logo">
+        <i class="bi bi-house-heart-fill"></i>
+        <span>Vizinho</span>
+      </div>
+      <div class="footer-links">
+        <a href="#">Términos</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Soporte</a>
+        <a href="#">Contacto</a>
+      </div>
+    </div>
+    <div class="footer-text">
+      © 2025 Vizinho - Conectando comunidades, construyendo vecindarios | Vizinho Team
+    </div>
   </footer>
-
+  
+  <script src="{% static 'js/base.js' %}"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

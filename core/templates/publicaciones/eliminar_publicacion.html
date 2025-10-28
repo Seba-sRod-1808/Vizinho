@@ -1,15 +1,404 @@
 {% extends "base.html" %}
 {% block title %}Eliminar Publicación{% endblock %}
+{% block extra_head %}
+{% load static %}
+<style>
+  .delete-wrapper {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .breadcrumb-custom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+  }
+
+  .breadcrumb-custom a {
+    color: #6b7280;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .breadcrumb-custom a:hover {
+    color: #dc2626;
+  }
+
+  .breadcrumb-custom i {
+    color: #9ca3af;
+    font-size: 0.8rem;
+  }
+
+  .breadcrumb-custom .current {
+    color: #dc2626;
+    font-weight: 600;
+  }
+
+  /* Alerta de peligro */
+  .danger-alert {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border: 3px solid #dc2626;
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 30px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(220, 38, 38, 0.2);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      box-shadow: 0 8px 30px rgba(220, 38, 38, 0.2);
+    }
+    50% {
+      box-shadow: 0 12px 40px rgba(220, 38, 38, 0.3);
+    }
+  }
+
+  .danger-icon {
+    font-size: 5rem;
+    color: #dc2626;
+    margin-bottom: 20px;
+    animation: shake 0.5s;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+
+  .danger-alert h2 {
+    font-weight: 800;
+    font-size: 1.8rem;
+    color: #991b1b;
+    margin-bottom: 15px;
+  }
+
+  .danger-alert p {
+    color: #7f1d1d;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  /* Tarjeta de vista previa */
+  .preview-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+    border-left: 5px solid #dc2626;
+  }
+
+  .preview-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #6b7280;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+  }
+
+  .preview-label i {
+    color: #dc2626;
+  }
+
+  .preview-card h3 {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #1f2937;
+    margin-bottom: 15px;
+    line-height: 1.4;
+  }
+
+  .preview-card p {
+    color: #4b5563;
+    line-height: 1.7;
+    font-size: 1rem;
+    margin-bottom: 20px;
+  }
+
+  .preview-meta {
+    display: flex;
+    gap: 20px;
+    padding-top: 15px;
+    border-top: 2px solid #f3f4f6;
+    font-size: 0.9rem;
+    color: #6b7280;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .meta-item i {
+    color: #dc2626;
+  }
+
+  /* Sección de advertencia */
+  .warning-section {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border-left: 4px solid #f59e0b;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+
+  .warning-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #92400e;
+    font-weight: 700;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+  }
+
+  .warning-header i {
+    font-size: 1.3rem;
+  }
+
+  .warning-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .warning-list li {
+    color: #78350f;
+    padding: 6px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.95rem;
+  }
+
+  .warning-list li i {
+    color: #f59e0b;
+    margin-top: 3px;
+    font-size: 0.9rem;
+  }
+
+  /* Botones de acción */
+  .action-container {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 15px;
+  }
+
+  .btn-delete {
+    flex: 1;
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    color: white;
+    border: none;
+    padding: 18px 32px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .btn-delete:hover {
+    background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+    color: white;
+  }
+
+  .btn-delete i {
+    font-size: 1.3rem;
+  }
+
+  .btn-cancel {
+    flex: 1;
+    background: white;
+    color: #1f2937;
+    border: 2px solid #e5e7eb;
+    padding: 18px 32px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .btn-cancel:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #1f2937;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .confirmation-text {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .confirmation-text p {
+    color: #6b7280;
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .confirmation-text strong {
+    color: #dc2626;
+    font-size: 1.1rem;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in {
+    animation: fadeInUp 0.5s ease-out;
+  }
+
+  @media (max-width: 768px) {
+    .danger-alert {
+      padding: 30px 20px;
+    }
+
+    .danger-icon {
+      font-size: 3.5rem;
+    }
+
+    .danger-alert h2 {
+      font-size: 1.4rem;
+    }
+
+    .preview-card {
+      padding: 20px;
+    }
+
+    .form-actions {
+      flex-direction: column-reverse;
+    }
+
+    .btn-delete,
+    .btn-cancel {
+      width: 100%;
+    }
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2>¿Seguro que deseas eliminar esta publicación?</h2>
-  <p><strong>{{ object.titulo }}</strong></p>
-  <p>{{ object.contenido }}</p>
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Eliminar</button>
-    <a href="{% url 'lista_publicaciones' %}" class="btn btn-secondary">Cancelar</a>
-  </form>
+<div class="delete-wrapper fade-in">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-custom">
+    <a href="{% url 'dashboard' %}">
+      <i class="bi bi-house-door"></i> Inicio
+    </a>
+    <i class="bi bi-chevron-right"></i>
+    <a href="{% url 'lista_publicaciones' %}">Publicaciones</a>
+    <i class="bi bi-chevron-right"></i>
+    <span class="current">Eliminar Publicación</span>
+  </div>
+
+  <!-- Alerta de Peligro -->
+  <div class="danger-alert">
+    <div class="danger-icon">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+    </div>
+    <h2>¡Acción Irreversible!</h2>
+    <p>Estás a punto de eliminar esta publicación permanentemente</p>
+  </div>
+
+  <!-- Vista previa de la publicación -->
+  <div class="preview-card">
+    <div class="preview-label">
+      <i class="bi bi-file-text"></i>
+      Publicación a eliminar
+    </div>
+    <h3>{{ object.titulo }}</h3>
+    <p>{{ object.contenido|truncatewords:50 }}</p>
+    <div class="preview-meta">
+      <span class="meta-item">
+        <i class="bi bi-person-circle"></i>
+        {{ object.vecino.username }}
+      </span>
+      <span class="meta-item">
+        <i class="bi bi-clock"></i>
+        {{ object.fecha|date:"d/m/Y H:i" }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Advertencias -->
+  <div class="warning-section">
+    <div class="warning-header">
+      <i class="bi bi-shield-exclamation"></i>
+      Ten en cuenta que:
+    </div>
+    <ul class="warning-list">
+      <li>
+        <i class="bi bi-x-circle-fill"></i>
+        Esta acción no se puede deshacer
+      </li>
+      <li>
+        <i class="bi bi-x-circle-fill"></i>
+        La publicación se eliminará permanentemente de la base de datos
+      </li>
+      <li>
+        <i class="bi bi-x-circle-fill"></i>
+        Todos los datos asociados se perderán
+      </li>
+    </ul>
+  </div>
+
+  <!-- Formulario de confirmación -->
+  <div class="action-container">
+    <div class="confirmation-text">
+      <p>¿Estás <strong>completamente seguro</strong> de que deseas continuar?</p>
+    </div>
+    <form method="post" id="deleteForm">
+      {% csrf_token %}
+      <div class="form-actions">
+        <a href="{% url 'lista_publicaciones' %}" class="btn-cancel">
+          <i class="bi bi-arrow-left-circle"></i>
+          No, Regresar
+        </a>
+        <button type="submit" class="btn-delete" id="deleteButton">
+          <i class="bi bi-trash-fill"></i>
+          Sí, Eliminar Definitivamente
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
+
+<script src="{% static 'js/publicaciones/delete.js' %}">
+</script>
 {% endblock %}

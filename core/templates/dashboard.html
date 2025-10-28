@@ -3,94 +3,571 @@
 {% block extra_head %}
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <style>
-    body { background-color: #fffaf5; color: #333; }
-    .sidebar { min-height: 100vh; background-color: #e63946; color: white; }
-    .sidebar h5 { color: #fff; }
-    .sidebar a { text-decoration: none; display: flex; align-items: center; gap: 10px;
-                 padding: 12px; color: white; border-radius: 6px; margin-bottom: 5px; font-size: 1rem; }
-    .sidebar a:hover { background-color: #b71c1c; color: #fff; }
-    .card { border: none; border-radius: 12px; }
-    .card-orange { background-color: #f97316; color: white; }
-    .card-red { background-color: #dc2626; color: white; }
-    .card-yellow { background-color: #facc15; color: #333; }
-    .card-light { background-color: #fff; color: #333; border: 1px solid #ddd; }
-    .publication-container { background: white; color: #333; border-radius: 10px;
-                              padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; }
-    .publication-container h4 { font-weight: bold; color: #e63946; }
-    .text-accent { color: #f97316 !important; }
+    body { 
+      background: linear-gradient(135deg, #fff5eb 0%, #fffaf5 100%);
+      color: #333; 
+      min-height: 100vh;
+    }
+    
+    /* Animaciones */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+      }
+      50% {
+        box-shadow: 0 12px 30px rgba(220, 38, 38, 0.6);
+      }
+    }
+    
+    .fade-in {
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    /* Header con Botón de Pánico */
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    /* Botón de Pánico DESTACADO */
+    .panic-button {
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      border: none;
+      padding: 18px 35px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1.15rem;
+      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      animation: pulse 2s infinite;
+      letter-spacing: 0.5px;
+    }
+    
+    .panic-button:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 15px 35px rgba(220, 38, 38, 0.7);
+      background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+    }
+    
+    .panic-button i {
+      font-size: 1.3rem;
+      margin-right: 8px;
+    }
+    
+    /* Título Principal */
+    h2.page-title {
+      font-weight: 800;
+      font-size: 2.2rem;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+    }
+    
+    /* Grid de Contenido Principal */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+    
+    /* Contenedor de Publicaciones REDISEÑADO */
+    .publication-container { 
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      height: fit-content;
+    }
+    
+    .publication-container:hover {
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+    
+    .publication-container h4 { 
+      font-weight: 700;
+      color: #e63946;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.4rem;
+    }
+    
+    .publication-container h4 i {
+      font-size: 1.6rem;
+    }
+    
+    /* Items de Publicaciones - Más compactos */
+    .publication-item {
+      border: none;
+      border-radius: 14px;
+      padding: 18px;
+      background: linear-gradient(135deg, #fef3f2 0%, #fff 100%);
+      transition: all 0.3s ease;
+      margin-bottom: 15px;
+      border-left: 4px solid #f97316;
+    }
+    
+    .publication-item:hover {
+      background: linear-gradient(135deg, #fed7d7 0%, #fef3f2 100%);
+      transform: translateX(5px);
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.15);
+      border-left-color: #ea580c;
+    }
+    
+    .publication-item h5 {
+      color: #f97316;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+    
+    .publication-item p {
+      color: #4b5563;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+    
+    /* Sidebar de Acceso Rápido */
+    .quick-access-sidebar {
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+    }
+    
+    .quick-access-sidebar h4 {
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+    }
+    
+    .quick-link {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: #333;
+      border: 2px solid transparent;
+    }
+    
+    .quick-link:hover {
+      transform: translateX(5px);
+      text-decoration: none;
+      color: #333;
+    }
+    
+    .quick-link-orange {
+      background: linear-gradient(135deg, #fef3f2 0%, #fff 100%);
+      border-left: 4px solid #f97316;
+    }
+    
+    .quick-link-orange:hover {
+      background: linear-gradient(135deg, #fed7d7 0%, #fef3f2 100%);
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+    }
+    
+    .quick-link-yellow {
+      background: linear-gradient(135deg, #fefce8 0%, #fff 100%);
+      border-left: 4px solid #facc15;
+    }
+    
+    .quick-link-yellow:hover {
+      background: linear-gradient(135deg, #fef3c7 0%, #fefce8 100%);
+      box-shadow: 0 4px 12px rgba(250, 204, 21, 0.2);
+    }
+    
+    .quick-link-gray {
+      background: linear-gradient(135deg, #f9fafb 0%, #fff 100%);
+      border-left: 4px solid #6b7280;
+    }
+    
+    .quick-link-gray:hover {
+      background: linear-gradient(135deg, #f3f4f6 0%, #f9fafb 100%);
+      box-shadow: 0 4px 12px rgba(107, 114, 128, 0.2);
+    }
+    
+    .quick-link-icon {
+      font-size: 2rem;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+    
+    .quick-link-orange .quick-link-icon {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: white;
+    }
+    
+    .quick-link-yellow .quick-link-icon {
+      background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+      color: #333;
+    }
+    
+    .quick-link-gray .quick-link-icon {
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      color: white;
+    }
+    
+    .quick-link:hover .quick-link-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+    
+    .quick-link-content h6 {
+      font-weight: 700;
+      margin: 0;
+      font-size: 1rem;
+    }
+    
+    .quick-link-content p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+    
+    /* Tarjetas inferiores REDISEÑADAS */
+    .feature-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+    
+    .feature-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      border-top: 5px solid;
+    }
+    
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .feature-card:hover::before {
+      left: 100%;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .feature-card-orange {
+      border-top-color: #f97316;
+    }
+    
+    .feature-card-red {
+      border-top-color: #dc2626;
+    }
+    
+    .feature-card-yellow {
+      border-top-color: #facc15;
+    }
+    
+    .feature-card-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover .feature-card-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+    
+    .feature-card-orange .feature-card-icon {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: white;
+    }
+    
+    .feature-card-red .feature-card-icon {
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: white;
+    }
+    
+    .feature-card-yellow .feature-card-icon {
+      background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+      color: #333;
+    }
+    
+    .feature-card h5 {
+      font-weight: 700;
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #1f2937;
+    }
+    
+    .feature-card p {
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    
+    /* Botones Mejorados */
+    .btn {
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+    }
+    
+    .btn-primary-custom {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+    }
+    
+    .btn-primary-custom:hover {
+      background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(249, 115, 22, 0.4);
+      color: white;
+    }
+    
+    .btn-outline-danger {
+      border: 2px solid #dc2626;
+      color: #dc2626;
+      background: transparent;
+    }
+    
+    .btn-outline-danger:hover {
+      background: #dc2626;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+    
+    /* Badge de usuario */
+    .text-muted {
+      color: #6b7280 !important;
+      font-size: 0.9rem;
+    }
+    
+    /* Alerta cuando no hay publicaciones */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #fef3f2 0%, #fff 100%);
+      border-radius: 14px;
+      border: 2px dashed #fed7d7;
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      color: #f97316;
+      margin-bottom: 15px;
+    }
+    
+    .empty-state p {
+      color: #6b7280;
+      margin: 0;
+    }
+    
+    /* Responsive */
+    @media (max-width: 992px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .quick-access-sidebar {
+        position: relative;
+        top: 0;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .header-section {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .panic-button {
+        width: 100%;
+        text-align: center;
+      }
+      
+      h2.page-title {
+        font-size: 1.8rem;
+        text-align: center;
+      }
+      
+      .feature-cards {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 {% endblock %}
 {% block content %}
 <div class="row">
-  <!-- Contenido principal -->
-  <div class="col-md-9 col-lg-10 p-4">
-    <h2 class="fw-bold mb-4 text-accent">Bienvenido al Panel de Vecinos</h2>
-
-    <!-- Botón de Pánico -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="col-12 p-4">
+    <!-- Header con título y botón de pánico -->
+    <div class="header-section fade-in">
+      <h2 class="page-title">👋 Bienvenido al Panel de Vecinos</h2>
       <form method="post" action="{% url 'activar_panico' %}">
         {% csrf_token %}
-        <button type="submit" class="btn btn-danger btn-lg shadow-sm">
+        <button type="submit" class="panic-button">
           <i class="bi bi-shield-exclamation"></i> Botón de Pánico
         </button>
       </form>
     </div>
     
-    <!-- Publicaciones -->
-    <div class="publication-container shadow-sm">
-      <h4><i class="bi bi-chat-left-text"></i> Últimas Publicaciones</h4>
+    <!-- Grid Principal: Publicaciones + Sidebar -->
+    <div class="main-grid fade-in">
+      <!-- Publicaciones -->
+      <div class="publication-container">
+        <h4>
+          <i class="bi bi-chat-left-text-fill"></i> Últimas Publicaciones
+        </h4>
+        
+        {% if ultimas_publicaciones %}
+          <div>
+            {% for p in ultimas_publicaciones %}
+              <div class="publication-item">
+                <h5>{{ p.titulo }}</h5>
+                <p>{{ p.contenido|truncatewords:25 }}</p>
+                <small class="text-muted">
+                  <i class="bi bi-person-circle"></i> {{ p.vecino.username }} • 
+                  <i class="bi bi-clock"></i> {{ p.fecha|date:"d/m/Y H:i" }}
+                </small>
+              </div>
+            {% endfor %}
+          </div>
+          
+          <a href="{% url 'lista_publicaciones' %}" class="btn btn-outline-danger w-100 mt-3">
+            <i class="bi bi-arrow-right-circle"></i> Ver Todas las Publicaciones
+          </a>
+        {% else %}
+          <div class="empty-state">
+            <i class="bi bi-chat-dots"></i>
+            <p class="mb-2"><strong>No hay publicaciones todavía</strong></p>
+            <p>¡Sé el primero en compartir algo con la comunidad!</p>
+          </div>
+          <a href="{% url 'lista_publicaciones' %}" class="btn btn-primary-custom w-100 mt-3">
+            <i class="bi bi-plus-circle"></i> Crear Primera Publicación
+          </a>
+        {% endif %}
+      </div>
       
-      {% if ultimas_publicaciones %}
-        <div class="list-group mt-3">
-          {% for p in ultimas_publicaciones %}
-            <div class="list-group-item mb-2">
-              <h5 class="text-accent">{{ p.titulo }}</h5>
-              <p>{{ p.contenido|truncatewords:30 }}</p>
-              <small class="text-muted">
-                <i class="bi bi-person-circle"></i> Por {{ p.vecino.username }} el {{ p.fecha|date:"d/m/Y H:i" }}
-              </small>
-            </div>
-          {% endfor %}
-        </div>
-      {% else %}
-        <p class="text-muted mt-3">No hay publicaciones todavía. ¡Sé el primero en compartir algo con la comunidad!</p>
-      {% endif %}
-      
-      <a href="{% url 'lista_publicaciones' %}" class="btn btn-outline-danger btn-sm mt-3">
-        <i class="bi bi-arrow-right-circle"></i> Ver Todas las Publicaciones
-      </a>
+      <!-- Sidebar de Acceso Rápido -->
+      <div class="quick-access-sidebar">
+        <h4>⚡ Acceso Rápido</h4>
+        
+        <a href="{% url 'lista_reportes' %}" class="quick-link quick-link-orange">
+          <div class="quick-link-icon">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+          </div>
+          <div class="quick-link-content">
+            <h6>Reportes</h6>
+            <p>Gestiona incidencias</p>
+          </div>
+        </a>
+        
+        <a href="{% url 'lista_multas' %}" class="quick-link quick-link-yellow">
+          <div class="quick-link-icon">
+            <i class="bi bi-cash-coin"></i>
+          </div>
+          <div class="quick-link-content">
+            <h6>Multas</h6>
+            <p>Revisa tus multas</p>
+          </div>
+        </a>
+        
+        <a href="{% url 'lista_objetos_perdidos' %}" class="quick-link quick-link-gray">
+          <div class="quick-link-icon">
+            <i class="bi bi-bag-fill"></i>
+          </div>
+          <div class="quick-link-content">
+            <h6>Objetos Perdidos</h6>
+            <p>Encuentra objetos</p>
+          </div>
+        </a>
+      </div>
     </div>
     
-    <!-- Reportes -->
-    <div class="row g-4 mt-4">
-      <div class="col-md-4">
-        <div class="card card-orange shadow">
-          <div class="card-body">
-            <h5 class="card-title"><i class="bi bi-exclamation-triangle"></i> Reportes</h5>
-            <p class="card-text">Reporta incidencias o consulta el estado de tus reportes.</p>
-            <a href="{% url 'lista_reportes' %}" class="btn btn-light w-100">Ver Reportes</a>
-          </div>
+    <!-- Tarjetas de Funciones Destacadas -->
+    <div class="feature-cards fade-in" style="animation-delay: 0.2s">
+      <div class="feature-card feature-card-orange">
+        <div class="feature-card-icon">
+          <i class="bi bi-megaphone-fill"></i>
         </div>
+        <h5>Mantente Informado</h5>
+        <p>Recibe actualizaciones importantes de tu comunidad en tiempo real.</p>
+        <a href="{% url 'lista_publicaciones' %}" class="btn btn-primary-custom w-100">
+          Ver Publicaciones
+        </a>
       </div>
-      <!-- Multas -->
-      <div class="col-md-4">
-        <div class="card card-yellow shadow">
-          <div class="card-body">
-            <h5 class="card-title"><i class="bi bi-cash-coin"></i> Multas</h5>
-            <p class="card-text">Consulta y paga tus multas pendientes.</p>
-            <a href="{% url 'lista_multas' %}" class="btn btn-dark w-100">Ver Multas</a>
-          </div>
+      
+      <div class="feature-card feature-card-red">
+        <div class="feature-card-icon">
+          <i class="bi bi-shield-check"></i>
         </div>
+        <h5>Seguridad 24/7</h5>
+        <p>Reporta incidentes y mantén tu colonia segura para todos.</p>
+        <a href="{% url 'lista_reportes' %}" class="btn btn-primary-custom w-100">
+          Crear Reporte
+        </a>
       </div>
-      <!-- Objetos Perdidos -->
-      <div class="col-md-4">
-        <div class="card card-light shadow">
-          <div class="card-body">
-            <h5 class="card-title"><i class="bi bi-bag"></i> Objetos Perdidos</h5>
-            <p class="card-text">Publica o busca objetos extraviados en la comunidad.</p>
-            <a href="{% url 'lista_objetos_perdidos' %}" class="btn btn-danger w-100">Ver Objetos</a>
-          </div>
+      
+      <div class="feature-card feature-card-yellow">
+        <div class="feature-card-icon">
+          <i class="bi bi-people-fill"></i>
         </div>
+        <h5>Comunidad Unida</h5>
+        <p>Conecta con tus vecinos y construye una mejor comunidad.</p>
+        <a href="{% url 'lista_objetos_perdidos' %}" class="btn btn-primary-custom w-100">
+          Explorar
+        </a>
       </div>
     </div>
   </div>
