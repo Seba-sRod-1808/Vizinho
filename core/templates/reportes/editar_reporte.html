@@ -1,14 +1,454 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Editar Reporte{% endblock %}
+{% block extra_head %}
+<style>
+  .form-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .page-header {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .page-header h2 {
+    font-weight: 800;
+    font-size: 2rem;
+    background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .page-header p {
+    color: #6b7280;
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .breadcrumb-custom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+  }
+
+  .breadcrumb-custom a {
+    color: #6b7280;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .breadcrumb-custom a:hover {
+    color: #facc15;
+  }
+
+  .breadcrumb-custom i {
+    color: #9ca3af;
+    font-size: 0.8rem;
+  }
+
+  .breadcrumb-custom .current {
+    color: #facc15;
+    font-weight: 600;
+  }
+
+  .form-container {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .form-group {
+    margin-bottom: 30px;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #1f2937;
+    margin-bottom: 10px;
+  }
+
+  .form-group label i {
+    color: #facc15;
+    margin-right: 8px;
+    font-size: 1.1rem;
+  }
+
+  .required-indicator {
+    color: #dc2626;
+    margin-left: 4px;
+  }
+
+  .form-help-text {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .form-help-text i {
+    color: #9ca3af;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f9fafb;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: #facc15;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.1);
+  }
+
+  .form-control:hover {
+    border-color: #fde68a;
+  }
+
+  textarea.form-control {
+    min-height: 150px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.6;
+  }
+
+  .char-counter {
+    text-align: right;
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 8px;
+  }
+
+  .char-counter.warning {
+    color: #facc15;
+    font-weight: 600;
+  }
+
+  .char-counter.danger {
+    color: #dc2626;
+    font-weight: 600;
+  }
+
+  .error-message {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-left: 4px solid #dc2626;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: #991b1b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .error-message i {
+    color: #dc2626;
+    font-size: 1.1rem;
+  }
+
+  .info-section {
+    background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
+    border-left: 4px solid #facc15;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+
+  .info-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #854d0e;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .info-header i {
+    font-size: 1.3rem;
+  }
+
+  .info-text {
+    color: #854d0e;
+    font-size: 0.95rem;
+  }
+
+  .preview-section {
+    background: linear-gradient(135deg, #fef3f2 0%, #fff 100%);
+    border: 2px dashed #fed7d7;
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 30px;
+  }
+
+  .preview-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    color: #facc15;
+    font-weight: 700;
+  }
+
+  .preview-content {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    min-height: 100px;
+  }
+
+  .preview-content h5 {
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 12px;
+  }
+
+  .preview-content p {
+    color: #4b5563;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 15px;
+    padding-top: 30px;
+    border-top: 2px solid #f3f4f6;
+    margin-top: 30px;
+  }
+
+  .btn-submit {
+    flex: 1;
+    background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+    color: #333;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    box-shadow: 0 4px 15px rgba(250, 204, 21, 0.3);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .btn-submit:hover {
+    background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(250, 204, 21, 0.4);
+    color: #333;
+  }
+
+  .btn-submit i {
+    font-size: 1.2rem;
+  }
+
+  .btn-cancel {
+    background: white;
+    color: #6b7280;
+    border: 2px solid #e5e7eb;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .btn-cancel:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #1f2937;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in {
+    animation: fadeInUp 0.5s ease-out;
+  }
+
+  @media (max-width: 768px) {
+    .form-container {
+      padding: 25px;
+    }
+
+    .page-header h2 {
+      font-size: 1.6rem;
+    }
+
+    .form-actions {
+      flex-direction: column;
+    }
+
+    .btn-submit,
+    .btn-cancel {
+      width: 100%;
+    }
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2>Editar Reporte</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-warning">Actualizar</button>
-    <a href="{% url 'lista_reportes' %}" class="btn btn-secondary">Cancelar</a>
-  </form>
+<div class="form-wrapper fade-in">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-custom">
+    <a href="{% url 'dashboard' %}">
+      <i class="bi bi-house-door"></i> Inicio
+    </a>
+    <i class="bi bi-chevron-right"></i>
+    <a href="{% url 'lista_reportes' %}">Reportes</a>
+    <i class="bi bi-chevron-right"></i>
+    <span class="current">Editar Reporte</span>
+  </div>
+
+  <!-- Header -->
+  <div class="page-header">
+    <h2>
+      <i class="bi bi-pencil-square"></i>
+      Editar Reporte
+    </h2>
+    <p>Actualiza la información del reporte</p>
+  </div>
+
+  <!-- Info -->
+  <div class="info-section">
+    <div class="info-header">
+      <i class="bi bi-info-circle-fill"></i>
+      Modo de Edición
+    </div>
+    <p class="info-text">
+      Estás editando un reporte existente. Los cambios se guardarán inmediatamente al hacer clic en "Actualizar".
+    </p>
+  </div>
+
+  <!-- Formulario -->
+  <div class="form-container">
+    <form method="post" id="editReportForm">
+      {% csrf_token %}
+      
+      {% if form.non_field_errors %}
+        <div class="error-message">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      {% for field in form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}" class="custom-label">
+            {% if field.name == "_titulo" %}
+              <i class="bi bi-type"></i>
+              Título del Reporte
+            {% elif field.name == "_descripcion" %}
+              <i class="bi bi-file-text"></i>
+              Descripción del Problema
+            {% elif field.name == "_ubicacion" %}
+              <i class="bi bi-geo-alt-fill"></i>
+              Ubicación
+            {% else %}
+              {{ field.label }}
+            {% endif %}
+            {% if field.field.required %}
+              <span class="required-indicator">*</span>
+            {% endif %}
+          </label>
+          
+          {{ field }}
+          
+          {% if field.name == "_titulo" %}
+            <div class="form-help-text">
+              <i class="bi bi-info-circle"></i>
+              Título breve y descriptivo del problema.
+            </div>
+          {% elif field.name == "_descripcion" %}
+            <div class="char-counter" id="charCounter">
+              <span id="charCount">0</span> / 1000 caracteres
+            </div>
+            <div class="form-help-text">
+              <i class="bi bi-info-circle"></i>
+              Explica detalladamente el problema o incidente.
+            </div>
+          {% elif field.name == "_ubicacion" %}
+            <div class="form-help-text">
+              <i class="bi bi-info-circle"></i>
+              Especifica dónde ocurrió el incidente.
+            </div>
+          {% endif %}
+          
+          {% if field.errors %}
+            <div class="error-message">
+              <i class="bi bi-exclamation-triangle-fill"></i>
+              {{ field.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <!-- Vista Previa -->
+      <div class="preview-section">
+        <div class="preview-header">
+          <i class="bi bi-eye-fill"></i>
+          Vista Previa del Reporte
+        </div>
+        <div class="preview-content" id="previewContent">
+          <!-- Se actualiza con JavaScript -->
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="form-actions">
+        <button type="submit" class="btn-submit">
+          <i class="bi bi-check-circle-fill"></i>
+          Actualizar Reporte
+        </button>
+        <a href="{% url 'lista_reportes' %}" class="btn-cancel">
+          <i class="bi bi-x-circle"></i>
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
 </div>
+
+<script src="{% static 'js/reportes/edit.js' %}"></script>
 {% endblock %}

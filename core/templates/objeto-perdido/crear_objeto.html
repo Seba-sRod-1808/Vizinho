@@ -1,16 +1,586 @@
 {% extends "base.html" %}
-{% block title %}Publicar Objeto Perdido{% endblock %}
+{% load static %}
+{% block title %}Reportar Objeto Perdido{% endblock %}
+{% block extra_head %}
+<style>
+  .form-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .breadcrumb-custom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+  }
+
+  .breadcrumb-custom a {
+    color: #6b7280;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .breadcrumb-custom a:hover {
+    color: #6b7280;
+  }
+
+  .breadcrumb-custom i {
+    color: #9ca3af;
+    font-size: 0.8rem;
+  }
+
+  .breadcrumb-custom .current {
+    color: #6b7280;
+    font-weight: 600;
+  }
+
+  .page-header {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .page-header h2 {
+    font-weight: 800;
+    font-size: 2rem;
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .page-header p {
+    color: #6b7280;
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .form-container {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .form-group {
+    margin-bottom: 30px;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #1f2937;
+    margin-bottom: 10px;
+  }
+
+  .form-group label i {
+    color: #6b7280;
+    margin-right: 8px;
+    font-size: 1.1rem;
+  }
+
+  .required-indicator {
+    color: #dc2626;
+    margin-left: 4px;
+  }
+
+  .form-help-text {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .form-help-text i {
+    color: #9ca3af;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f9fafb;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: #6b7280;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(107, 114, 128, 0.1);
+  }
+
+  .form-control:hover {
+    border-color: #9ca3af;
+  }
+
+  textarea.form-control {
+    min-height: 150px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.6;
+  }
+
+  .char-counter {
+    text-align: right;
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 8px;
+  }
+
+  .char-counter.warning {
+    color: #f59e0b;
+    font-weight: 600;
+  }
+
+  .char-counter.danger {
+    color: #dc2626;
+    font-weight: 600;
+  }
+
+  .error-message {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-left: 4px solid #dc2626;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: #991b1b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .error-message i {
+    color: #dc2626;
+    font-size: 1.1rem;
+  }
+
+  /* Sección de imagen */
+  .image-upload-section {
+    background: linear-gradient(135deg, #f9fafb 0%, #fff 100%);
+    border: 2px dashed #d1d5db;
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .image-preview-container {
+    margin-bottom: 20px;
+  }
+
+  .image-preview {
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .no-image-placeholder {
+    width: 200px;
+    height: 200px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: #9ca3af;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .upload-label {
+    display: inline-block;
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+  }
+
+  .upload-label:hover {
+    background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+  }
+
+  .upload-label i {
+    margin-right: 8px;
+  }
+
+  .file-input-hidden {
+    display: none;
+  }
+
+  .file-name {
+    margin-top: 10px;
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+
+  .tips-section {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-left: 4px solid #3b82f6;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+
+  .tips-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #1e40af;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .tips-header i {
+    font-size: 1.3rem;
+  }
+
+  .tips-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .tips-list li {
+    color: #1e3a8a;
+    padding: 8px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.95rem;
+  }
+
+  .tips-list li i {
+    color: #3b82f6;
+    margin-top: 3px;
+    font-size: 0.9rem;
+  }
+
+  .preview-section {
+    background: linear-gradient(135deg, #fef3f2 0%, #fff 100%);
+    border: 2px dashed #fed7d7;
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 30px;
+  }
+
+  .preview-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    color: #6b7280;
+    font-weight: 700;
+  }
+
+  .preview-content {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    min-height: 100px;
+  }
+
+  .preview-content h5 {
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 12px;
+  }
+
+  .preview-content p {
+    color: #4b5563;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .preview-empty {
+    color: #9ca3af;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 15px;
+    padding-top: 30px;
+    border-top: 2px solid #f3f4f6;
+    margin-top: 30px;
+  }
+
+  .btn-submit {
+    flex: 1;
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .btn-submit:hover {
+    background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4);
+    color: white;
+  }
+
+  .btn-submit i {
+    font-size: 1.2rem;
+  }
+
+  .btn-cancel {
+    background: white;
+    color: #6b7280;
+    border: 2px solid #e5e7eb;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .btn-cancel:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #1f2937;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in {
+    animation: fadeInUp 0.5s ease-out;
+  }
+
+  @media (max-width: 768px) {
+    .form-container {
+      padding: 25px;
+    }
+
+    .page-header h2 {
+      font-size: 1.6rem;
+    }
+
+    .form-actions {
+      flex-direction: column;
+    }
+
+    .btn-submit,
+    .btn-cancel {
+      width: 100%;
+    }
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2 class="fw-bold text-primary mb-4">Reportar Objeto Perdido</h2>
+<div class="form-wrapper fade-in">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-custom">
+    <a href="{% url 'dashboard' %}">
+      <i class="bi bi-house-door"></i> Inicio
+    </a>
+    <i class="bi bi-chevron-right"></i>
+    <a href="{% url 'lista_objetos_perdidos' %}">Objetos Perdidos</a>
+    <i class="bi bi-chevron-right"></i>
+    <span class="current">Reportar Objeto</span>
+  </div>
 
-  <form method="post" enctype="multipart/form-data" class="shadow p-4 bg-light rounded">
-    {% csrf_token %}
-    {{ form.as_p }}
+  <!-- Header -->
+  <div class="page-header">
+    <h2>
+      <i class="bi bi-bag-plus-fill"></i>
+      Reportar Objeto Perdido
+    </h2>
+    <p>Ayuda a encontrar objetos extraviados en la comunidad</p>
+  </div>
 
-    <button type="submit" class="btn btn-success mt-3">Publicar</button>
-    <a href="{% url 'lista_objetos_perdidos' %}" class="btn btn-secondary mt-3">Cancelar</a>
-  </form>
+  <!-- Tips -->
+  <div class="tips-section">
+    <div class="tips-header">
+      <i class="bi bi-lightbulb-fill"></i>
+      Consejos para reportar
+    </div>
+    <ul class="tips-list">
+      <li>
+        <i class="bi bi-check-circle-fill"></i>
+        Incluye una foto clara del objeto
+      </li>
+      <li>
+        <i class="bi bi-check-circle-fill"></i>
+        Describe el objeto con el mayor detalle posible
+      </li>
+      <li>
+        <i class="bi bi-check-circle-fill"></i>
+        Indica dónde y cuándo se perdió o encontró
+      </li>
+      <li>
+        <i class="bi bi-check-circle-fill"></i>
+        Proporciona información de contacto si es necesario
+      </li>
+    </ul>
+  </div>
+
+  <!-- Formulario -->
+  <div class="form-container">
+    <form method="post" enctype="multipart/form-data" id="objectForm">
+      {% csrf_token %}
+      
+      {% if form.non_field_errors %}
+        <div class="error-message">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      {% for field in form %}
+        {% if field.name == "_imagen" %}
+          <!-- Sección de imagen -->
+          <div class="image-upload-section">
+            <div class="image-preview-container">
+              <div class="no-image-placeholder" id="imagePreview">
+                <i class="bi bi-image"></i>
+              </div>
+            </div>
+            
+            <label for="id__imagen" class="upload-label">
+              <i class="bi bi-cloud-upload-fill"></i>
+              <span id="uploadText">Subir Fotografía</span>
+            </label>
+            
+            {{ field }}
+            
+            <div class="file-name" id="fileName"></div>
+            
+            <div class="form-help-text" style="justify-content: center; margin-top: 15px;">
+              <i class="bi bi-info-circle"></i>
+              Formatos aceptados: JPG, PNG. Tamaño máximo: 10MB
+            </div>
+            
+            {% if field.errors %}
+              <div class="error-message" style="margin-top: 15px; display: inline-flex;">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                {{ field.errors.0 }}
+              </div>
+            {% endif %}
+          </div>
+        {% else %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}" class="custom-label">
+              {% if field.name == "_titulo" %}
+                <i class="bi bi-tag-fill"></i>
+                Nombre del Objeto
+              {% elif field.name == "_descripcion" %}
+                <i class="bi bi-file-text-fill"></i>
+                Descripción Detallada
+              {% else %}
+                {{ field.label }}
+              {% endif %}
+              {% if field.field.required %}
+                <span class="required-indicator">*</span>
+              {% endif %}
+            </label>
+            
+            {{ field }}
+            
+            {% if field.name == "_titulo" %}
+              <div class="form-help-text">
+                <i class="bi bi-info-circle"></i>
+                Ej: Llaves de casa, Billetera negra, Celular iPhone 12
+              </div>
+            {% elif field.name == "_descripcion" %}
+              <div class="char-counter" id="charCounter">
+                <span id="charCount">0</span> / 1000 caracteres
+              </div>
+              <div class="form-help-text">
+                <i class="bi bi-info-circle"></i>
+                Incluye color, marca, modelo, características distintivas y lugar donde se perdió/encontró.
+              </div>
+            {% endif %}
+            
+            {% if field.errors %}
+              <div class="error-message">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                {{ field.errors.0 }}
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      <!-- Vista Previa -->
+      <div class="preview-section">
+        <div class="preview-header">
+          <i class="bi bi-eye-fill"></i>
+          Vista Previa
+        </div>
+        <div class="preview-content" id="previewContent">
+          <div class="preview-empty">
+            <i class="bi bi-bag"></i>
+            Comienza a escribir para ver una vista previa
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="form-actions">
+        <button type="submit" class="btn-submit">
+          <i class="bi bi-check-circle-fill"></i>
+          Publicar Reporte
+        </button>
+        <a href="{% url 'lista_objetos_perdidos' %}" class="btn-cancel">
+          <i class="bi bi-x-circle"></i>
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
 </div>
+
+<script src="{% static 'js/objetos-perdidos/form.js' %}"></script>
 {% endblock %}

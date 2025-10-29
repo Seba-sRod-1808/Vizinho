@@ -111,6 +111,13 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
 
     def get_object(self):
         return PerfilUsuario.objects.get(_usuario=self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['reportes_count'] = Reporte.objects.filter(_vecino=self.request.user).count()
+        context['publicaciones_count'] = Publicacion.objects.filter(_vecino=self.request.user).count()
+        context['multas_count'] = Multa.objects.filter(_vecino=self.request.user).count()
+        return context
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     model = PerfilUsuario

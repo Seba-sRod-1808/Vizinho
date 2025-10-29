@@ -1,17 +1,493 @@
 {% extends "base.html" %}
-{% block title %}Perfil de Usuario{% endblock %}
+{% load static %}
+{% block title %}Mi Perfil{% endblock %}
+{% block extra_head %}
+<style>
+  .profile-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .breadcrumb-custom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+  }
+
+  .breadcrumb-custom a {
+    color: #6b7280;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .breadcrumb-custom a:hover {
+    color: #f97316;
+  }
+
+  .breadcrumb-custom i {
+    color: #9ca3af;
+    font-size: 0.8rem;
+  }
+
+  .breadcrumb-custom .current {
+    color: #f97316;
+    font-weight: 600;
+  }
+
+  /* Header del perfil */
+  .profile-header {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 30px rgba(249, 115, 22, 0.3);
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .profile-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+
+  .profile-header-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .profile-avatar-container {
+    position: relative;
+  }
+
+  .profile-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 5px solid white;
+    object-fit: cover;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    background: white;
+  }
+
+  .default-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 5px solid white;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: #f97316;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .profile-info h2 {
+    margin: 0 0 10px 0;
+    font-weight: 800;
+    font-size: 2rem;
+  }
+
+  .profile-email {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    opacity: 0.95;
+    margin-bottom: 15px;
+  }
+
+  .profile-stats {
+    display: flex;
+    gap: 25px;
+    margin-top: 20px;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stat-number {
+    font-size: 1.8rem;
+    font-weight: 800;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+
+  /* Grid de contenido */
+  .profile-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 25px;
+    margin-bottom: 30px;
+  }
+
+  /* Tarjeta de biografía */
+  .bio-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f3f4f6;
+  }
+
+  .card-header h3 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #1f2937;
+  }
+
+  .card-header i {
+    font-size: 1.5rem;
+    color: #f97316;
+  }
+
+  .bio-text {
+    color: #4b5563;
+    line-height: 1.8;
+    font-size: 1rem;
+    white-space: pre-wrap;
+  }
+
+  .bio-empty {
+    color: #9ca3af;
+    font-style: italic;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  /* Tarjeta de acciones rápidas */
+  .quick-actions-card {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    height: fit-content;
+  }
+
+  .action-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: white;
+    color: #1f2937;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin-bottom: 12px;
+  }
+
+  .action-button:hover {
+    background: #f9fafb;
+    border-color: #f97316;
+    color: #f97316;
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.1);
+  }
+
+  .action-button i {
+    font-size: 1.3rem;
+    width: 30px;
+    text-align: center;
+  }
+
+  .action-button-primary {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    color: white;
+    border: none;
+  }
+
+  .action-button-primary:hover {
+    background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+  }
+
+  /* Tarjeta de información adicional */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 25px;
+  }
+
+  .info-card {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  .info-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin: 0 auto 15px;
+  }
+
+  .info-icon-orange {
+    background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+    color: #ea580c;
+  }
+
+  .info-icon-blue {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #3b82f6;
+  }
+
+  .info-icon-green {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #059669;
+  }
+
+  .info-icon-purple {
+    background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%);
+    color: #9333ea;
+  }
+
+  .info-card h4 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0 0 5px 0;
+  }
+
+  .info-card p {
+    color: #6b7280;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  /* Animaciones */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in {
+    animation: fadeInUp 0.5s ease-out;
+  }
+
+  /* Responsive */
+  @media (max-width: 992px) {
+    .profile-content {
+      grid-template-columns: 1fr;
+    }
+
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .profile-header {
+      padding: 30px 20px;
+    }
+
+    .profile-header-content {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .profile-stats {
+      justify-content: center;
+    }
+
+    .profile-info h2 {
+      font-size: 1.6rem;
+    }
+
+    .profile-avatar,
+    .default-avatar {
+      width: 120px;
+      height: 120px;
+    }
+
+    .default-avatar {
+      font-size: 3rem;
+    }
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2>Mi Perfil</h2>
-  <div class="card p-3">
-    {% if object.foto %}
-      <img src="{{ object.foto.url }}" class="img-thumbnail mb-3" width="150">
-    {% endif %}
-    <p><strong>Usuario:</strong> {{ object.usuario.username }}</p>
-    <p><strong>Email:</strong> {{ object.usuario.email }}</p>
-    <p><strong>Bio:</strong> {{ object.bio }}</p>
-    <a href="{% url 'editar_perfil' %}" class="btn btn-warning">Editar Perfil</a>
+<div class="profile-wrapper fade-in">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-custom">
+    <a href="{% url 'dashboard' %}">
+      <i class="bi bi-house-door"></i> Inicio
+    </a>
+    <i class="bi bi-chevron-right"></i>
+    <span class="current">Mi Perfil</span>
+  </div>
+
+  <!-- Header del perfil -->
+  <div class="profile-header">
+    <div class="profile-header-content">
+      <div class="profile-avatar-container">
+        {% if object.foto %}
+          <img src="{{ object.foto.url }}" alt="Foto de perfil" class="profile-avatar">
+        {% else %}
+          <div class="default-avatar">
+            <i class="bi bi-person-fill"></i>
+          </div>
+        {% endif %}
+      </div>
+      
+      <div class="profile-info">
+        <h2>{{ object.usuario.username }}</h2>
+        <div class="profile-email">
+          <i class="bi bi-envelope-fill"></i>
+          {{ object.usuario.email }}
+        </div>
+        
+        <div class="profile-stats">
+          <div class="stat-item">
+            <div class="stat-number">{{ reportes_count|default:0 }}</div>
+            <div class="stat-label">Reportes</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ publicaciones_count|default:0 }}</div>
+            <div class="stat-label">Publicaciones</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ multas_count|default:0 }}</div>
+            <div class="stat-label">Multas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="profile-content">
+    <!-- Biografía -->
+    <div class="bio-card">
+      <div class="card-header">
+        <i class="bi bi-card-text"></i>
+        <h3>Biografía</h3>
+      </div>
+      {% if object.bio %}
+        <p class="bio-text">{{ object.bio }}</p>
+      {% else %}
+        <div class="bio-empty">
+          <i class="bi bi-file-earmark-text" style="font-size: 3rem; color: #d1d5db; margin-bottom: 10px;"></i>
+          <p>No has agregado una biografía aún.</p>
+          <p>¡Cuéntanos sobre ti!</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Acciones rápidas -->
+    <div class="quick-actions-card">
+      <div class="card-header">
+        <i class="bi bi-lightning-fill"></i>
+        <h3>Acciones</h3>
+      </div>
+      
+      <a href="{% url 'editar_perfil' %}" class="action-button action-button-primary">
+        <i class="bi bi-pencil-square"></i>
+        <span>Editar Perfil</span>
+      </a>
+      
+      <a href="{% url 'lista_publicaciones' %}" class="action-button">
+        <i class="bi bi-chat-left-text"></i>
+        <span>Mis Publicaciones</span>
+      </a>
+      
+      <a href="{% url 'lista_reportes' %}" class="action-button">
+        <i class="bi bi-exclamation-triangle"></i>
+        <span>Mis Reportes</span>
+      </a>
+      
+      <a href="{% url 'lista_multas' %}" class="action-button">
+        <i class="bi bi-cash-coin"></i>
+        <span>Mis Multas</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Información adicional -->
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-icon info-icon-orange">
+        <i class="bi bi-person-badge"></i>
+      </div>
+      <h4>Vecino</h4>
+      <p>Miembro de la comunidad</p>
+    </div>
+    
+    <div class="info-card">
+      <div class="info-icon info-icon-blue">
+        <i class="bi bi-calendar-check"></i>
+      </div>
+      <h4>Activo</h4>
+      <p>Usuario verificado</p>
+    </div>
+    
+    <div class="info-card">
+      <div class="info-icon info-icon-green">
+        <i class="bi bi-shield-check"></i>
+      </div>
+      <h4>Seguro</h4>
+      <p>Cuenta protegida</p>
+    </div>
+    
+    <div class="info-card">
+      <div class="info-icon info-icon-purple">
+        <i class="bi bi-star-fill"></i>
+      </div>
+      <h4>Comunidad</h4>
+      <p>Parte del equipo</p>
+    </div>
   </div>
 </div>
 {% endblock %}
