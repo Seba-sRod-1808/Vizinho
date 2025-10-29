@@ -3,28 +3,363 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión - Vizinho</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #fff5eb 0%, #fffaf5 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+    }
+
+    .login-container {
+      max-width: 450px;
+      width: 100%;
+    }
+
+    /* Logo/Header */
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo-container {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 25px rgba(249, 115, 22, 0.3);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .logo-container i {
+      font-size: 2.5rem;
+      color: white;
+    }
+
+    .login-header h1 {
+      font-weight: 800;
+      font-size: 2rem;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .login-header p {
+      color: #6b7280;
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    /* Card principal */
+    .login-card {
+      background: white;
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .form-title {
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #1f2937;
+      margin-bottom: 25px;
+    }
+
+    /* Campos del formulario */
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .form-group label i {
+      color: #f97316;
+      margin-right: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: #f9fafb;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #f97316;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+    }
+
+    .form-control::placeholder {
+      color: #9ca3af;
+    }
+
+    /* Botón de login */
+    .btn-login {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+      margin-top: 10px;
+    }
+
+    .btn-login:hover {
+      background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    /* Mensaje de error */
+    .alert-error {
+      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+      border-left: 4px solid #dc2626;
+      padding: 15px 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #991b1b;
+      font-size: 0.95rem;
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    .alert-error i {
+      font-size: 1.5rem;
+      color: #dc2626;
+    }
+
+    /* Footer */
+    .login-footer {
+      text-align: center;
+      margin-top: 25px;
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
+    .login-footer a {
+      color: #f97316;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .login-footer a:hover {
+      color: #ea580c;
+    }
+
+    /* Decoración de fondo */
+    .bg-decoration {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      opacity: 0.05;
+    }
+
+    .circle-1 {
+      width: 300px;
+      height: 300px;
+      top: -150px;
+      right: -150px;
+    }
+
+    .circle-2 {
+      width: 200px;
+      height: 200px;
+      bottom: -100px;
+      left: -100px;
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    }
+
+    /* Checkbox personalizado */
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .remember-me input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #f97316;
+    }
+
+    .remember-me label {
+      margin: 0;
+      cursor: pointer;
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 576px) {
+      .login-card {
+        padding: 30px 25px;
+      }
+
+      .login-header h1 {
+        font-size: 1.8rem;
+      }
+
+      .logo-container {
+        width: 70px;
+        height: 70px;
+      }
+
+      .logo-container i {
+        font-size: 2rem;
+      }
+    }
+  </style>
 </head>
-<body class="bg-light">
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-4">
-        <div class="card p-4 shadow">
-          <h3 class="text-center mb-4">Iniciar Sesión</h3>
-          <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary w-100">Entrar</button>
-          </form>
-          {% if form.errors %}
-          <div class="alert alert-danger mt-3">
-            {{ form.errors }}
-          </div>
-          {% endif %}
-        </div>
+<body>
+  <!-- Decoración de fondo -->
+  <div class="bg-decoration">
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+  </div>
+
+  <div class="login-container">
+    <!-- Header con logo -->
+    <div class="login-header">
+      <div class="logo-container">
+        <i class="bi bi-house-heart-fill"></i>
       </div>
+      <h1>Vizinho</h1>
+      <p>Sistema de Gestión de Colonias</p>
+    </div>
+
+    <!-- Card de login -->
+    <div class="login-card">
+      <h2 class="form-title">Iniciar Sesión</h2>
+      
+      <form method="post" id="loginForm">
+        {% csrf_token %}
+        
+        {% for field in form %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}">
+              {% if field.name == "username" %}
+                <i class="bi bi-person-fill"></i> Usuario
+              {% elif field.name == "password" %}
+                <i class="bi bi-lock-fill"></i> Contraseña
+              {% else %}
+                {{ field.label }}
+              {% endif %}
+            </label>
+            {{ field }}
+          </div>
+        {% endfor %}
+
+        <!-- Recordarme (opcional) -->
+        <div class="remember-me">
+          <input type="checkbox" id="remember" name="remember">
+          <label for="remember">Recordarme</label>
+        </div>
+
+        <button type="submit" class="btn-login">
+          <i class="bi bi-box-arrow-in-right"></i> Ingresar
+        </button>
+      </form>
+
+      {% if form.errors %}
+        <div class="alert-error">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          <div>
+            {% for field, errors in form.errors.items %}
+              {% for error in errors %}
+                {{ error }}
+              {% endfor %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <p>© 2025 Vizinho - Conectando comunidades</p>
     </div>
   </div>
+
+  <script src="{% static 'js/login.js' %}">
+
+  </script>
 </body>
 </html>
