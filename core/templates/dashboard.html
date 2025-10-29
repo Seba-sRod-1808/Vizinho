@@ -85,180 +85,190 @@
     /* Grid de Contenido Principal */
     .main-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 25px;
       margin-bottom: 30px;
     }
     
-    /* Contenedor de Publicaciones REDISEÑADO */
-    .publication-container { 
+    /* Contenedor de Publicaciones y Objetos */
+    .content-container { 
       background: white;
       border-radius: 20px;
-      padding: 30px;
+      padding: 25px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       transition: all 0.3s ease;
       height: fit-content;
     }
     
-    .publication-container:hover {
+    .content-container:hover {
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
     }
     
-    .publication-container h4 { 
+    .content-container h4 { 
       font-weight: 700;
-      color: #e63946;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       display: flex;
       align-items: center;
       gap: 12px;
+      font-size: 1.3rem;
+    }
+    
+    .content-container h4 i {
       font-size: 1.4rem;
     }
     
-    .publication-container h4 i {
-      font-size: 1.6rem;
+    .content-container.publications h4 {
+      color: #e63946;
     }
     
-    /* Items de Publicaciones - Más compactos */
-    .publication-item {
+    .content-container.objects h4 {
+      color: #6b7280;
+    }
+    
+    /* Items compactos */
+    .content-item {
       border: none;
-      border-radius: 14px;
-      padding: 18px;
+      border-radius: 12px;
+      padding: 15px;
       background: linear-gradient(135deg, #fef3f2 0%, #fff 100%);
       transition: all 0.3s ease;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
+    }
+    
+    .content-item.publication {
       border-left: 4px solid #f97316;
     }
     
-    .publication-item:hover {
+    .content-item.publication:hover {
       background: linear-gradient(135deg, #fed7d7 0%, #fef3f2 100%);
       transform: translateX(5px);
       box-shadow: 0 4px 15px rgba(249, 115, 22, 0.15);
       border-left-color: #ea580c;
     }
     
-    .publication-item h5 {
-      color: #f97316;
-      font-weight: 700;
-      font-size: 1.1rem;
-      margin-bottom: 10px;
+    .content-item.object {
+      border-left: 4px solid #6b7280;
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: 12px;
+      align-items: start;
     }
     
-    .publication-item p {
-      color: #4b5563;
-      line-height: 1.6;
-      margin-bottom: 10px;
+    .content-item.object:hover {
+      background: linear-gradient(135deg, #f3f4f6 0%, #fff 100%);
+      transform: translateX(5px);
+      box-shadow: 0 4px 15px rgba(107, 114, 128, 0.15);
+      border-left-color: #4b5563;
     }
     
-    /* Sidebar de Acceso Rápido */
-    .quick-access-sidebar {
-      background: white;
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      height: fit-content;
-      position: sticky;
-      top: 20px;
-    }
-    
-    .quick-access-sidebar h4 {
-      font-weight: 700;
+    .content-item h5 {
       color: #1f2937;
-      margin-bottom: 20px;
-      font-size: 1.3rem;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 8px;
     }
     
-    .quick-link {
+    .content-item p {
+      color: #4b5563;
+      line-height: 1.5;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+    
+    .content-item small {
+      color: #6b7280;
+      font-size: 0.8rem;
       display: flex;
       align-items: center;
-      gap: 15px;
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      color: #333;
-      border: 2px solid transparent;
+      gap: 4px;
     }
     
-    .quick-link:hover {
-      transform: translateX(5px);
-      text-decoration: none;
-      color: #333;
+    .content-item small i {
+      color: #9ca3af;
+      font-size: 0.85rem;
     }
     
-    .quick-link-orange {
-      background: linear-gradient(135deg, #fef3f2 0%, #fff 100%);
-      border-left: 4px solid #f97316;
+    /* Imagen de objetos perdidos */
+    .object-thumbnail {
+      width: 70px;
+      height: 70px;
+      border-radius: 10px;
+      object-fit: cover;
     }
     
-    .quick-link-orange:hover {
-      background: linear-gradient(135deg, #fed7d7 0%, #fef3f2 100%);
-      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
-    }
-    
-    .quick-link-yellow {
-      background: linear-gradient(135deg, #fefce8 0%, #fff 100%);
-      border-left: 4px solid #facc15;
-    }
-    
-    .quick-link-yellow:hover {
-      background: linear-gradient(135deg, #fef3c7 0%, #fefce8 100%);
-      box-shadow: 0 4px 12px rgba(250, 204, 21, 0.2);
-    }
-    
-    .quick-link-gray {
-      background: linear-gradient(135deg, #f9fafb 0%, #fff 100%);
-      border-left: 4px solid #6b7280;
-    }
-    
-    .quick-link-gray:hover {
-      background: linear-gradient(135deg, #f3f4f6 0%, #f9fafb 100%);
-      box-shadow: 0 4px 12px rgba(107, 114, 128, 0.2);
-    }
-    
-    .quick-link-icon {
-      font-size: 2rem;
-      width: 50px;
-      height: 50px;
+    .no-image-thumb {
+      width: 70px;
+      height: 70px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 12px;
+      color: #9ca3af;
+      font-size: 2rem;
+    }
+    
+    /* Botones Ver Todas/Todos */
+    .btn-view-all {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
       transition: all 0.3s ease;
+      margin-top: 10px;
     }
     
-    .quick-link-orange .quick-link-icon {
-      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    .btn-view-all.publications {
+      background: #fef3f2;
+      color: #e63946;
+      border: 2px solid #fed7d7;
+    }
+    
+    .btn-view-all.publications:hover {
+      background: #e63946;
       color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
     }
     
-    .quick-link-yellow .quick-link-icon {
-      background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
-      color: #333;
-    }
-    
-    .quick-link-gray .quick-link-icon {
-      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-      color: white;
-    }
-    
-    .quick-link:hover .quick-link-icon {
-      transform: scale(1.1) rotate(5deg);
-    }
-    
-    .quick-link-content h6 {
-      font-weight: 700;
-      margin: 0;
-      font-size: 1rem;
-    }
-    
-    .quick-link-content p {
-      margin: 0;
-      font-size: 0.85rem;
+    .btn-view-all.objects {
+      background: #f3f4f6;
       color: #6b7280;
+      border: 2px solid #e5e7eb;
     }
     
-    /* Tarjetas inferiores REDISEÑADAS */
+    .btn-view-all.objects:hover {
+      background: #6b7280;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+    }
+    
+    /* Estado vacío */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #fef3f2 0%, #fff 100%);
+      border-radius: 14px;
+      border: 2px dashed #fed7d7;
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      color: #f97316;
+      margin-bottom: 15px;
+      opacity: 0.5;
+    }
+    
+    .empty-state p {
+      color: #6b7280;
+      margin: 0;
+      font-size: 0.9rem;
+    }
+    
+    /* Tarjetas de Funciones Destacadas */
     .feature-cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -353,19 +363,18 @@
       margin-bottom: 20px;
     }
     
-    /* Botones Mejorados */
-    .btn {
-      border-radius: 12px;
-      padding: 12px 24px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      border: none;
-    }
-    
+    /* Botones */
     .btn-primary-custom {
       background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
       color: white;
       box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      text-decoration: none;
+      display: inline-block;
     }
     
     .btn-primary-custom:hover {
@@ -375,54 +384,10 @@
       color: white;
     }
     
-    .btn-outline-danger {
-      border: 2px solid #dc2626;
-      color: #dc2626;
-      background: transparent;
-    }
-    
-    .btn-outline-danger:hover {
-      background: #dc2626;
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
-    }
-    
-    /* Badge de usuario */
-    .text-muted {
-      color: #6b7280 !important;
-      font-size: 0.9rem;
-    }
-    
-    /* Alerta cuando no hay publicaciones */
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      background: linear-gradient(135deg, #fef3f2 0%, #fff 100%);
-      border-radius: 14px;
-      border: 2px dashed #fed7d7;
-    }
-    
-    .empty-state i {
-      font-size: 3rem;
-      color: #f97316;
-      margin-bottom: 15px;
-    }
-    
-    .empty-state p {
-      color: #6b7280;
-      margin: 0;
-    }
-    
     /* Responsive */
     @media (max-width: 992px) {
       .main-grid {
         grid-template-columns: 1fr;
-      }
-      
-      .quick-access-sidebar {
-        position: relative;
-        top: 0;
       }
     }
     
@@ -462,76 +427,75 @@
       </form>
     </div>
     
-    <!-- Grid Principal: Publicaciones + Sidebar -->
+    <!-- Grid Principal: Publicaciones + Objetos Perdidos -->
     <div class="main-grid fade-in">
       <!-- Publicaciones -->
-      <div class="publication-container">
+      <div class="content-container publications">
         <h4>
           <i class="bi bi-chat-left-text-fill"></i> Últimas Publicaciones
         </h4>
         
         {% if ultimas_publicaciones %}
-          <div>
-            {% for p in ultimas_publicaciones %}
-              <div class="publication-item">
-                <h5>{{ p.titulo }}</h5>
-                <p>{{ p.contenido|truncatewords:25 }}</p>
-                <small class="text-muted">
-                  <i class="bi bi-person-circle"></i> {{ p.vecino.username }} • 
-                  <i class="bi bi-clock"></i> {{ p.fecha|date:"d/m/Y H:i" }}
-                </small>
-              </div>
-            {% endfor %}
-          </div>
+          {% for p in ultimas_publicaciones %}
+            <div class="content-item publication">
+              <h5>{{ p.titulo }}</h5>
+              <p>{{ p.contenido|truncatewords:15 }}</p>
+              <small>
+                <i class="bi bi-person-circle"></i> {{ p.vecino.username }} •
+                <i class="bi bi-clock"></i> {{ p.fecha|date:"d/m/Y" }}
+              </small>
+            </div>
+          {% endfor %}
           
-          <a href="{% url 'lista_publicaciones' %}" class="btn btn-outline-danger w-100 mt-3">
+          <a href="{% url 'lista_publicaciones' %}" class="btn-view-all publications">
             <i class="bi bi-arrow-right-circle"></i> Ver Todas las Publicaciones
           </a>
         {% else %}
           <div class="empty-state">
             <i class="bi bi-chat-dots"></i>
-            <p class="mb-2"><strong>No hay publicaciones todavía</strong></p>
+            <p><strong>No hay publicaciones todavía</strong></p>
             <p>¡Sé el primero en compartir algo con la comunidad!</p>
           </div>
-          <a href="{% url 'lista_publicaciones' %}" class="btn btn-primary-custom w-100 mt-3">
-            <i class="bi bi-plus-circle"></i> Crear Primera Publicación
-          </a>
         {% endif %}
       </div>
       
-      <!-- Sidebar de Acceso Rápido -->
-      <div class="quick-access-sidebar">
-        <h4>⚡ Acceso Rápido</h4>
+      <!-- Objetos Perdidos -->
+      <div class="content-container objects">
+        <h4>
+          <i class="bi bi-bag-fill"></i> Objetos Perdidos
+        </h4>
         
-        <a href="{% url 'lista_reportes' %}" class="quick-link quick-link-orange">
-          <div class="quick-link-icon">
-            <i class="bi bi-exclamation-triangle-fill"></i>
+        {% if ultimos_objetos %}
+          {% for obj in ultimos_objetos %}
+            <div class="content-item object">
+              {% if obj.imagen %}
+                <img src="{{ obj.imagen.url }}" alt="{{ obj.titulo }}" class="object-thumbnail">
+              {% else %}
+                <div class="no-image-thumb">
+                  <i class="bi bi-image"></i>
+                </div>
+              {% endif %}
+              <div>
+                <h5>{{ obj.titulo }}</h5>
+                <p>{{ obj.descripcion|truncatewords:12 }}</p>
+                <small>
+                  <i class="bi bi-person-circle"></i> {{ obj.usuario.username }} •
+                  <i class="bi bi-calendar3"></i> {{ obj.fecha|date:"d/m/Y" }}
+                </small>
+              </div>
+            </div>
+          {% endfor %}
+          
+          <a href="{% url 'lista_objetos_perdidos' %}" class="btn-view-all objects">
+            <i class="bi bi-arrow-right-circle"></i> Ver Todos los Objetos
+          </a>
+        {% else %}
+          <div class="empty-state">
+            <i class="bi bi-bag-x"></i>
+            <p><strong>No hay objetos reportados</strong></p>
+            <p>Reporta objetos perdidos o encontrados</p>
           </div>
-          <div class="quick-link-content">
-            <h6>Reportes</h6>
-            <p>Gestiona incidencias</p>
-          </div>
-        </a>
-        
-        <a href="{% url 'lista_multas' %}" class="quick-link quick-link-yellow">
-          <div class="quick-link-icon">
-            <i class="bi bi-cash-coin"></i>
-          </div>
-          <div class="quick-link-content">
-            <h6>Multas</h6>
-            <p>Revisa tus multas</p>
-          </div>
-        </a>
-        
-        <a href="{% url 'lista_objetos_perdidos' %}" class="quick-link quick-link-gray">
-          <div class="quick-link-icon">
-            <i class="bi bi-bag-fill"></i>
-          </div>
-          <div class="quick-link-content">
-            <h6>Objetos Perdidos</h6>
-            <p>Encuentra objetos</p>
-          </div>
-        </a>
+        {% endif %}
       </div>
     </div>
     
@@ -543,7 +507,7 @@
         </div>
         <h5>Mantente Informado</h5>
         <p>Recibe actualizaciones importantes de tu comunidad en tiempo real.</p>
-        <a href="{% url 'lista_publicaciones' %}" class="btn btn-primary-custom w-100">
+        <a href="{% url 'lista_publicaciones' %}" class="btn-primary-custom w-100">
           Ver Publicaciones
         </a>
       </div>
@@ -554,7 +518,7 @@
         </div>
         <h5>Seguridad 24/7</h5>
         <p>Reporta incidentes y mantén tu colonia segura para todos.</p>
-        <a href="{% url 'lista_reportes' %}" class="btn btn-primary-custom w-100">
+        <a href="{% url 'lista_reportes' %}" class="btn-primary-custom w-100">
           Crear Reporte
         </a>
       </div>
@@ -565,7 +529,7 @@
         </div>
         <h5>Comunidad Unida</h5>
         <p>Conecta con tus vecinos y construye una mejor comunidad.</p>
-        <a href="{% url 'lista_objetos_perdidos' %}" class="btn btn-primary-custom w-100">
+        <a href="{% url 'lista_objetos_perdidos' %}" class="btn-primary-custom w-100">
           Explorar
         </a>
       </div>

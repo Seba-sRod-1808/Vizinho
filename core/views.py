@@ -101,8 +101,10 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "dashboard.html"
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Obtener las últimas 5 publicaciones ordenadas por fecha descendente
-        context['ultimas_publicaciones'] = Publicacion.objects.all().order_by('-_fecha')[:5]
+        # Últimas 3 publicaciones
+        context['ultimas_publicaciones'] = Publicacion.objects.all().order_by('-_fecha')[:3]
+        # Últimos 3 objetos perdidos
+        context['ultimos_objetos'] = ObjetoPerdido.objects.all().order_by('-_fecha')[:3]
         return context
 
 class ProfileDetailView(LoginRequiredMixin, DetailView):

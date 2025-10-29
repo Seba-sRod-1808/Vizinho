@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Crear Multa{% endblock %}
+{% block title %}Editar Objeto Perdido{% endblock %}
 {% block extra_head %}
 <style>
   .form-wrapper {
@@ -23,7 +23,7 @@
   }
 
   .breadcrumb-custom a:hover {
-    color: #facc15;
+    color: #6b7280;
   }
 
   .breadcrumb-custom i {
@@ -32,7 +32,7 @@
   }
 
   .breadcrumb-custom .current {
-    color: #facc15;
+    color: #6b7280;
     font-weight: 600;
   }
 
@@ -47,7 +47,7 @@
   .page-header h2 {
     font-weight: 800;
     font-size: 2rem;
-    background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -83,7 +83,7 @@
   }
 
   .form-group label i {
-    color: #facc15;
+    color: #6b7280;
     margin-right: 8px;
     font-size: 1.1rem;
   }
@@ -118,21 +118,17 @@
 
   .form-control:focus {
     outline: none;
-    border-color: #facc15;
+    border-color: #6b7280;
     background: white;
-    box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.1);
+    box-shadow: 0 0 0 4px rgba(107, 114, 128, 0.1);
   }
 
   .form-control:hover {
-    border-color: #fde68a;
-  }
-
-  select.form-control {
-    cursor: pointer;
+    border-color: #9ca3af;
   }
 
   textarea.form-control {
-    min-height: 120px;
+    min-height: 150px;
     resize: vertical;
     font-family: inherit;
     line-height: 1.6;
@@ -173,51 +169,102 @@
     font-size: 1.1rem;
   }
 
-  .tips-section {
-    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-    border-left: 4px solid #f59e0b;
+  .info-section {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    border-left: 4px solid #6b7280;
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 30px;
   }
 
-  .tips-header {
+  .info-header {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #92400e;
+    color: #374151;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }
 
-  .tips-header i {
+  .info-header i {
     font-size: 1.3rem;
   }
 
-  .tips-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .tips-list li {
-    color: #78350f;
-    padding: 8px 0;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
+  .info-text {
+    color: #4b5563;
     font-size: 0.95rem;
   }
 
-  .tips-list li i {
-    color: #f59e0b;
-    margin-top: 3px;
+  /* Sección de imagen */
+  .image-upload-section {
+    background: linear-gradient(135deg, #f9fafb 0%, #fff 100%);
+    border: 2px dashed #d1d5db;
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .image-preview-container {
+    margin-bottom: 20px;
+  }
+
+  .image-preview {
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .no-image-placeholder {
+    width: 200px;
+    height: 200px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: #9ca3af;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .upload-label {
+    display: inline-block;
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+  }
+
+  .upload-label:hover {
+    background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+  }
+
+  .upload-label i {
+    margin-right: 8px;
+  }
+
+  .file-input-hidden {
+    display: none;
+  }
+
+  .file-name {
+    margin-top: 10px;
+    color: #6b7280;
     font-size: 0.9rem;
   }
 
   .preview-section {
-    background: linear-gradient(135deg, #fefce8 0%, #fff 100%);
-    border: 2px dashed #fde68a;
+    background: linear-gradient(135deg, #fef3f2 0%, #fff 100%);
+    border: 2px dashed #fed7d7;
     border-radius: 16px;
     padding: 25px;
     margin-bottom: 30px;
@@ -228,7 +275,7 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 15px;
-    color: #d97706;
+    color: #6b7280;
     font-weight: 700;
   }
 
@@ -239,24 +286,16 @@
     min-height: 100px;
   }
 
-  .preview-content .preview-amount {
-    font-size: 2.5rem;
-    font-weight: 800;
+  .preview-content h5 {
+    font-weight: 700;
     color: #1f2937;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
   }
 
   .preview-content p {
     color: #4b5563;
     line-height: 1.7;
     margin: 0;
-  }
-
-  .preview-empty {
-    color: #9ca3af;
-    font-style: italic;
-    text-align: center;
-    padding: 20px;
   }
 
   .form-actions {
@@ -269,14 +308,14 @@
 
   .btn-submit {
     flex: 1;
-    background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
-    color: #333;
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: white;
     border: none;
     padding: 16px 32px;
     border-radius: 12px;
     font-weight: 700;
     font-size: 1.05rem;
-    box-shadow: 0 4px 15px rgba(250, 204, 21, 0.3);
+    box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
     transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
@@ -286,10 +325,10 @@
   }
 
   .btn-submit:hover {
-    background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+    background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(250, 204, 21, 0.4);
-    color: #333;
+    box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4);
+    color: white;
   }
 
   .btn-submit i {
@@ -364,49 +403,34 @@
       <i class="bi bi-house-door"></i> Inicio
     </a>
     <i class="bi bi-chevron-right"></i>
-    <a href="{% url 'lista_multas' %}">Multas</a>
+    <a href="{% url 'lista_objetos_perdidos' %}">Objetos Perdidos</a>
     <i class="bi bi-chevron-right"></i>
-    <span class="current">Crear Multa</span>
+    <span class="current">Editar Objeto</span>
   </div>
 
   <!-- Header -->
   <div class="page-header">
     <h2>
-      <i class="bi bi-plus-circle-fill"></i>
-      Crear Nueva Multa
+      <i class="bi bi-pencil-square"></i>
+      Editar Objeto Perdido
     </h2>
-    <p>Registra una nueva multa para un vecino</p>
+    <p>Actualiza la información del objeto reportado</p>
   </div>
 
-  <!-- Tips -->
-  <div class="tips-section">
-    <div class="tips-header">
+  <!-- Info -->
+  <div class="info-section">
+    <div class="info-header">
       <i class="bi bi-info-circle-fill"></i>
-      Información importante
+      Modo de Edición
     </div>
-    <ul class="tips-list">
-      <li>
-        <i class="bi bi-check-circle-fill"></i>
-        Verifica que el monto sea correcto antes de guardar
-      </li>
-      <li>
-        <i class="bi bi-check-circle-fill"></i>
-        Describe claramente el motivo de la multa
-      </li>
-      <li>
-        <i class="bi bi-check-circle-fill"></i>
-        El vecino recibirá una notificación de la multa
-      </li>
-      <li>
-        <i class="bi bi-check-circle-fill"></i>
-        Puedes cambiar el estado posteriormente si es necesario
-      </li>
-    </ul>
+    <p class="info-text">
+      Estás editando un objeto reportado. Los cambios se guardarán inmediatamente al hacer clic en "Actualizar".
+    </p>
   </div>
 
   <!-- Formulario -->
   <div class="form-container">
-    <form method="post" id="multaForm">
+    <form method="post" enctype="multipart/form-data" id="editObjectForm">
       {% csrf_token %}
       
       {% if form.non_field_errors %}
@@ -417,75 +441,92 @@
       {% endif %}
 
       {% for field in form %}
-        <div class="form-group">
-          <label for="{{ field.id_for_label }}" class="custom-label">
-            {% if field.name == "_vecino" %}
-              <i class="bi bi-person-fill"></i>
-              Vecino
-            {% elif field.name == "_monto" %}
-              <i class="bi bi-cash-stack"></i>
-              Monto (Q)
-            {% elif field.name == "_motivo" %}
-              <i class="bi bi-file-text-fill"></i>
-              Motivo de la Multa
-            {% elif field.name == "_estado" %}
-              <i class="bi bi-flag-fill"></i>
-              Estado
-            {% else %}
-              {{ field.label }}
+        {% if field.name == "_imagen" %}
+          <!-- Sección de imagen -->
+          <div class="image-upload-section">
+            <div class="image-preview-container">
+              {% if form.instance.imagen %}
+                <img src="{{ form.instance.imagen.url }}" alt="Imagen actual" class="image-preview" id="imagePreview">
+              {% else %}
+                <div class="no-image-placeholder" id="imagePreview">
+                  <i class="bi bi-image"></i>
+                </div>
+              {% endif %}
+            </div>
+            
+            <label for="id__imagen" class="upload-label">
+              <i class="bi bi-cloud-upload-fill"></i>
+              <span id="uploadText">Cambiar Fotografía</span>
+            </label>
+            
+            {{ field }}
+            
+            <div class="file-name" id="fileName"></div>
+            
+            <div class="form-help-text" style="justify-content: center; margin-top: 15px;">
+              <i class="bi bi-info-circle"></i>
+              Formatos aceptados: JPG, PNG. Tamaño máximo: 10MB
+            </div>
+            
+            {% if field.errors %}
+              <div class="error-message" style="margin-top: 15px; display: inline-flex;">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                {{ field.errors.0 }}
+              </div>
             {% endif %}
-            {% if field.field.required %}
-              <span class="required-indicator">*</span>
+          </div>
+        {% else %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}" class="custom-label">
+              {% if field.name == "_titulo" %}
+                <i class="bi bi-tag-fill"></i>
+                Nombre del Objeto
+              {% elif field.name == "_descripcion" %}
+                <i class="bi bi-file-text-fill"></i>
+                Descripción Detallada
+              {% else %}
+                {{ field.label }}
+              {% endif %}
+              {% if field.field.required %}
+                <span class="required-indicator">*</span>
+              {% endif %}
+            </label>
+            
+            {{ field }}
+            
+            {% if field.name == "_titulo" %}
+              <div class="form-help-text">
+                <i class="bi bi-info-circle"></i>
+                Ej: Llaves de casa, Billetera negra, Celular iPhone 12
+              </div>
+            {% elif field.name == "_descripcion" %}
+              <div class="char-counter" id="charCounter">
+                <span id="charCount">0</span> / 1000 caracteres
+              </div>
+              <div class="form-help-text">
+                <i class="bi bi-info-circle"></i>
+                Incluye color, marca, modelo, características distintivas y lugar donde se perdió/encontró.
+              </div>
             {% endif %}
-          </label>
-          
-          {{ field }}
-          
-          {% if field.name == "_vecino" %}
-            <div class="form-help-text">
-              <i class="bi bi-info-circle"></i>
-              Selecciona el vecino al que se le aplicará la multa.
-            </div>
-          {% elif field.name == "_monto" %}
-            <div class="form-help-text">
-              <i class="bi bi-info-circle"></i>
-              Ingresa el monto en Quetzales (Q). Ej: 150.00
-            </div>
-          {% elif field.name == "_motivo" %}
-            <div class="char-counter" id="charCounter">
-              <span id="charCount">0</span> / 500 caracteres
-            </div>
-            <div class="form-help-text">
-              <i class="bi bi-info-circle"></i>
-              Explica claramente el motivo de la multa.
-            </div>
-          {% elif field.name == "_estado" %}
-            <div class="form-help-text">
-              <i class="bi bi-info-circle"></i>
-              Generalmente se crea como "Pendiente".
-            </div>
-          {% endif %}
-          
-          {% if field.errors %}
-            <div class="error-message">
-              <i class="bi bi-exclamation-triangle-fill"></i>
-              {{ field.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
+            
+            {% if field.errors %}
+              <div class="error-message">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                {{ field.errors.0 }}
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
       {% endfor %}
 
       <!-- Vista Previa -->
       <div class="preview-section">
         <div class="preview-header">
           <i class="bi bi-eye-fill"></i>
-          Vista Previa de la Multa
+          Vista Previa
         </div>
         <div class="preview-content" id="previewContent">
-          <div class="preview-empty">
-            <i class="bi bi-cash-coin"></i>
-            Comienza a completar el formulario para ver una vista previa
-          </div>
+          <!-- Se actualiza con JavaScript -->
         </div>
       </div>
 
@@ -493,9 +534,9 @@
       <div class="form-actions">
         <button type="submit" class="btn-submit">
           <i class="bi bi-check-circle-fill"></i>
-          Crear Multa
+          Actualizar Objeto
         </button>
-        <a href="{% url 'lista_multas' %}" class="btn-cancel">
+        <a href="{% url 'lista_objetos_perdidos' %}" class="btn-cancel">
           <i class="bi bi-x-circle"></i>
           Cancelar
         </a>
@@ -504,5 +545,5 @@
   </div>
 </div>
 
-<script src="{% static 'js/multa/form.js' %}"></script>
+<script src="{% static 'js/objetos-perdidos/edit.js' %}"></script>
 {% endblock %}

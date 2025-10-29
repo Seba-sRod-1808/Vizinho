@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Eliminar Multa{% endblock %}
+{% block title %}Eliminar Objeto Perdido{% endblock %}
 {% block extra_head %}
 <style>
   .delete-wrapper {
@@ -109,93 +109,79 @@
     color: #dc2626;
   }
 
-  .multa-preview-content {
-    text-align: center;
+  .object-preview-content {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 25px;
+    align-items: start;
   }
 
-  .preview-monto {
-    font-size: 3rem;
-    font-weight: 800;
-    color: #dc2626;
-    margin-bottom: 20px;
-  }
-
-  .preview-details {
-    background: linear-gradient(135deg, #fef3f2 0%, #fff 100%);
+  .preview-image-container {
+    width: 200px;
+    height: 200px;
     border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
   }
 
-  .detail-item {
+  .preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .no-image-preview {
+    width: 100%;
+    height: 100%;
     display: flex;
-    justify-content: space-between;
-    padding: 12px 0;
-    border-bottom: 1px solid #f3f4f6;
-  }
-
-  .detail-item:last-child {
-    border-bottom: none;
-  }
-
-  .detail-label {
-    font-weight: 600;
-    color: #6b7280;
-    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    color: #9ca3af;
   }
 
-  .detail-label i {
-    color: #dc2626;
-  }
-
-  .detail-value {
-    font-weight: 700;
-    color: #1f2937;
-  }
-
-  .status-badge {
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-  }
-
-  .status-pendiente {
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-    color: #854d0e;
-  }
-
-  .status-pagada {
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-    color: #065f46;
-  }
-
-  .status-vencida {
-    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
-    color: #991b1b;
-  }
-
-  .preview-motivo {
-    background: #f9fafb;
-    border-radius: 12px;
-    padding: 20px;
-    text-align: left;
-  }
-
-  .preview-motivo h4 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #6b7280;
+  .no-image-preview i {
+    font-size: 3rem;
     margin-bottom: 10px;
   }
 
-  .preview-motivo p {
+  .no-image-preview p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .preview-details h3 {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #1f2937;
+    margin: 0 0 15px 0;
+    line-height: 1.4;
+  }
+
+  .preview-details p {
     color: #4b5563;
     line-height: 1.7;
-    margin: 0;
+    margin-bottom: 20px;
+  }
+
+  .preview-meta {
+    display: flex;
+    gap: 20px;
+    padding-top: 15px;
+    border-top: 2px solid #f3f4f6;
+    font-size: 0.9rem;
+    color: #6b7280;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .meta-item i {
+    color: #dc2626;
   }
 
   /* Sección de advertencia */
@@ -357,8 +343,13 @@
       padding: 20px;
     }
 
-    .preview-monto {
-      font-size: 2.5rem;
+    .object-preview-content {
+      grid-template-columns: 1fr;
+    }
+
+    .preview-image-container {
+      width: 100%;
+      margin: 0 auto;
     }
 
     .form-actions {
@@ -381,9 +372,9 @@
       <i class="bi bi-house-door"></i> Inicio
     </a>
     <i class="bi bi-chevron-right"></i>
-    <a href="{% url 'lista_multas' %}">Multas</a>
+    <a href="{% url 'lista_objetos_perdidos' %}">Objetos Perdidos</a>
     <i class="bi bi-chevron-right"></i>
-    <span class="current">Eliminar Multa</span>
+    <span class="current">Eliminar Objeto</span>
   </div>
 
   <!-- Alerta de Peligro -->
@@ -392,60 +383,43 @@
       <i class="bi bi-exclamation-triangle-fill"></i>
     </div>
     <h2>¡Acción Irreversible!</h2>
-    <p>Estás a punto de eliminar esta multa permanentemente</p>
+    <p>Estás a punto de eliminar este objeto reportado permanentemente</p>
   </div>
 
-  <!-- Vista previa de la multa -->
+  <!-- Vista previa del objeto -->
   <div class="preview-card">
     <div class="preview-label">
-      <i class="bi bi-cash-x"></i>
-      Multa a eliminar
+      <i class="bi bi-bag-x"></i>
+      Objeto a eliminar
     </div>
     
-    <div class="multa-preview-content">
-      <div class="preview-monto">Q{{ object.monto }}</div>
+    <div class="object-preview-content">
+      <div class="preview-image-container">
+        {% if object.imagen %}
+          <img src="{{ object.imagen.url }}" alt="{{ object.titulo }}" class="preview-image">
+        {% else %}
+          <div class="no-image-preview">
+            <i class="bi bi-image"></i>
+            <p>Sin imagen</p>
+          </div>
+        {% endif %}
+      </div>
       
       <div class="preview-details">
-        <div class="detail-item">
-          <span class="detail-label">
-            <i class="bi bi-hash"></i>
-            ID
-          </span>
-          <span class="detail-value">#{{ object.id }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">
+        <h3>{{ object.titulo }}</h3>
+        <p>{{ object.descripcion|truncatewords:50 }}</p>
+        
+        <div class="preview-meta">
+          <span class="meta-item">
             <i class="bi bi-person-circle"></i>
-            Vecino
+            {{ object.usuario.username }}
           </span>
-          <span class="detail-value">{{ object.vecino.username }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">
-            <i class="bi bi-calendar-fill"></i>
-            Fecha
-          </span>
-          <span class="detail-value">{{ object.fecha|date:"d/m/Y" }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">
-            <i class="bi bi-flag-fill"></i>
-            Estado
-          </span>
-          <span class="detail-value">
-            <span class="status-badge status-{{ object.estado|lower }}">
-              {{ object.estado }}
-            </span>
+          <span class="meta-item">
+            <i class="bi bi-calendar3"></i>
+            {{ object.fecha|date:"d/m/Y" }}
           </span>
         </div>
       </div>
-
-      {% if object.motivo %}
-      <div class="preview-motivo">
-        <h4>Motivo:</h4>
-        <p>{{ object.motivo }}</p>
-      </div>
-      {% endif %}
     </div>
   </div>
 
@@ -462,15 +436,15 @@
       </li>
       <li>
         <i class="bi bi-x-circle-fill"></i>
-        La multa se eliminará permanentemente de la base de datos
+        El reporte del objeto se eliminará permanentemente de la base de datos
       </li>
       <li>
         <i class="bi bi-x-circle-fill"></i>
-        Se perderá todo el historial de pagos asociado
+        La imagen y toda la información asociada se perderán
       </li>
       <li>
         <i class="bi bi-x-circle-fill"></i>
-        El vecino ya no verá esta multa en su historial
+        Otras personas no podrán ver este reporte nuevamente
       </li>
     </ul>
   </div>
@@ -483,7 +457,7 @@
     <form method="post" id="deleteForm">
       {% csrf_token %}
       <div class="form-actions">
-        <a href="{% url 'lista_multas' %}" class="btn-cancel">
+        <a href="{% url 'lista_objetos_perdidos' %}" class="btn-cancel">
           <i class="bi bi-arrow-left-circle"></i>
           No, Regresar
         </a>
@@ -496,5 +470,5 @@
   </div>
 </div>
 
-<script src="{% static 'js/multas/delete.js' %}"></script>
+<script src="{% static 'js/objetos-perdidos/delete.js' %}"></script>
 {% endblock %}
