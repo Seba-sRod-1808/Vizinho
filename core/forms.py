@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from .models import (
-    Reporte, PerfilUsuario, Publicacion, Multa, ObjetoPerdido, Usuario
+    Reporte, PerfilUsuario, Publicacion, Multa, ObjetoPerdido, Usuario, Comentario
 )
 
 # ========================
@@ -160,10 +160,11 @@ class ProfileForm(forms.ModelForm):
 class PublicacionForm(forms.ModelForm):
     class Meta:
         model = Publicacion
-        fields = ["_titulo", "_contenido"]
+        fields = ["_titulo", "_contenido", "_imagen"]
         labels = {
             "_titulo": "Título de la publicación",
-            "_contenido": "Contenido"
+            "_contenido": "Contenido",
+            "_imagen": "Imagen (opcional)"
         }
         widgets = {
             "_titulo": forms.TextInput(attrs={
@@ -174,6 +175,10 @@ class PublicacionForm(forms.ModelForm):
                 'class': 'form-control',
                 'rows': 5,
                 'placeholder': 'Escribe tu mensaje para la comunidad...'
+            }),
+            "_imagen": forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
             })
         }
     
@@ -471,3 +476,87 @@ class CrearUsuarioForm(forms.ModelForm):
             user.save()
         
         return user
+    
+
+class ComentarioForm(forms.ModelForm):
+    """
+    Formulario para crear/editar comentarios.
+    Funciona tanto para Reportes como para Publicaciones.
+    """
+    
+    class Meta:
+        model = Comentario
+        fields = ["_contenido"]
+        labels = {
+            "_contenido": "Comentario"
+        }
+        widgets = {
+            "_contenido": forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Escribe tu comentario aquí...'
+            })
+        }
+    
+    def clean__contenido(self):
+        """Valida el contenido del comentario."""
+        contenido = self.cleaned_data["_contenido"]
+        
+        if not contenido or contenido.strip() == "":
+            raise ValidationError("El comentario no puede estar vacío")
+        
+        contenido = contenido.strip()
+        
+        if len(contenido) < 3:
+            raise ValidationError("El comentario debe tener al menos 3 caracteres")
+        
+        if len(contenido) > 500:
+            raise ValidationError("El comentario no puede exceder 500 caracteres")
+        
+        return contenido
+
+
+# ========================
+# FORMULARIO DE RESOLUCIÓN DE REPORTE
+# ========================
+
+class ResolverReporteForm(forms.Form):
+    ACCIONES = [
+        ('resolver', 'Marcar como Resuelto'),
+        ('rechazar', 'Rechazar Reporte'),
+        ('comentar', 'Solo Agregar Comentario'),
+    ]
+    
+    accion = forms.ChoiceField(
+        choices=ACCIONES,
+        label="Acción",
+        widget=forms.RadioSelect(attrs={'class': 'form-check-input'}),
+        initial='resolver'
+    )
+    
+    comentario = forms.CharField(
+        label="Comentario / Motivo",
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 4,
+            'placeholder': 'Explica la resolución o motivo del rechazo...'
+        }),
+        required=False
+    )
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        accion = cleaned_data.get('accion')
+        comentario = cleaned_data.get('comentario', '').strip()
+        
+        if accion == 'rechazar' and not comentario:
+            raise ValidationError({
+                'comentario': 'Debes proporcionar un motivo para rechazar el reporte'
+            })
+        
+        if accion == 'comentar' and not comentario:
+            raise ValidationError({
+                'comentario': 'Debes escribir un comentario'
+            })
+        
+        return cleaned_data

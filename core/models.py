@@ -137,6 +137,12 @@ class Publicacion(models.Model):
     _contenido = models.TextField()
     _fecha = models.DateTimeField(auto_now_add=True)
     _vecino = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="publicaciones")
+    _imagen = models.ImageField(
+        upload_to="publicaciones/",
+        null=True,
+        blank=True,
+        verbose_name='Imagen de la publicación'
+    )
     
     class Meta:
         ordering = ['-_fecha']
@@ -158,6 +164,13 @@ class Publicacion(models.Model):
     def vecino(self):
         return self._vecino
     
+    @property
+    def imagen(self):
+        return self._imagen
+    
+    def ultimos_comentarios(self, limit=5):
+        return self.comentarios.order_by('-_fecha')[:limit]
+    
     def puede_editar_usuario(self, usuario):
         return usuario.es_administrador()
     
@@ -174,6 +187,7 @@ class Reporte(models.Model):
         ("Recibido", "Recibido"),
         ("EnProceso", "En proceso"),
         ("Resuelto", "Resuelto"),
+        ("Rechazado", "Rechazado"),
     ]
 
     _titulo = models.CharField(max_length=200)
@@ -184,6 +198,27 @@ class Reporte(models.Model):
     _vecino = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="reportes")
 
     objects = ReporteManager()
+
+    _comentario_admin = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name='Comentario del administrador'
+    )
+
+    _fecha_resolucion = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name='Fecha de resolución'
+    )
+
+    _resuelto_por = models.ForeignKey(
+        Usuario,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='reportes_resueltos',
+        verbose_name='Resuelto por'
+    )
 
     # ===== PROPERTIES =====
     
@@ -211,6 +246,10 @@ class Reporte(models.Model):
     def vecino(self):
         return self._vecino
 
+    @property
+    def comentario_admin(self):
+        return self._comentario_admin
+
     # ===== MÉTODOS DE TRANSICIÓN DE ESTADO =====
     
     def marcar_en_proceso(self):
@@ -224,7 +263,45 @@ class Reporte(models.Model):
             raise ValidationError("Este reporte ya está resuelto")
         self._estado = "Resuelto"
         self.save()
-    
+
+    def marcar_resuelto(self, admin_usuario, comentario=None):
+
+        if not admin_usuario.es_administrador():
+            raise ValidationError("Solo administradores pueden resolver reportes")
+        
+        if self._estado == "Resuelto":
+            raise ValidationError("Este reporte ya está resuelto")
+        
+        self._estado = "Resuelto"
+        self._fecha_resolucion = timezone.now()
+        self._resuelto_por = admin_usuario
+        if comentario:
+            self._comentario_admin = comentario
+        self.save()
+
+    def rechazar(self, admin_usuario, motivo):
+        if not admin_usuario.es_administrador():
+            raise ValidationError("Solo administradores pueden rechazar reportes")
+        
+        if not motivo or motivo.strip() == "":
+            raise ValidationError("Debes proporcionar un motivo para rechazar")
+        
+        self._estado = "Rechazado"
+        self._fecha_resolucion = timezone.now()
+        self._resuelto_por = admin_usuario
+        self._comentario_admin = motivo
+        self.save()
+
+    def agregar_comentario_admin(self, admin_usuario, comentario):
+        if not admin_usuario.es_administrador():
+            raise ValidationError("Solo administradores pueden comentar")
+        
+        self._comentario_admin = comentario
+        self.save()
+
+    def total_comentarios(self):
+        return self.comentarios.count()
+        
     def puede_editar_usuario(self, usuario):
         return self._vecino == usuario or usuario.es_administrador()
 
@@ -499,3 +576,148 @@ class DashboardService:
             "total_multas_pendientes": Multa.objects.total_pendiente_usuario(usuario),
             "ultimas_publicaciones": Publicacion.objects.all()[:5],
         }
+
+# ========================
+# SISTEMA DE COMENTARIOS
+# ========================
+
+class Comentario(models.Model):
+    """
+    Modelo genérico de comentarios para Reportes y Publicaciones.
+    
+    Usa composición para relacionarse con diferentes modelos.
+    Patrón: Composition over Inheritance
+    
+    NUEVO: Sistema de comentarios flexible
+    """
+    
+    # Relaciones opcionales (uno y solo uno debe estar presente)
+    _reporte = models.ForeignKey(
+        'Reporte',
+        on_delete=models.CASCADE,
+        related_name='comentarios',
+        null=True,
+        blank=True,
+        verbose_name='Reporte relacionado'
+    )
+    
+    _publicacion = models.ForeignKey(
+        'Publicacion',
+        on_delete=models.CASCADE,
+        related_name='comentarios',
+        null=True,
+        blank=True,
+        verbose_name='Publicación relacionada'
+    )
+    
+    # Datos del comentario
+    _contenido = models.TextField(verbose_name='Contenido del comentario')
+    _autor = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name='comentarios',
+        verbose_name='Autor'
+    )
+    _fecha = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de creación')
+    _editado = models.BooleanField(default=False, verbose_name='¿Fue editado?')
+    _fecha_edicion = models.DateTimeField(null=True, blank=True, verbose_name='Fecha de edición')
+    
+    class Meta:
+        ordering = ['_fecha']
+        verbose_name = 'Comentario'
+        verbose_name_plural = 'Comentarios'
+    
+    # ===== PROPERTIES =====
+    
+    @property
+    def contenido(self):
+        return self._contenido
+    
+    @property
+    def autor(self):
+        return self._autor
+    
+    @property
+    def fecha(self):
+        return self._fecha
+    
+    @property
+    def editado(self):
+        return self._editado
+    
+    @property
+    def reporte(self):
+        return self._reporte
+    
+    @property
+    def publicacion(self):
+        return self._publicacion
+    
+    def editar_contenido(self, nuevo_contenido, usuario):
+        if not self.puede_editar(usuario):
+            raise ValidationError("No tienes permisos para editar este comentario")
+        
+        self._contenido = nuevo_contenido
+        self._editado = True
+        self._fecha_edicion = timezone.now()
+        self.save()
+    
+    def puede_editar(self, usuario):
+
+        return self._autor == usuario or usuario.es_administrador()
+    
+    def puede_eliminar(self, usuario):
+        return self._autor == usuario or usuario.es_administrador()
+    
+    def get_objeto_relacionado(self):
+        if self._reporte:
+            return self._reporte
+        elif self._publicacion:
+            return self._publicacion
+        return None
+    
+    def get_tipo_objeto(self):
+        if self._reporte:
+            return 'reporte'
+        elif self._publicacion:
+            return 'publicacion'
+        return None
+    
+    def clean(self):
+        relaciones_activas = sum([
+            bool(self._reporte),
+            bool(self._publicacion)
+        ])
+        
+        if relaciones_activas == 0:
+            raise ValidationError("El comentario debe estar relacionado con un Reporte o Publicación")
+        
+        if relaciones_activas > 1:
+            raise ValidationError("El comentario solo puede estar relacionado con UN objeto")
+    
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        objeto = self.get_objeto_relacionado()
+        tipo = self.get_tipo_objeto()
+        return f"Comentario de {self._autor.username} en {tipo} ({objeto})"
+
+# ========================
+# MANAGER DE COMENTARIOS
+# ========================
+
+class ComentarioManager(models.Manager):
+    
+    def de_reporte(self, reporte):
+        return self.filter(_reporte=reporte)
+    
+    def de_publicacion(self, publicacion):
+        return self.filter(_publicacion=publicacion)
+    
+    def del_usuario(self, usuario):
+        return self.filter(_autor=usuario)
+    
+    def recientes(self, limit=10):
+        return self.order_by('-_fecha')[:limit]

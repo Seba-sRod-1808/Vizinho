@@ -1,539 +1,205 @@
 {% extends "base.html" %}
 {% block title %}Panel de Vecinos{% endblock %}
-{% block extra_head %}
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-  <style>
-    body { 
-      background: linear-gradient(135deg, #fff5eb 0%, #fffaf5 100%);
-      color: #333; 
-      min-height: 100vh;
-    }
-    
-    /* Animaciones */
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    @keyframes pulse {
-      0%, 100% {
-        box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
-      }
-      50% {
-        box-shadow: 0 12px 30px rgba(220, 38, 38, 0.6);
-      }
-    }
-    
-    .fade-in {
-      animation: fadeInUp 0.6s ease-out;
-    }
-    
-    /* Header con Botón de Pánico */
-    .header-section {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-    
-    /* Botón de Pánico DESTACADO */
-    .panic-button {
-      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-      border: none;
-      padding: 18px 35px;
-      border-radius: 50px;
-      font-weight: 700;
-      font-size: 1.15rem;
-      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      animation: pulse 2s infinite;
-      letter-spacing: 0.5px;
-    }
-    
-    .panic-button:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 15px 35px rgba(220, 38, 38, 0.7);
-      background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
-    }
-    
-    .panic-button i {
-      font-size: 1.3rem;
-      margin-right: 8px;
-    }
-    
-    /* Título Principal */
-    h2.page-title {
-      font-weight: 800;
-      font-size: 2.2rem;
-      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin: 0;
-    }
-    
-    /* Grid de Contenido Principal */
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 25px;
-      margin-bottom: 30px;
-    }
-    
-    /* Contenedor de Publicaciones y Objetos */
-    .content-container { 
-      background: white;
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      transition: all 0.3s ease;
-      height: fit-content;
-    }
-    
-    .content-container:hover {
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    }
-    
-    .content-container h4 { 
-      font-weight: 700;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 1.3rem;
-    }
-    
-    .content-container h4 i {
-      font-size: 1.4rem;
-    }
-    
-    .content-container.publications h4 {
-      color: #e63946;
-    }
-    
-    .content-container.objects h4 {
-      color: #6b7280;
-    }
-    
-    /* Items compactos */
-    .content-item {
-      border: none;
-      border-radius: 12px;
-      padding: 15px;
-      background: linear-gradient(135deg, #fef3f2 0%, #fff 100%);
-      transition: all 0.3s ease;
-      margin-bottom: 12px;
-    }
-    
-    .content-item.publication {
-      border-left: 4px solid #f97316;
-    }
-    
-    .content-item.publication:hover {
-      background: linear-gradient(135deg, #fed7d7 0%, #fef3f2 100%);
-      transform: translateX(5px);
-      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.15);
-      border-left-color: #ea580c;
-    }
-    
-    .content-item.object {
-      border-left: 4px solid #6b7280;
-      display: grid;
-      grid-template-columns: 70px 1fr;
-      gap: 12px;
-      align-items: start;
-    }
-    
-    .content-item.object:hover {
-      background: linear-gradient(135deg, #f3f4f6 0%, #fff 100%);
-      transform: translateX(5px);
-      box-shadow: 0 4px 15px rgba(107, 114, 128, 0.15);
-      border-left-color: #4b5563;
-    }
-    
-    .content-item h5 {
-      color: #1f2937;
-      font-weight: 700;
-      font-size: 1rem;
-      margin-bottom: 8px;
-    }
-    
-    .content-item p {
-      color: #4b5563;
-      line-height: 1.5;
-      margin-bottom: 8px;
-      font-size: 0.9rem;
-    }
-    
-    .content-item small {
-      color: #6b7280;
-      font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    
-    .content-item small i {
-      color: #9ca3af;
-      font-size: 0.85rem;
-    }
-    
-    /* Imagen de objetos perdidos */
-    .object-thumbnail {
-      width: 70px;
-      height: 70px;
-      border-radius: 10px;
-      object-fit: cover;
-    }
-    
-    .no-image-thumb {
-      width: 70px;
-      height: 70px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #9ca3af;
-      font-size: 2rem;
-    }
-    
-    /* Botones Ver Todas/Todos */
-    .btn-view-all {
-      display: inline-block;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      margin-top: 10px;
-    }
-    
-    .btn-view-all.publications {
-      background: #fef3f2;
-      color: #e63946;
-      border: 2px solid #fed7d7;
-    }
-    
-    .btn-view-all.publications:hover {
-      background: #e63946;
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
-    }
-    
-    .btn-view-all.objects {
-      background: #f3f4f6;
-      color: #6b7280;
-      border: 2px solid #e5e7eb;
-    }
-    
-    .btn-view-all.objects:hover {
-      background: #6b7280;
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
-    }
-    
-    /* Estado vacío */
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      background: linear-gradient(135deg, #fef3f2 0%, #fff 100%);
-      border-radius: 14px;
-      border: 2px dashed #fed7d7;
-    }
-    
-    .empty-state i {
-      font-size: 3rem;
-      color: #f97316;
-      margin-bottom: 15px;
-      opacity: 0.5;
-    }
-    
-    .empty-state p {
-      color: #6b7280;
-      margin: 0;
-      font-size: 0.9rem;
-    }
-    
-    /* Tarjetas de Funciones Destacadas */
-    .feature-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 25px;
-      margin-top: 30px;
-    }
-    
-    .feature-card {
-      background: white;
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-      border-top: 5px solid;
-    }
-    
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-      transition: left 0.5s ease;
-    }
-    
-    .feature-card:hover::before {
-      left: 100%;
-    }
-    
-    .feature-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-    }
-    
-    .feature-card-orange {
-      border-top-color: #f97316;
-    }
-    
-    .feature-card-red {
-      border-top-color: #dc2626;
-    }
-    
-    .feature-card-yellow {
-      border-top-color: #facc15;
-    }
-    
-    .feature-card-icon {
-      width: 70px;
-      height: 70px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      margin-bottom: 20px;
-      transition: all 0.3s ease;
-    }
-    
-    .feature-card:hover .feature-card-icon {
-      transform: scale(1.1) rotate(5deg);
-    }
-    
-    .feature-card-orange .feature-card-icon {
-      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-      color: white;
-    }
-    
-    .feature-card-red .feature-card-icon {
-      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-      color: white;
-    }
-    
-    .feature-card-yellow .feature-card-icon {
-      background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
-      color: #333;
-    }
-    
-    .feature-card h5 {
-      font-weight: 700;
-      font-size: 1.3rem;
-      margin-bottom: 12px;
-      color: #1f2937;
-    }
-    
-    .feature-card p {
-      color: #6b7280;
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
-    
-    /* Botones */
-    .btn-primary-custom {
-      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-      color: white;
-      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
-      padding: 12px 24px;
-      border-radius: 12px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      border: none;
-      text-decoration: none;
-      display: inline-block;
-    }
-    
-    .btn-primary-custom:hover {
-      background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(249, 115, 22, 0.4);
-      color: white;
-    }
-    
-    /* Responsive */
-    @media (max-width: 992px) {
-      .main-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-    
-    @media (max-width: 768px) {
-      .header-section {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      
-      .panic-button {
-        width: 100%;
-        text-align: center;
-      }
-      
-      h2.page-title {
-        font-size: 1.8rem;
-        text-align: center;
-      }
-      
-      .feature-cards {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
-{% endblock %}
+
 {% block content %}
-<div class="row">
-  <div class="col-12 p-4">
-    <!-- Header con título y botón de pánico -->
-    <div class="header-section fade-in">
-      <h2 class="page-title">👋 Bienvenido al Panel de Vecinos</h2>
-      <form method="post" action="{% url 'activar_panico' %}">
-        {% csrf_token %}
-        <button type="submit" class="panic-button">
-          <i class="bi bi-shield-exclamation"></i> Botón de Pánico
-        </button>
-      </form>
+<div class="dashboard-container">
+  <!-- Header del Dashboard -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="mb-1">¡Hola, {{ user.username }}! 👋</h1>
+      <p class="text-muted mb-0">Bienvenido a tu panel de vecino</p>
     </div>
-    
-    <!-- Grid Principal: Publicaciones + Objetos Perdidos -->
-    <div class="main-grid fade-in">
-      <!-- Publicaciones -->
-      <div class="content-container publications">
-        <h4>
-          <i class="bi bi-chat-left-text-fill"></i> Últimas Publicaciones
-        </h4>
-        
-        {% if ultimas_publicaciones %}
-          {% for p in ultimas_publicaciones %}
-            <div class="content-item publication">
-              <h5>{{ p.titulo }}</h5>
-              <p>{{ p.contenido|truncatewords:15 }}</p>
-              <small>
-                <i class="bi bi-person-circle"></i> {{ p.vecino.username }} •
-                <i class="bi bi-clock"></i> {{ p.fecha|date:"d/m/Y" }}
-              </small>
-            </div>
-          {% endfor %}
-          
-          <a href="{% url 'lista_publicaciones' %}" class="btn-view-all publications">
-            <i class="bi bi-arrow-right-circle"></i> Ver Todas las Publicaciones
-          </a>
-        {% else %}
-          <div class="empty-state">
-            <i class="bi bi-chat-dots"></i>
-            <p><strong>No hay publicaciones todavía</strong></p>
-            <p>¡Sé el primero en compartir algo con la comunidad!</p>
-          </div>
-        {% endif %}
+    <form method="post" action="{% url 'activar_panico' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger btn-lg">
+        <i class="bi bi-shield-exclamation"></i>
+        Botón de Pánico
+      </button>
+    </form>
+  </div>
+
+  <!-- Estadísticas Rápidas -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-3 col-sm-6">
+      <div class="card stat-card stat-card-primary">
+        <i class="bi bi-file-earmark-text"></i>
+        <h5>Mis Reportes</h5>
+        <h2>{{ mis_reportes }}</h2>
+        <small>{{ reportes_pendientes }} pendientes</small>
       </div>
-      
-      <!-- Objetos Perdidos -->
-      <div class="content-container objects">
-        <h4>
-          <i class="bi bi-bag-fill"></i> Objetos Perdidos
-        </h4>
-        
-        {% if ultimos_objetos %}
-          {% for obj in ultimos_objetos %}
-            <div class="content-item object">
-              {% if obj.imagen %}
-                <img src="{{ obj.imagen.url }}" alt="{{ obj.titulo }}" class="object-thumbnail">
-              {% else %}
-                <div class="no-image-thumb">
-                  <i class="bi bi-image"></i>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+      <div class="card stat-card stat-card-secondary">
+        <i class="bi bi-cash-coin"></i>
+        <h5>Multas</h5>
+        <h2>{{ mis_multas }}</h2>
+        <small>{{ multas_pendientes }} pendientes</small>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+      <div class="card stat-card stat-card-info">
+        <i class="bi bi-currency-dollar"></i>
+        <h5>Total Pendiente</h5>
+        <h2>Q{{ total_multas_pendientes|floatformat:2 }}</h2>
+        <small>Por pagar</small>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+      <div class="card stat-card stat-card-danger">
+        <i class="bi bi-people"></i>
+        <h5>Comunidad</h5>
+        <h2>{{ ultimas_publicaciones|length }}</h2>
+        <small>Publicaciones recientes</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acciones Rápidas -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h4 class="mb-3">
+        <i class="bi bi-lightning-charge-fill text-primary"></i>
+        Acciones Rápidas
+      </h4>
+      <div class="row g-3">
+        <div class="col-md-4 col-sm-6">
+          <a href="{% url 'crear_reporte' %}" class="btn btn-outline-primary w-100">
+            <i class="bi bi-plus-circle"></i> Crear Reporte
+          </a>
+        </div>
+        <div class="col-md-4 col-sm-6">
+          <a href="{% url 'crear_publicacion' %}" class="btn btn-outline-primary w-100">
+            <i class="bi bi-chat-dots"></i> Nueva Publicación
+          </a>
+        </div>
+        <div class="col-md-4 col-sm-6">
+          <a href="{% url 'crear_objeto_perdido' %}" class="btn btn-outline-primary w-100">
+            <i class="bi bi-bag-plus"></i> Reportar Objeto Perdido
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Últimas Publicaciones -->
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">
+              <i class="bi bi-chat-left-dots-fill text-primary"></i>
+              Últimas Publicaciones
+            </h4>
+            <a href="{% url 'lista_publicaciones' %}" class="btn btn-sm btn-outline-primary">
+              Ver todas <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+
+          {% if ultimas_publicaciones %}
+            <div class="list-group list-group-flush">
+              {% for pub in ultimas_publicaciones %}
+                <div class="list-group-item px-0 border-0 border-bottom py-3">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1 fw-semibold">{{ pub.titulo }}</h6>
+                      <p class="mb-2 text-muted" style="font-size: 0.9rem;">
+                        {{ pub.contenido|truncatewords:20 }}
+                      </p>
+                      <small class="text-muted">
+                        <i class="bi bi-person-circle"></i> {{ pub.vecino.username }} •
+                        <i class="bi bi-clock"></i> {{ pub.fecha|date:"d/m/Y H:i" }}
+                      </small>
+                    </div>
+                  </div>
                 </div>
-              {% endif %}
-              <div>
-                <h5>{{ obj.titulo }}</h5>
-                <p>{{ obj.descripcion|truncatewords:12 }}</p>
-                <small>
-                  <i class="bi bi-person-circle"></i> {{ obj.usuario.username }} •
-                  <i class="bi bi-calendar3"></i> {{ obj.fecha|date:"d/m/Y" }}
-                </small>
-              </div>
+              {% endfor %}
             </div>
-          {% endfor %}
-          
-          <a href="{% url 'lista_objetos_perdidos' %}" class="btn-view-all objects">
-            <i class="bi bi-arrow-right-circle"></i> Ver Todos los Objetos
-          </a>
-        {% else %}
-          <div class="empty-state">
-            <i class="bi bi-bag-x"></i>
-            <p><strong>No hay objetos reportados</strong></p>
-            <p>Reporta objetos perdidos o encontrados</p>
-          </div>
-        {% endif %}
+          {% else %}
+            <div class="text-center py-5">
+              <i class="bi bi-chat-left-text text-muted" style="font-size: 3rem;"></i>
+              <p class="text-muted mt-3 mb-0">No hay publicaciones todavía</p>
+              <small class="text-muted">Sé el primero en compartir algo con la comunidad</small>
+            </div>
+          {% endif %}
+        </div>
       </div>
     </div>
-    
-    <!-- Tarjetas de Funciones Destacadas -->
-    <div class="feature-cards fade-in" style="animation-delay: 0.2s">
-      <div class="feature-card feature-card-orange">
-        <div class="feature-card-icon">
-          <i class="bi bi-megaphone-fill"></i>
+
+    <!-- Panel lateral de enlaces rápidos -->
+    <div class="col-lg-4">
+      <!-- Enlaces Rápidos -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="mb-3">
+            <i class="bi bi-link-45deg text-primary"></i>
+            Enlaces Rápidos
+          </h5>
+          <div class="d-grid gap-2">
+            <a href="{% url 'lista_reportes' %}" class="btn btn-sm btn-outline-secondary text-start">
+              <i class="bi bi-exclamation-triangle"></i> Ver Mis Reportes
+            </a>
+            <a href="{% url 'lista_multas' %}" class="btn btn-sm btn-outline-secondary text-start">
+              <i class="bi bi-cash-coin"></i> Ver Mis Multas
+            </a>
+            <a href="{% url 'lista_objetos_perdidos' %}" class="btn btn-sm btn-outline-secondary text-start">
+              <i class="bi bi-bag"></i> Objetos Perdidos
+            </a>
+            <a href="{% url 'ver_perfil' %}" class="btn btn-sm btn-outline-secondary text-start">
+              <i class="bi bi-person-circle"></i> Mi Perfil
+            </a>
+          </div>
         </div>
-        <h5>Mantente Informado</h5>
-        <p>Recibe actualizaciones importantes de tu comunidad en tiempo real.</p>
-        <a href="{% url 'lista_publicaciones' %}" class="btn-primary-custom w-100">
-          Ver Publicaciones
-        </a>
       </div>
-      
-      <div class="feature-card feature-card-red">
-        <div class="feature-card-icon">
-          <i class="bi bi-shield-check"></i>
+
+      <!-- Información de la Cuenta -->
+      <div class="card">
+        <div class="card-body">
+          <h5 class="mb-3">
+            <i class="bi bi-info-circle text-primary"></i>
+            Tu Cuenta
+          </h5>
+          <div class="mb-2">
+            <small class="text-muted">Usuario</small>
+            <p class="mb-0 fw-semibold">{{ user.username }}</p>
+          </div>
+          <div class="mb-2">
+            <small class="text-muted">Email</small>
+            <p class="mb-0 fw-semibold">{{ user.email }}</p>
+          </div>
+          {% if user.telefono %}
+          <div class="mb-2">
+            <small class="text-muted">Teléfono</small>
+            <p class="mb-0 fw-semibold">{{ user.telefono }}</p>
+          </div>
+          {% endif %}
+          <div class="mt-3">
+            <a href="{% url 'editar_perfil' %}" class="btn btn-sm btn-primary w-100">
+              <i class="bi bi-pencil"></i> Editar Perfil
+            </a>
+          </div>
         </div>
-        <h5>Seguridad 24/7</h5>
-        <p>Reporta incidentes y mantén tu colonia segura para todos.</p>
-        <a href="{% url 'lista_reportes' %}" class="btn-primary-custom w-100">
-          Crear Reporte
-        </a>
-      </div>
-      
-      <div class="feature-card feature-card-yellow">
-        <div class="feature-card-icon">
-          <i class="bi bi-people-fill"></i>
-        </div>
-        <h5>Comunidad Unida</h5>
-        <p>Conecta con tus vecinos y construye una mejor comunidad.</p>
-        <a href="{% url 'lista_objetos_perdidos' %}" class="btn-primary-custom w-100">
-          Explorar
-        </a>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+  .dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .list-group-item:last-child {
+    border-bottom: none !important;
+  }
+
+  .list-group-item:hover {
+    background-color: var(--bg-main);
+    transition: all 0.2s ease;
+  }
+</style>
 {% endblock %}

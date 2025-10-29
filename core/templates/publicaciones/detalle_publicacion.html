@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ publicacion.titulo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+          <i class="bi bi-chat-left-text text-primary"></i>
+          Publicación
+        </h2>
+        <a href="{% url 'lista_publicaciones' %}" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left"></i> Volver
+        </a>
+      </div>
+
+      <!-- Card principal de la publicación -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <!-- Header de la publicación -->
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="flex-grow-1">
+              <h3 class="mb-2">{{ publicacion.titulo }}</h3>
+              <div class="d-flex align-items-center gap-3">
+                <small class="text-muted">
+                  <i class="bi bi-person-circle"></i> {{ publicacion.vecino.username }}
+                </small>
+                <small class="text-muted">
+                  <i class="bi bi-clock"></i> {{ publicacion.fecha|date:"d/m/Y H:i" }}
+                </small>
+                <small class="text-muted">
+                  <i class="bi bi-chat-dots"></i> {{ comentarios.count }} comentarios
+                </small>
+              </div>
+            </div>
+            
+            <!-- Botones de acción (solo admin) -->
+            {% if user.es_administrador %}
+            <div class="d-flex gap-2">
+              <a href="{% url 'editar_publicacion' publicacion.id %}" class="btn btn-warning btn-sm">
+                <i class="bi bi-pencil"></i>
+              </a>
+              <a href="{% url 'eliminar_publicacion' publicacion.id %}" class="btn btn-danger btn-sm">
+                <i class="bi bi-trash"></i>
+              </a>
+            </div>
+            {% endif %}
+          </div>
+
+          <hr>
+
+          <!-- Contenido -->
+          <div class="mb-3">
+            <p style="white-space: pre-wrap; font-size: 1.05rem; line-height: 1.7;">{{ publicacion.contenido }}</p>
+          </div>
+
+          <!-- Imagen si existe -->
+          {% if publicacion.imagen %}
+          <div class="mt-4">
+            <img 
+              src="{{ publicacion.imagen.url }}" 
+              alt="{{ publicacion.titulo }}" 
+              class="img-fluid rounded shadow-sm" 
+              style="max-width: 100%; max-height: 600px; object-fit: contain;"
+            >
+          </div>
+          {% endif %}
+
+          <!-- Estadísticas rápidas -->
+          <div class="mt-4 d-flex gap-4">
+            <div>
+              <i class="bi bi-chat-dots text-primary"></i>
+              <strong>{{ comentarios.count }}</strong> comentarios
+            </div>
+            <div>
+              <i class="bi bi-clock text-muted"></i>
+              Publicado hace {{ publicacion.fecha|timesince }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección de comentarios -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="bi bi-chat-left-dots-fill text-primary"></i>
+            Comentarios
+          </h5>
+        </div>
+        <div class="card-body">
+          <!-- Formulario para agregar comentario -->
+          <div class="mb-4">
+            <form method="post" action="{% url 'agregar_comentario' 'publicacion' publicacion.id %}">
+              {% csrf_token %}
+              <div class="d-flex gap-2 align-items-start">
+                <div class="flex-grow-1">
+                  <textarea 
+                    name="_contenido" 
+                    class="form-control" 
+                    rows="3" 
+                    placeholder="Escribe tu comentario..."
+                    required
+                  ></textarea>
+                </div>
+              </div>
+              <div class="mt-2">
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <i class="bi bi-send"></i> Publicar
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <hr>
+
+          <!-- Lista de comentarios -->
+          {% if comentarios %}
+            <div class="comentarios-list">
+              {% for comentario in comentarios %}
+                <div class="comentario-item p-3 mb-3 border rounded">
+                  <!-- Header del comentario -->
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="user-avatar">
+                        <i class="bi bi-person-circle text-primary" style="font-size: 2rem;"></i>
+                      </div>
+                      <div>
+                        <strong class="d-block">{{ comentario.autor.username }}</strong>
+                        <small class="text-muted">
+                          {{ comentario.fecha|date:"d/m/Y H:i" }}
+                          {% if comentario.editado %}
+                            • <span class="badge bg-secondary">Editado</span>
+                          {% endif %}
+                        </small>
+                      </div>
+                    </div>
+                    
+                    <!-- Botones de acción -->
+                    {% if user == comentario.autor or user.es_administrador %}
+                      <div class="dropdown">
+                        <button 
+                          class="btn btn-sm btn-link text-muted" 
+                          type="button" 
+                          data-bs-toggle="dropdown"
+                        >
+                          <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                          <li>
+                            <button 
+                              class="dropdown-item" 
+                              onclick="editarComentario({{ comentario.id }}, '{{ comentario.contenido|escapejs }}')"
+                            >
+                              <i class="bi bi-pencil"></i> Editar
+                            </button>
+                          </li>
+                          <li>
+                            <form method="post" action="{% url 'eliminar_comentario' comentario.id %}" style="display: inline;">
+                              {% csrf_token %}
+                              <button 
+                                type="submit" 
+                                class="dropdown-item text-danger"
+                                onclick="return confirm('¿Eliminar este comentario?')"
+                              >
+                                <i class="bi bi-trash"></i> Eliminar
+                              </button>
+                            </form>
+                          </li>
+                        </ul>
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <!-- Contenido del comentario -->
+                  <p class="mb-0 ms-5" style="white-space: pre-wrap;">{{ comentario.contenido }}</p>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="text-center py-5 text-muted">
+              <i class="bi bi-chat-left-text" style="font-size: 3rem; opacity: 0.3;"></i>
+              <p class="mt-3 mb-0">No hay comentarios todavía</p>
+              <small>Sé el primero en comentar esta publicación</small>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar comentario -->
+<div class="modal fade" id="editarComentarioModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Comentario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="post" id="formEditarComentario">
+        {% csrf_token %}
+        <div class="modal-body">
+          <textarea 
+            name="contenido" 
+            id="nuevoContenido" 
+            class="form-control" 
+            rows="4"
+            required
+          ></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-lg"></i> Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function editarComentario(id, contenidoActual) {
+  document.getElementById('nuevoContenido').value = contenidoActual;
+  document.getElementById('formEditarComentario').action = '/comentarios/' + id + '/editar/';
+  new bootstrap.Modal(document.getElementById('editarComentarioModal')).show();
+}
+</script>
+
+<style>
+.comentario-item {
+  transition: all 0.2s ease;
+  background: var(--bg-card);
+}
+
+.comentario-item:hover {
+  background: var(--bg-main);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
+{% endblock %}

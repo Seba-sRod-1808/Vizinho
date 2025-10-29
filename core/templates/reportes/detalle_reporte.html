@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Reporte: {{ reporte.titulo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <!-- Header con botón de volver -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+          <i class="bi bi-file-earmark-text text-primary"></i>
+          Detalle del Reporte
+        </h2>
+        <a href="{% url 'lista_reportes' %}" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left"></i> Volver
+        </a>
+      </div>
+
+      <!-- Card principal del reporte -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <!-- Estado del reporte -->
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <h3 class="mb-2">{{ reporte.titulo }}</h3>
+              <small class="text-muted">
+                <i class="bi bi-person-circle"></i> {{ reporte.vecino.username }} •
+                <i class="bi bi-clock"></i> {{ reporte.fecha|date:"d/m/Y H:i" }}
+              </small>
+            </div>
+            {% if reporte.estado == "Recibido" %}
+              <span class="badge bg-info" style="font-size: 1rem;">{{ reporte.get_estado_display }}</span>
+            {% elif reporte.estado == "EnProceso" %}
+              <span class="badge bg-warning" style="font-size: 1rem;">{{ reporte.get_estado_display }}</span>
+            {% elif reporte.estado == "Resuelto" %}
+              <span class="badge bg-success" style="font-size: 1rem;">{{ reporte.get_estado_display }}</span>
+            {% elif reporte.estado == "Rechazado" %}
+              <span class="badge bg-danger" style="font-size: 1rem;">{{ reporte.get_estado_display }}</span>
+            {% endif %}
+          </div>
+
+          <hr>
+
+          <!-- Descripción -->
+          <div class="mb-3">
+            <h5><i class="bi bi-card-text text-primary"></i> Descripción</h5>
+            <p class="text-muted mb-0" style="white-space: pre-wrap;">{{ reporte.descripcion }}</p>
+          </div>
+
+          <!-- Ubicación -->
+          <div class="mb-3">
+            <h5><i class="bi bi-geo-alt text-primary"></i> Ubicación</h5>
+            <p class="text-muted mb-0">{{ reporte.ubicacion }}</p>
+          </div>
+
+          <!-- Imagen si existe -->
+          {% if reporte.imagen %}
+          <div class="mb-3">
+            <h5><i class="bi bi-image text-primary"></i> Fotografía</h5>
+            <img src="{{ reporte.imagen.url }}" alt="{{ reporte.titulo }}" class="img-fluid rounded" style="max-width: 100%; max-height: 500px; object-fit: contain;">
+          </div>
+          {% endif %}
+
+          <!-- Comentario del administrador si existe -->
+          {% if reporte.comentario_admin %}
+          <div class="alert alert-info mt-3">
+            <h6><i class="bi bi-shield-fill-check"></i> Comentario del Administrador</h6>
+            <p class="mb-0">{{ reporte.comentario_admin }}</p>
+            {% if reporte.resuelto_por %}
+              <small class="text-muted d-block mt-2">
+                Por: {{ reporte.resuelto_por.username }} • 
+                {{ reporte.fecha_resolucion|date:"d/m/Y H:i" }}
+              </small>
+            {% endif %}
+          </div>
+          {% endif %}
+
+          <!-- Botones de acción -->
+          <div class="mt-4 d-flex gap-2">
+            {% if user == reporte.vecino or user.es_administrador %}
+              <a href="{% url 'editar_reporte' reporte.id %}" class="btn btn-warning btn-sm">
+                <i class="bi bi-pencil"></i> Editar
+              </a>
+            {% endif %}
+            
+            {% if user == reporte.vecino or user.es_administrador %}
+              <a href="{% url 'eliminar_reporte' reporte.id %}" class="btn btn-danger btn-sm">
+                <i class="bi bi-trash"></i> Eliminar
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel de resolución (solo admin) -->
+      {% if user.es_administrador and reporte.estado != "Resuelto" and reporte.estado != "Rechazado" %}
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-gear-fill"></i>
+            Acciones de Administrador
+          </h5>
+        </div>
+        <div class="card-body">
+          <form method="post" action="{% url 'resolver_reporte' reporte.id %}">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+              <label class="form-label fw-bold">Selecciona una acción:</label>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="accion" id="resolver" value="resolver" checked>
+                <label class="form-check-label" for="resolver">
+                  <i class="bi bi-check-circle text-success"></i> Marcar como Resuelto
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="accion" id="rechazar" value="rechazar">
+                <label class="form-check-label" for="rechazar">
+                  <i class="bi bi-x-circle text-danger"></i> Rechazar Reporte
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="accion" id="comentar" value="comentar">
+                <label class="form-check-label" for="comentar">
+                  <i class="bi bi-chat-dots text-info"></i> Solo Agregar Comentario
+                </label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="comentario" class="form-label fw-bold">Comentario / Motivo:</label>
+              <textarea 
+                name="comentario" 
+                id="comentario" 
+                class="form-control" 
+                rows="4" 
+                placeholder="Explica la resolución o motivo del rechazo..."
+              ></textarea>
+              <small class="text-muted">* Obligatorio si rechazas el reporte</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-lg"></i> Ejecutar Acción
+            </button>
+          </form>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Sección de comentarios -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="bi bi-chat-left-dots-fill text-primary"></i>
+            Comentarios ({{ comentarios.count }})
+          </h5>
+        </div>
+        <div class="card-body">
+          <!-- Formulario para agregar comentario -->
+          <form method="post" action="{% url 'agregar_comentario' 'reporte' reporte.id %}" class="mb-4">
+            {% csrf_token %}
+            <div class="mb-3">
+              <textarea 
+                name="_contenido" 
+                class="form-control" 
+                rows="3" 
+                placeholder="Escribe tu comentario aquí..."
+                required
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">
+              <i class="bi bi-send"></i> Publicar Comentario
+            </button>
+          </form>
+
+          <hr>
+
+          <!-- Lista de comentarios -->
+          {% if comentarios %}
+            <div class="comentarios-list">
+              {% for comentario in comentarios %}
+                <div class="comentario-item mb-3 p-3 border rounded">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                      <strong>{{ comentario.autor.username }}</strong>
+                      {% if comentario.editado %}
+                        <span class="badge bg-secondary">Editado</span>
+                      {% endif %}
+                    </div>
+                    <small class="text-muted">
+                      {{ comentario.fecha|date:"d/m/Y H:i" }}
+                    </small>
+                  </div>
+                  
+                  <p class="mb-2" style="white-space: pre-wrap;">{{ comentario.contenido }}</p>
+
+                  <!-- Botones de acción en comentarios -->
+                  {% if user == comentario.autor or user.es_administrador %}
+                    <div class="d-flex gap-2">
+                      <!-- Botón editar con modal simple -->
+                      <button 
+                        class="btn btn-sm btn-outline-warning" 
+                        onclick="editarComentario({{ comentario.id }}, '{{ comentario.contenido|escapejs }}')"
+                      >
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      
+                      <!-- Formulario eliminar -->
+                      <form method="post" action="{% url 'eliminar_comentario' comentario.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button 
+                          type="submit" 
+                          class="btn btn-sm btn-outline-danger"
+                          onclick="return confirm('¿Seguro que quieres eliminar este comentario?')"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </form>
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-chat-left-text" style="font-size: 3rem;"></i>
+              <p class="mt-2 mb-0">No hay comentarios todavía</p>
+              <small>Sé el primero en comentar</small>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar comentario -->
+<div class="modal fade" id="editarComentarioModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Comentario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="post" id="formEditarComentario">
+        {% csrf_token %}
+        <div class="modal-body">
+          <textarea 
+            name="contenido" 
+            id="nuevoContenido" 
+            class="form-control" 
+            rows="4"
+            required
+          ></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function editarComentario(id, contenidoActual) {
+  document.getElementById('nuevoContenido').value = contenidoActual;
+  document.getElementById('formEditarComentario').action = '/comentarios/' + id + '/editar/';
+  new bootstrap.Modal(document.getElementById('editarComentarioModal')).show();
+}
+</script>
+
+<style>
+.comentario-item {
+  transition: all 0.2s ease;
+  background: var(--bg-card);
+}
+
+.comentario-item:hover {
+  background: var(--bg-main);
+  transform: translateX(4px);
+}
+</style>
+{% endblock %}

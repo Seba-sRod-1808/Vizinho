@@ -2,9 +2,9 @@ from django.urls import path
 from .views import (
     DashboardView,
     # Reportes
-    ReporteListView, ReporteCreateView, ReporteUpdateView, ReporteDeleteView,
+    ReporteListView, ReporteCreateView, ReporteUpdateView, ReporteDeleteView, ReporteDetailView, ResolverReporteView,
     # Publicaciones
-    PublicacionListView, PublicacionCreateView, PublicacionUpdateView, PublicacionDeleteView,
+    PublicacionListView, PublicacionCreateView, PublicacionUpdateView, PublicacionDeleteView, PublicacionDetailView,
     # Multas
     MultaListView, MultaCreateView, MultaUpdateView, MultaDeleteView, PagarMultaView,
     # Auth
@@ -19,6 +19,8 @@ from .views import (
     ListaObjetosPerdidosView, CrearObjetoPerdidoView, 
     #creacion de usuarios por admin
     CrearUsuarioView,
+    # Comentarios
+    EliminarComentarioView, AgregarComentarioView, EditarComentarioView
 )
 
 urlpatterns = [
@@ -31,12 +33,15 @@ urlpatterns = [
     path("reportes/nuevo/", ReporteCreateView.as_view(), name="crear_reporte"),
     path("reportes/<int:pk>/editar/", ReporteUpdateView.as_view(), name="editar_reporte"),
     path("reportes/<int:pk>/eliminar/", ReporteDeleteView.as_view(), name="eliminar_reporte"),
+    path('reportes/<int:pk>/', ReporteDetailView.as_view(), name='detalle_reporte'),
+    path('reportes/<int:pk>/resolver/', ResolverReporteView.as_view(), name='resolver_reporte'),
 
     # Publicaciones
     path("publicaciones/", PublicacionListView.as_view(), name="lista_publicaciones"),
     path("publicaciones/nueva/", PublicacionCreateView.as_view(), name="crear_publicacion"),
     path("publicaciones/<int:pk>/editar/", PublicacionUpdateView.as_view(), name="editar_publicacion"),
     path("publicaciones/<int:pk>/eliminar/", PublicacionDeleteView.as_view(), name="eliminar_publicacion"),
+    path('publicaciones/<int:pk>/', PublicacionDetailView.as_view(), name='detalle_publicacion'),
 
     # Multas
     path("multas/", MultaListView.as_view(), name="lista_multas"),
@@ -62,4 +67,17 @@ urlpatterns = [
 
     #Creacion de usuarios por admin
     path("administrador/crear-usuario/", CrearUsuarioView.as_view(), name="crear_usuario"),
+
+    # Comentarios
+    path('comentarios/agregar/<str:tipo>/<int:objeto_id>/', 
+         AgregarComentarioView.as_view(), 
+         name='agregar_comentario'),
+    
+    path('comentarios/<int:pk>/editar/', 
+         EditarComentarioView.as_view(), 
+         name='editar_comentario'),
+    
+    path('comentarios/<int:pk>/eliminar/', 
+         EliminarComentarioView.as_view(), 
+         name='eliminar_comentario'),
 ]

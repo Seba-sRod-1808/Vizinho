@@ -14,11 +14,13 @@ from django.views.generic import (
 # Local imports
 from .models import (
     Reporte, PerfilUsuario, Publicacion, Multa, 
-    BotonPanico, ObjetoPerdido, Usuario, DashboardService
+    BotonPanico, ObjetoPerdido, Usuario, DashboardService,
+    Comentario
 )
 from .forms import (
     LoginForm, ReporteForm, ProfileForm, PublicacionForm, 
-    MultaForm, ObjetoPerdidoForm, CrearUsuarioForm
+    MultaForm, ObjetoPerdidoForm, CrearUsuarioForm, ComentarioForm,
+    ResolverReporteForm
 )
 
 
@@ -301,6 +303,14 @@ class PublicacionCreateView(LoginRequiredMixin, CreateView):
         form.instance._vecino = self.request.user
         messages.success(self.request, "Publicación creada exitosamente")
         return super().form_valid(form)
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if self.request.method in ('POST', 'PUT'):
+            kwargs.update({
+                'files': self.request.FILES
+            })
+        return kwargs
 
 class PublicacionUpdateView(LoginRequiredMixin, SoloAdminMixin, UpdateView):
     model = Publicacion
@@ -311,6 +321,14 @@ class PublicacionUpdateView(LoginRequiredMixin, SoloAdminMixin, UpdateView):
     def form_valid(self, form):
         messages.success(self.request, "Publicación actualizada exitosamente")
         return super().form_valid(form)
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if self.request.method in ('POST', 'PUT'):
+            kwargs.update({
+                'files': self.request.FILES
+            })
+        return kwargs
 
 class PublicacionDeleteView(LoginRequiredMixin, SoloAdminMixin, DeleteView):
     model = Publicacion
@@ -452,3 +470,165 @@ class CrearUsuarioView(LoginRequiredMixin, SoloAdminMixin, CreateView):
             "Error al crear usuario. Por favor verifica los datos ingresados."
         )
         return super().form_invalid(form)
+    
+
+class AgregarComentarioView(LoginRequiredMixin, View):
+    def post(self, request, tipo, objeto_id):
+        form = ComentarioForm(request.POST)
+        
+        if form.is_valid():
+            comentario = form.save(commit=False)
+            comentario._autor = request.user
+            
+            # Asignar relación según el tipo
+            if tipo == 'reporte':
+                reporte = get_object_or_404(Reporte, pk=objeto_id)
+                comentario._reporte = reporte
+                redirect_url = 'detalle_reporte'
+            elif tipo == 'publicacion':
+                publicacion = get_object_or_404(Publicacion, pk=objeto_id)
+                comentario._publicacion = publicacion
+                redirect_url = 'detalle_publicacion'
+            else:
+                messages.error(request, "❌ Tipo de objeto inválido")
+                return redirect('dashboard')
+            
+            try:
+                comentario.save()
+                messages.success(request, "✅ Comentario agregado exitosamente")
+            except ValidationError as e:
+                messages.error(request, f"❌ {str(e)}")
+            
+            return redirect(redirect_url, pk=objeto_id)
+        
+        messages.error(request, "❌ Error en el formulario. Verifica los datos.")
+        return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
+
+
+class EditarComentarioView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        comentario = get_object_or_404(Comentario, pk=pk)
+        
+        # Verificar permisos
+        if not comentario.puede_editar(request.user):
+            messages.error(request, "❌ No tienes permisos para editar este comentario")
+            return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
+        
+        nuevo_contenido = request.POST.get('contenido', '').strip()
+        
+        if not nuevo_contenido:
+            messages.error(request, "❌ El comentario no puede estar vacío")
+            return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
+        
+        try:
+            comentario.editar_contenido(nuevo_contenido, request.user)
+            messages.success(request, "✅ Comentario actualizado")
+        except ValidationError as e:
+            messages.error(request, f"❌ {str(e)}")
+        
+        return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
+
+
+class EliminarComentarioView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        comentario = get_object_or_404(Comentario, pk=pk)
+        
+        if not comentario.puede_eliminar(request.user):
+            messages.error(request, "❌ No tienes permisos para eliminar este comentario")
+            return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
+        
+        tipo = comentario.get_tipo_objeto()
+        objeto = comentario.get_objeto_relacionado()
+        
+        comentario.delete()
+        messages.success(request, "✅ Comentario eliminado")
+        
+        # Redirigir al objeto original
+        if tipo == 'reporte':
+            return redirect('detalle_reporte', pk=objeto.id)
+        elif tipo == 'publicacion':
+            return redirect('detalle_publicacion', pk=objeto.id)
+        
+        return redirect('dashboard')
+
+
+# ========================
+# VISTAS DE REPORTES ACTUALIZADAS
+# ========================
+
+class ReporteDetailView(LoginRequiredMixin, DetailView):
+    model = Reporte
+    template_name = "reportes/detalle_reporte.html"
+    context_object_name = "reporte"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comentarios'] = self.object.comentarios.all()
+        context['form_comentario'] = ComentarioForm()
+        
+        # Si es admin, agregar formulario de resolución
+        if self.request.user.es_administrador():
+            context['form_resolver'] = ResolverReporteForm()
+        
+        return context
+
+
+class ResolverReporteView(LoginRequiredMixin, SoloAdminMixin, View):
+    def post(self, request, pk):
+        reporte = get_object_or_404(Reporte, pk=pk)
+        form = ResolverReporteForm(request.POST)
+        
+        if form.is_valid():
+            accion = form.cleaned_data['accion']
+            comentario = form.cleaned_data.get('comentario', '').strip()
+            
+            try:
+                if accion == 'resolver':
+                    reporte.marcar_resuelto(request.user, comentario)
+                    messages.success(
+                        request,
+                        f"✅ Reporte marcado como resuelto"
+                    )
+                
+                elif accion == 'rechazar':
+                    reporte.rechazar(request.user, comentario)
+                    messages.success(
+                        request,
+                        f"✅ Reporte rechazado"
+                    )
+                
+                elif accion == 'comentar':
+                    reporte.agregar_comentario_admin(request.user, comentario)
+                    messages.success(
+                        request,
+                        f"✅ Comentario agregado al reporte"
+                    )
+            
+            except ValidationError as e:
+                messages.error(request, f"❌ {str(e)}")
+        else:
+            messages.error(request, "❌ Error en el formulario")
+        
+        return redirect('detalle_reporte', pk=pk)
+    
+
+# ========================
+# VISTAS DE PUBLICACIONES ACTUALIZADAS
+# ========================
+
+class PublicacionDetailView(LoginRequiredMixin, DetailView):
+    """
+    Vista detallada de una publicación con comentarios.
+    ✅ NUEVA VISTA
+    """
+    
+    model = Publicacion
+    template_name = "publicaciones/detalle_publicacion.html"
+    context_object_name = "publicacion"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comentarios'] = self.object.comentarios.all()
+        context['form_comentario'] = ComentarioForm()
+        return context
+
