@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Eliminar Reporte{% endblock %}
+{% block title %}Eliminar Objeto Perdido{% endblock %}
 {% block extra_head %}
 <style>
   .delete-wrapper {
@@ -102,25 +102,65 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
   }
 
   .preview-label i {
     color: #dc2626;
   }
 
-  .preview-card h3 {
+  .object-preview-content {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 25px;
+    align-items: start;
+  }
+
+  .preview-image-container {
+    width: 200px;
+    height: 200px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  }
+
+  .preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .no-image-preview {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+  }
+
+  .no-image-preview i {
+    font-size: 3rem;
+    margin-bottom: 10px;
+  }
+
+  .no-image-preview p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .preview-details h3 {
     font-weight: 700;
     font-size: 1.5rem;
     color: #1f2937;
-    margin-bottom: 15px;
+    margin: 0 0 15px 0;
     line-height: 1.4;
   }
 
-  .preview-card p {
+  .preview-details p {
     color: #4b5563;
     line-height: 1.7;
-    font-size: 1rem;
     margin-bottom: 20px;
   }
 
@@ -142,18 +182,6 @@
 
   .meta-item i {
     color: #dc2626;
-  }
-
-  .status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
-    color: #9a3412;
   }
 
   /* Sección de advertencia */
@@ -315,6 +343,15 @@
       padding: 20px;
     }
 
+    .object-preview-content {
+      grid-template-columns: 1fr;
+    }
+
+    .preview-image-container {
+      width: 100%;
+      margin: 0 auto;
+    }
+
     .form-actions {
       flex-direction: column-reverse;
     }
@@ -335,9 +372,9 @@
       <i class="bi bi-house-door"></i> Inicio
     </a>
     <i class="bi bi-chevron-right"></i>
-    <a href="{% url 'lista_reportes' %}">Reportes</a>
+    <a href="{% url 'lista_objetos_perdidos' %}">Objetos Perdidos</a>
     <i class="bi bi-chevron-right"></i>
-    <span class="current">Eliminar Reporte</span>
+    <span class="current">Eliminar Objeto</span>
   </div>
 
   <!-- Alerta de Peligro -->
@@ -346,34 +383,43 @@
       <i class="bi bi-exclamation-triangle-fill"></i>
     </div>
     <h2>¡Acción Irreversible!</h2>
-    <p>Estás a punto de eliminar este reporte permanentemente</p>
+    <p>Estás a punto de eliminar este objeto reportado permanentemente</p>
   </div>
 
-  <!-- Vista previa del reporte -->
+  <!-- Vista previa del objeto -->
   <div class="preview-card">
     <div class="preview-label">
-      <i class="bi bi-file-text"></i>
-      Reporte a eliminar
+      <i class="bi bi-bag-x"></i>
+      Objeto a eliminar
     </div>
-    <h3>{{ object.titulo }}</h3>
-    <p>{{ object.descripcion|truncatewords:50 }}</p>
-    <div class="preview-meta">
-      <span class="meta-item">
-        <i class="bi bi-geo-alt-fill"></i>
-        {{ object.ubicacion }}
-      </span>
-      <span class="meta-item">
-        <i class="bi bi-calendar-fill"></i>
-        {{ object.fecha|date:"d/m/Y" }}
-      </span>
-      <span class="meta-item">
-        <i class="bi bi-clock-fill"></i>
-        {{ object.fecha|date:"H:i" }}
-      </span>
-      <span class="status-badge">
-        <i class="bi bi-info-circle-fill"></i>
-        {{ object.estado }}
-      </span>
+    
+    <div class="object-preview-content">
+      <div class="preview-image-container">
+        {% if object.imagen %}
+          <img src="{{ object.imagen.url }}" alt="{{ object.titulo }}" class="preview-image">
+        {% else %}
+          <div class="no-image-preview">
+            <i class="bi bi-image"></i>
+            <p>Sin imagen</p>
+          </div>
+        {% endif %}
+      </div>
+      
+      <div class="preview-details">
+        <h3>{{ object.titulo }}</h3>
+        <p>{{ object.descripcion|truncatewords:50 }}</p>
+        
+        <div class="preview-meta">
+          <span class="meta-item">
+            <i class="bi bi-person-circle"></i>
+            {{ object.usuario.username }}
+          </span>
+          <span class="meta-item">
+            <i class="bi bi-calendar3"></i>
+            {{ object.fecha|date:"d/m/Y" }}
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -390,11 +436,15 @@
       </li>
       <li>
         <i class="bi bi-x-circle-fill"></i>
-        El reporte se eliminará permanentemente de la base de datos
+        El reporte del objeto se eliminará permanentemente de la base de datos
       </li>
       <li>
         <i class="bi bi-x-circle-fill"></i>
-        Se perderá todo el historial y seguimiento del incidente
+        La imagen y toda la información asociada se perderán
+      </li>
+      <li>
+        <i class="bi bi-x-circle-fill"></i>
+        Otras personas no podrán ver este reporte nuevamente
       </li>
     </ul>
   </div>
@@ -407,7 +457,7 @@
     <form method="post" id="deleteForm">
       {% csrf_token %}
       <div class="form-actions">
-        <a href="{% url 'lista_reportes' %}" class="btn-cancel">
+        <a href="{% url 'lista_objetos_perdidos' %}" class="btn-cancel">
           <i class="bi bi-arrow-left-circle"></i>
           No, Regresar
         </a>
@@ -420,5 +470,5 @@
   </div>
 </div>
 
-<script src="{% static 'js/reportes/delete.js' %}"></script>
+<script src="{% static 'js/objetos-perdidos/delete.js' %}"></script>
 {% endblock %}

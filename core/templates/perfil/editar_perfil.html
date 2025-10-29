@@ -1,14 +1,512 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Editar Perfil{% endblock %}
+{% block extra_head %}
+<style>
+  .form-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .breadcrumb-custom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+  }
+
+  .breadcrumb-custom a {
+    color: #6b7280;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .breadcrumb-custom a:hover {
+    color: #f97316;
+  }
+
+  .breadcrumb-custom i {
+    color: #9ca3af;
+    font-size: 0.8rem;
+  }
+
+  .breadcrumb-custom .current {
+    color: #f97316;
+    font-weight: 600;
+  }
+
+  .page-header {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .page-header h2 {
+    font-weight: 800;
+    font-size: 2rem;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .page-header p {
+    color: #6b7280;
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .form-container {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .form-group {
+    margin-bottom: 30px;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #1f2937;
+    margin-bottom: 10px;
+  }
+
+  .form-group label i {
+    color: #f97316;
+    margin-right: 8px;
+    font-size: 1.1rem;
+  }
+
+  .form-help-text {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .form-help-text i {
+    color: #9ca3af;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f9fafb;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: #f97316;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+  }
+
+  .form-control:hover {
+    border-color: #fca5a5;
+  }
+
+  textarea.form-control {
+    min-height: 150px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.6;
+  }
+
+  /* Sección de foto */
+  .photo-upload-section {
+    background: linear-gradient(135deg, #fef3f2 0%, #fff 100%);
+    border: 2px dashed #fed7d7;
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .current-photo-container {
+    margin-bottom: 20px;
+  }
+
+  .current-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .no-photo-placeholder {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: #f97316;
+    border: 5px solid white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .upload-label {
+    display: inline-block;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+  }
+
+  .upload-label:hover {
+    background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+  }
+
+  .upload-label i {
+    margin-right: 8px;
+  }
+
+  #id__foto {
+    display: none;
+  }
+
+  .file-name {
+    margin-top: 10px;
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+
+  .char-counter {
+    text-align: right;
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 8px;
+  }
+
+  .char-counter.warning {
+    color: #f97316;
+    font-weight: 600;
+  }
+
+  .char-counter.danger {
+    color: #dc2626;
+    font-weight: 600;
+  }
+
+  .error-message {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-left: 4px solid #dc2626;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: #991b1b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .error-message i {
+    color: #dc2626;
+    font-size: 1.1rem;
+  }
+
+  .tips-section {
+    background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
+    border-left: 4px solid #facc15;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+
+  .tips-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #854d0e;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .tips-header i {
+    font-size: 1.3rem;
+  }
+
+  .tips-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .tips-list li {
+    color: #854d0e;
+    padding: 8px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.95rem;
+  }
+
+  .tips-list li i {
+    color: #facc15;
+    margin-top: 3px;
+    font-size: 0.9rem;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 15px;
+    padding-top: 30px;
+    border-top: 2px solid #f3f4f6;
+    margin-top: 30px;
+  }
+
+  .btn-submit {
+    flex: 1;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .btn-submit:hover {
+    background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+    color: white;
+  }
+
+  .btn-submit i {
+    font-size: 1.2rem;
+  }
+
+  .btn-cancel {
+    background: white;
+    color: #6b7280;
+    border: 2px solid #e5e7eb;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .btn-cancel:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #1f2937;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in {
+    animation: fadeInUp 0.5s ease-out;
+  }
+
+  @media (max-width: 768px) {
+    .form-container {
+      padding: 25px;
+    }
+
+    .page-header h2 {
+      font-size: 1.6rem;
+    }
+
+    .form-actions {
+      flex-direction: column;
+    }
+
+    .btn-submit,
+    .btn-cancel {
+      width: 100%;
+    }
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2>Editar Perfil</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-success">Guardar Cambios</button>
-    <a href="{% url 'ver_perfil' %}" class="btn btn-secondary">Cancelar</a>
-  </form>
+<div class="form-wrapper fade-in">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-custom">
+    <a href="{% url 'dashboard' %}">
+      <i class="bi bi-house-door"></i> Inicio
+    </a>
+    <i class="bi bi-chevron-right"></i>
+    <a href="{% url 'ver_perfil' %}">Mi Perfil</a>
+    <i class="bi bi-chevron-right"></i>
+    <span class="current">Editar Perfil</span>
+  </div>
+
+  <!-- Header -->
+  <div class="page-header">
+    <h2>
+      <i class="bi bi-person-gear"></i>
+      Editar Mi Perfil
+    </h2>
+    <p>Actualiza tu información personal y foto de perfil</p>
+  </div>
+
+  <!-- Tips -->
+  <div class="tips-section">
+    <div class="tips-header">
+      <i class="bi bi-lightbulb-fill"></i>
+      Consejos para tu perfil
+    </div>
+    <ul class="tips-list">
+      <li>
+        <i class="bi bi-check-circle-fill"></i>
+        Usa una foto de perfil clara y profesional
+      </li>
+      <li>
+        <i class="bi bi-check-circle-fill"></i>
+        Escribe una biografía breve que te describa
+      </li>
+      <li>
+        <i class="bi bi-check-circle-fill"></i>
+        Mantén tu información actualizada
+      </li>
+    </ul>
+  </div>
+
+  <!-- Formulario -->
+  <div class="form-container">
+    <form method="post" enctype="multipart/form-data" id="profileForm">
+      {% csrf_token %}
+      
+      {% if form.non_field_errors %}
+        <div class="error-message">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+<!-- Sección de foto -->
+<div class="photo-upload-section">
+  <div class="current-photo-container">
+    {% if form.instance.foto %}
+      <img src="{{ form.instance.foto.url }}" alt="Foto actual" class="current-photo" id="photoPreview">
+    {% else %}
+      <div class="no-photo-placeholder" id="photoPreview">
+        <i class="bi bi-person-fill"></i>
+      </div>
+    {% endif %}
+  </div>
+  
+  <label for="id__foto" class="upload-label">
+    <i class="bi bi-camera-fill"></i>
+    <span id="uploadText">Cambiar Foto de Perfil</span>
+  </label>
+  
+  {% for field in form %}
+    {% if field.name == "_foto" %}
+      {{ field }}
+      {% if field.errors %}
+        <div class="error-message" style="margin-top: 15px; display: inline-flex;">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          {{ field.errors.0 }}
+        </div>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+  
+  <div class="file-name" id="fileName"></div>
+  
+  <div class="form-help-text" style="justify-content: center; margin-top: 15px;">
+    <i class="bi bi-info-circle"></i>
+    Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB
+  </div>
 </div>
+
+<!-- Campo Bio -->
+<div class="form-group">
+  <label for="id__bio" class="custom-label">
+    <i class="bi bi-card-text"></i>
+    Biografía
+  </label>
+  
+  {% for field in form %}
+    {% if field.name == "_bio" %}
+      {{ field }}
+      {% if field.errors %}
+        <div class="error-message">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          {{ field.errors.0 }}
+        </div>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+  
+  <div class="char-counter" id="charCounter">
+    <span id="charCount">0</span> / 500 caracteres
+  </div>
+  <div class="form-help-text">
+    <i class="bi bi-info-circle"></i>
+    Cuéntanos un poco sobre ti. Esta información será visible para otros usuarios.
+  </div>
+</div>
+
+      <!-- Botones de acción -->
+      <div class="form-actions">
+        <button type="submit" class="btn-submit">
+          <i class="bi bi-check-circle-fill"></i>
+          Guardar Cambios
+        </button>
+        <a href="{% url 'ver_perfil' %}" class="btn-cancel">
+          <i class="bi bi-x-circle"></i>
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="{% static 'js/perfil/edit.js' %}"></script>
 {% endblock %}

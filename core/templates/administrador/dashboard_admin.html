@@ -1,73 +1,482 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Panel de Administrador{% endblock %}
-
-{% block content %}
-<div class="container mt-4">
-  <h2 class="fw-bold text-primary mb-4">Panel de Administración</h2>
-
-  <div class="row g-4">
-    <div class="col-md-3">
-      <div class="card shadow-sm border-0 bg-light">
-        <div class="card-body text-center">
-          <h5 class="text-secondary">Reportes Pendientes</h5>
-          <h2 class="fw-bold text-danger">{{ reportes_pendientes }}</h2>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card shadow-sm border-0 bg-light">
-        <div class="card-body text-center">
-          <h5 class="text-secondary">Multas Pendientes</h5>
-          <h2 class="fw-bold text-warning">{{ multas_pendientes }}</h2>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card shadow-sm border-0 bg-light">
-        <div class="card-body text-center">
-          <h5 class="text-secondary">Alertas Activas</h5>
-          <h2 class="fw-bold text-danger">{{ alertas_activas }}</h2>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="mt-4">
-    <a href="{% url 'crear_usuario' %}" class="btn btn-outline-success">
-      ➕ Crear nuevo usuario
-    </a>
-  </div>
-
-
-  <hr class="my-4">
-
-  <h4 class="text-primary mb-3">Últimas Publicaciones</h4>
-  <ul class="list-group">
-    {% for pub in publicaciones_recientes %}
-      <li class="list-group-item">
-        <strong>{{ pub.titulo }}</strong> - {{ pub.fecha|date:"d/m/Y H:i" }}
-      </li>
-    {% empty %}
-      <li class="list-group-item text-muted">No hay publicaciones recientes.</li>
-    {% endfor %}
-  </ul>
-
-  <div class="mt-4">
-    <a href="{% url 'lista_reportes' %}" class="btn btn-outline-primary me-2">Ver todos los reportes</a>
-    <a href="{% url 'lista_multas' %}" class="btn btn-outline-warning me-2">Ver todas las multas</a>
-    <a href="{% url 'lista_publicaciones' %}" class="btn btn-outline-secondary">Ver publicaciones</a>
-  </div>
-</div>
-{% endblock %}
-
 {% block extra_head %}
 <style>
-  body { background-color: #f4f6f8; color: #333; }
-  .card { border-radius: 10px; border: none; }
-  .card-body h2 { font-size: 2rem; }
-  .btn-outline-primary, .btn-outline-warning, .btn-outline-secondary {
-    border-width: 2px;
+  .admin-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
   }
-  h2, h4 { color: #1e40af; }
+
+  body {
+    background: linear-gradient(135deg, #fff5eb 0%, #fffaf5 100%);
+  }
+
+  /* Header del admin */
+  .admin-header {
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 30px rgba(220, 38, 38, 0.3);
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .admin-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+
+  .admin-header-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .admin-header h2 {
+    margin: 0 0 10px 0;
+    font-weight: 800;
+    font-size: 2.2rem;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .admin-header p {
+    margin: 0;
+    opacity: 0.95;
+    font-size: 1.1rem;
+  }
+
+  .admin-badge {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 15px;
+  }
+
+  /* Estadísticas */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+  }
+
+  .stat-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+  }
+
+  .stat-card-danger::before {
+    background: linear-gradient(90deg, #dc2626 0%, #991b1b 100%);
+  }
+
+  .stat-card-warning::before {
+    background: linear-gradient(90deg, #facc15 0%, #eab308 100%);
+  }
+
+  .stat-card-info::before {
+    background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+  }
+
+  .stat-card-success::before {
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  }
+
+  .stat-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .stat-info h5 {
+    margin: 0 0 10px 0;
+    color: #6b7280;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .stat-number {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #1f2937;
+    line-height: 1;
+  }
+
+  .stat-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+  }
+
+  .stat-icon-danger {
+    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+    color: #dc2626;
+  }
+
+  .stat-icon-warning {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #d97706;
+  }
+
+  .stat-icon-info {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #3b82f6;
+  }
+
+  .stat-icon-success {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #059669;
+  }
+
+  /* Acciones rápidas */
+  .quick-actions {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+  }
+
+  .quick-actions h4 {
+    margin: 0 0 20px 0;
+    font-weight: 700;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+  }
+
+  .action-btn i {
+    font-size: 1.2rem;
+  }
+
+  .action-btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+  }
+
+  .action-btn-primary:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    color: white;
+  }
+
+  .action-btn-warning {
+    background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+    color: #333;
+  }
+
+  .action-btn-warning:hover {
+    background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(250, 204, 21, 0.3);
+    color: #333;
+  }
+
+  .action-btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+  }
+
+  .action-btn-success:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    color: white;
+  }
+
+  .action-btn-secondary {
+    background: #f3f4f6;
+    color: #6b7280;
+    border: 2px solid #e5e7eb;
+  }
+
+  .action-btn-secondary:hover {
+    background: #e5e7eb;
+    color: #1f2937;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Últimas publicaciones */
+  .recent-section {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .recent-section h4 {
+    margin: 0 0 20px 0;
+    font-weight: 700;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .recent-item {
+    padding: 15px;
+    border-radius: 12px;
+    background: #f9fafb;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    border-left: 3px solid #f97316;
+  }
+
+  .recent-item:hover {
+    background: #fef3f2;
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .recent-item-content {
+    flex: 1;
+  }
+
+  .recent-item-title {
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 5px;
+  }
+
+  .recent-item-meta {
+    font-size: 0.85rem;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #9ca3af;
+  }
+
+  .empty-state i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.5;
+  }
+
+  /* Animaciones */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in {
+    animation: fadeInUp 0.5s ease-out;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .admin-header h2 {
+      font-size: 1.8rem;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+    }
+
+    .actions-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-wrapper fade-in">
+  <!-- Header del Admin -->
+  <div class="admin-header">
+    <div class="admin-header-content">
+      <h2>
+        <i class="bi bi-shield-fill-check"></i>
+        Panel de Administración
+      </h2>
+      <p>Gestiona y supervisa toda la actividad de la comunidad</p>
+      <span class="admin-badge">
+        <i class="bi bi-person-badge-fill"></i>
+        Administrador
+      </span>
+    </div>
+  </div>
+
+  <!-- Estadísticas -->
+  <div class="stats-grid">
+    <div class="stat-card stat-card-danger">
+      <div class="stat-content">
+        <div class="stat-info">
+          <h5>Reportes Pendientes</h5>
+          <div class="stat-number">{{ reportes_pendientes }}</div>
+        </div>
+        <div class="stat-icon stat-icon-danger">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-warning">
+      <div class="stat-content">
+        <div class="stat-info">
+          <h5>Multas Pendientes</h5>
+          <div class="stat-number">{{ multas_pendientes }}</div>
+        </div>
+        <div class="stat-icon stat-icon-warning">
+          <i class="bi bi-cash-coin"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-info">
+      <div class="stat-content">
+        <div class="stat-info">
+          <h5>Alertas Activas</h5>
+          <div class="stat-number">{{ alertas_activas }}</div>
+        </div>
+        <div class="stat-icon stat-icon-info">
+          <i class="bi bi-shield-exclamation"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-success">
+      <div class="stat-content">
+        <div class="stat-info">
+          <h5>Publicaciones</h5>
+          <div class="stat-number">{{ publicaciones_recientes|length }}</div>
+        </div>
+        <div class="stat-icon stat-icon-success">
+          <i class="bi bi-chat-left-text-fill"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acciones Rápidas -->
+  <div class="quick-actions">
+    <h4>
+      <i class="bi bi-lightning-charge-fill"></i>
+      Acciones Rápidas
+    </h4>
+    <div class="actions-grid">
+      <a href="{% url 'crear_usuario' %}" class="action-btn action-btn-success">
+        <i class="bi bi-person-plus-fill"></i>
+        Crear Usuario
+      </a>
+      <a href="{% url 'lista_reportes' %}" class="action-btn action-btn-primary">
+        <i class="bi bi-list-ul"></i>
+        Ver Reportes
+      </a>
+      <a href="{% url 'lista_multas' %}" class="action-btn action-btn-warning">
+        <i class="bi bi-wallet2"></i>
+        Ver Multas
+      </a>
+      <a href="{% url 'lista_publicaciones' %}" class="action-btn action-btn-secondary">
+        <i class="bi bi-newspaper"></i>
+        Publicaciones
+      </a>
+    </div>
+  </div>
+
+  <!-- Últimas Publicaciones -->
+  <div class="recent-section">
+    <h4>
+      <i class="bi bi-clock-history"></i>
+      Últimas Publicaciones
+    </h4>
+    {% if publicaciones_recientes %}
+      {% for pub in publicaciones_recientes %}
+        <div class="recent-item">
+          <div class="recent-item-content">
+            <div class="recent-item-title">{{ pub.titulo }}</div>
+            <div class="recent-item-meta">
+              <i class="bi bi-person-circle"></i>
+              {{ pub.vecino.username }}
+              •
+              <i class="bi bi-calendar3"></i>
+              {{ pub.fecha|date:"d/m/Y H:i" }}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <i class="bi bi-inbox"></i>
+        <p>No hay publicaciones recientes</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}
