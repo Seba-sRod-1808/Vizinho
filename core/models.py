@@ -493,9 +493,9 @@ class DashboardService:
     def obtener_resumen_vecino(usuario):
         return {
             "mis_reportes": Reporte.objects.del_usuario(usuario).count(),
-            "reportes_pendientes": Reporte.objects.del_usuario(usuario).pendientes().count(),
+            "reportes_pendientes": Reporte.objects.del_usuario(usuario).filter(_estado="Recibido").count(),
             "mis_multas": Multa.objects.del_usuario(usuario).count(),
-            "multas_pendientes": Multa.objects.del_usuario(usuario).pendientes().count(),
+            "multas_pendientes": Multa.objects.del_usuario(usuario).filter(_estado="Pendiente").count(),
             "total_multas_pendientes": Multa.objects.total_pendiente_usuario(usuario),
             "ultimas_publicaciones": Publicacion.objects.all()[:5],
         }
