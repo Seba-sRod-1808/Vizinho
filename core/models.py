@@ -161,7 +161,7 @@ class Publicacion(models.Model):
     def puede_editar_usuario(self, usuario):
         return usuario.es_administrador()
     
-    def __str__(self):  # ✅ Corregido: era _str_
+    def __str__(self):
         return f"{self._titulo} ({self._vecino.username})"
 
 
@@ -259,7 +259,7 @@ class PerfilUsuario(models.Model):
             raise ValidationError("La biografía no puede exceder 500 caracteres")
         self._bio = value
 
-    def __str__(self):  # ✅ Corregido: era _str_
+    def __str__(self): 
         return f"Perfil de {self._usuario.username}"
 
 
@@ -285,7 +285,7 @@ class Multa(models.Model):
     _motivo = models.CharField(max_length=255)
     _estado = models.CharField(max_length=50, choices=ESTADOS, default="Pendiente")
     _fecha = models.DateTimeField(auto_now_add=True)
-    _fecha_pago = models.DateTimeField(null=True, blank=True)  # ✅ Nuevo campo
+    _fecha_pago = models.DateTimeField(null=True, blank=True)
     _vecino = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="multas")
 
     objects = MultaManager()
@@ -331,7 +331,7 @@ class Multa(models.Model):
         self._fecha_pago = timezone.now()
         self.save()
         
-        # Hook para extensiones futuras (notificaciones, logging, etc.)
+        # Hook para extensiones futuras
         self._post_pago(metodo_pago, transaccion_id)
     
     def _post_pago(self, metodo_pago, transaccion_id):
@@ -356,8 +356,8 @@ class BotonPanico(models.Model):
     _mensaje = models.CharField(max_length=255, default="Alerta de pánico activada")
     _fecha = models.DateTimeField(auto_now_add=True)
     _activo = models.BooleanField(default=True)
-    _fecha_desactivacion = models.DateTimeField(null=True, blank=True)  # ✅ Nuevo campo
-    _desactivado_por = models.ForeignKey(  # ✅ Nuevo campo
+    _fecha_desactivacion = models.DateTimeField(null=True, blank=True) 
+    _desactivado_por = models.ForeignKey(
         Usuario,
         on_delete=models.SET_NULL,
         null=True,
@@ -416,8 +416,8 @@ class ObjetoPerdido(models.Model):
     _imagen = models.ImageField(upload_to="objetos_perdidos/", null=True, blank=True)
     _fecha = models.DateTimeField(auto_now_add=True)
     _usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="objetos_perdidos")
-    _encontrado = models.BooleanField(default=False)  # ✅ Nuevo campo
-    _fecha_encuentro = models.DateTimeField(null=True, blank=True)  # ✅ Nuevo campo
+    _encontrado = models.BooleanField(default=False)
+    _fecha_encuentro = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ['-_fecha']
