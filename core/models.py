@@ -100,7 +100,7 @@ class Usuario(AbstractUser):
         return False
 
     def __str__(self):
-        return f"{self.username} ({self.get_rol_display()})"
+        return f"{self.username} ({self.get__rol_display()})"
 
 
 # ========================
