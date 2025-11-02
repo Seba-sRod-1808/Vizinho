@@ -1,3 +1,21 @@
+"""
+Estos son los modelos principales de la aplicación. Contienen lógica de negocio
+y encapsulan campos con propiedades para un acceso controlado.
+
+Se mantiene el encapsulamiento de atributos con el prefijo _ para evitar accesos directos
+desde vistas o formularios, ya que DJANGO tiene soporte de atributos privados. 
+En su lugar, se usan propiedades y métodos específicos. @property y @setter permiten
+validaciones y reglas de negocio al asignar valores.
+
+Además, se definen managers personalizados para operaciones comunes como filtrar reportes
+por estado o calcular totales de multas pendientes por usuario. Esto mantiene la lógica de consulta dentro del modelo,
+siguiendo el principio de responsabilidad única.
+
+Se mantiene Liskov en los métodos de los modelos para asegurar que las subclases puedan usarse
+intercambiablemente sin romper la funcionalidad esperada. Esto es importante para mantener la integridad del sistema
+y facilitar futuras extensiones o modificaciones en los modelos.
+"""
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
@@ -12,6 +30,8 @@ from django.utils import timezone
 # ========================
 
 class ReporteManager(models.Manager):    
+    """Manager especializado para filtrar reportes por estado o usuario."""
+    
     def pendientes(self):
         return self.filter(_estado="Recibido")
     
@@ -22,10 +42,13 @@ class ReporteManager(models.Manager):
         return self.filter(_estado="Resuelto")
     
     def del_usuario(self, usuario):
+        """Filtra reportes asociados a un usuario específico."""
         return self.filter(_vecino=usuario)
 
 
-class MultaManager(models.Manager):    
+class MultaManager(models.Manager):
+    """Manager con operaciones agregadas de negocio (pendientes, pagadas, totales)."""    
+    
     def pendientes(self):
         return self.filter(_estado="Pendiente")
     
@@ -36,6 +59,10 @@ class MultaManager(models.Manager):
         return self.filter(_vecino=usuario)
     
     def total_pendiente_usuario(self, usuario):
+        """
+        Retorna la suma total de multas pendientes por usuario.
+        Usa aggregate() en lugar de sum() para aprovechar la eficiencia del ORM
+        """
         resultado = self.filter(
             _vecino=usuario, 
             _estado="Pendiente"
@@ -48,6 +75,8 @@ class MultaManager(models.Manager):
 # ========================
 
 class Usuario(AbstractUser):
+    """Modelo base de usuario extendido con rol y teléfono encapsulados"""
+    
     ROLES = [
         ("vecino", "Vecino"),
         ("admin", "Administrador"),
@@ -64,6 +93,7 @@ class Usuario(AbstractUser):
 
     @telefono.setter
     def telefono(self, value):
+        # Validación inline para evitar setters inseguros
         if value and len(value) < 8:
             raise ValidationError("El teléfono debe tener al menos 8 dígitos")
         self._telefono = value
@@ -74,6 +104,7 @@ class Usuario(AbstractUser):
 
     @rol.setter
     def rol(self, value):
+        # Verifica que el rol este dentro de las opciones definidas
         roles_validos = dict(self.ROLES).keys()
         if value not in roles_validos:
             raise ValidationError(
@@ -84,14 +115,17 @@ class Usuario(AbstractUser):
     # ===== MÉTODOS DE UTILIDAD =====
     
     def es_administrador(self):
+        """Permite detectar si el usuario tiene rol de administrador o superuser."""
         return self._rol == "admin" or self.is_superuser
     
     def puede_editar(self, objeto):
-        # Administradores pueden editar todo
+        """
+        Determina si el usuario puede modificar el objeto.
+        Verifica propiedad del recurso o permisos administrativos.
+        """
         if self.es_administrador():
             return True
         
-        # Verifica si el objeto pertenece al usuario
         if hasattr(objeto, '_vecino'):
             return objeto._vecino == self
         elif hasattr(objeto, '_usuario'):
@@ -100,6 +134,7 @@ class Usuario(AbstractUser):
         return False
 
     def __str__(self):
+        # Se usa get__rol_display() debido al prefijo del campo privado
         return f"{self.username} ({self.get__rol_display()})"
 
 
@@ -108,6 +143,8 @@ class Usuario(AbstractUser):
 # ========================
 
 class Condominio(models.Model):    
+    """Entidad base para representar un conjunto residencial."""
+    
     _nombre = models.CharField(max_length=100)
     _ubicacion = models.CharField(max_length=200)
     _reglas = models.TextField(null=True, blank=True)
@@ -159,6 +196,7 @@ class Publicacion(models.Model):
         return self._vecino
     
     def puede_editar_usuario(self, usuario):
+        """Solo administradores pueden editar publicaciones."""
         return usuario.es_administrador()
     
     def __str__(self):
@@ -169,7 +207,7 @@ class Publicacion(models.Model):
 # REPORTE
 # ========================
 
-class Reporte(models.Model):
+class Reporte(models.Model):    
     ESTADOS = [
         ("Recibido", "Recibido"),
         ("EnProceso", "En proceso"),
@@ -184,8 +222,6 @@ class Reporte(models.Model):
     _vecino = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="reportes")
 
     objects = ReporteManager()
-
-    # ===== PROPERTIES =====
     
     @property
     def titulo(self):
@@ -210,22 +246,23 @@ class Reporte(models.Model):
     @property
     def vecino(self):
         return self._vecino
-
-    # ===== MÉTODOS DE TRANSICIÓN DE ESTADO =====
     
     def marcar_en_proceso(self):
+        """Cambia estado de 'Recibido' a 'EnProceso'. Lanza excepción si no aplica."""
         if self._estado != "Recibido":
             raise ValidationError("Solo reportes recibidos pueden pasar a proceso")
         self._estado = "EnProceso"
         self.save()
     
     def marcar_resuelto(self):
+        """Marca el reporte como resuelto con validación de estado previo."""
         if self._estado == "Resuelto":
             raise ValidationError("Este reporte ya está resuelto")
         self._estado = "Resuelto"
         self.save()
     
     def puede_editar_usuario(self, usuario):
+        """Solo el autor o un administrador pueden editarlo."""
         return self._vecino == usuario or usuario.es_administrador()
 
     def __str__(self):
@@ -236,7 +273,7 @@ class Reporte(models.Model):
 # PERFIL DE USUARIO
 # ========================
 
-class PerfilUsuario(models.Model):
+class PerfilUsuario(models.Model):    
     _usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='perfil')
     _foto = models.ImageField(upload_to="perfiles/", null=True, blank=True)
     _bio = models.TextField(null=True, blank=True)
@@ -255,6 +292,7 @@ class PerfilUsuario(models.Model):
     
     @bio.setter
     def bio(self, value):
+        # Setter con validación de longitud; lanza ValidationError si excede el límite.
         if value and len(value) > 500:
             raise ValidationError("La biografía no puede exceder 500 caracteres")
         self._bio = value
@@ -263,10 +301,13 @@ class PerfilUsuario(models.Model):
         return f"Perfil de {self._usuario.username}"
 
 
-# Signal para crear perfil automáticamente
+# ===== SIGNAL: CREACIÓN DE PERFIL AUTOMÁTICO =====
 @receiver(post_save, sender=Usuario)
 def crear_perfil_usuario(sender, instance, created, **kwargs):
-    """Crea automáticamente un perfil cuando se crea un usuario."""
+    """
+    Crea automáticamente un perfil asociado al usuario nuevo.
+    **kwargs** se mantiene por compatibilidad con la señal post_save.
+    """
     if created:
         PerfilUsuario.objects.create(_usuario=instance)
 
@@ -275,7 +316,7 @@ def crear_perfil_usuario(sender, instance, created, **kwargs):
 # MULTAS
 # ========================
 
-class Multa(models.Model):
+class Multa(models.Model):    
     ESTADOS = [
         ("Pendiente", "Pendiente"),
         ("Pagada", "Pagada"),
@@ -289,58 +330,30 @@ class Multa(models.Model):
     _vecino = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="multas")
 
     objects = MultaManager()
-
-    # ===== PROPERTIES =====
-    
-    @property
-    def monto(self):
-        return self._monto
-
-    @property
-    def motivo(self):
-        return self._motivo
-
-    @property
-    def estado(self):
-        return self._estado
-
-    @property
-    def fecha(self):
-        return self._fecha
-    
-    @property
-    def fecha_pago(self):
-        return self._fecha_pago
-
-    @property
-    def vecino(self):
-        return self._vecino
     
     @property
     def esta_pendiente(self):
-        """Verifica si la multa está pendiente de pago."""
         return self._estado == "Pendiente"
 
     # ===== MÉTODOS DE NEGOCIO =====
     
     def pagar(self, metodo_pago=None, transaccion_id=None):
+        """ ESTO ES UN METODO SIMULADO, NO INTEGRA CON PASARELAS REALES DE PAGO. """
+      
         if self._estado == "Pagada":
             raise ValidationError("Esta multa ya fue pagada")
         
         self._estado = "Pagada"
         self._fecha_pago = timezone.now()
         self.save()
-        
-        # Hook para extensiones futuras
         self._post_pago(metodo_pago, transaccion_id)
     
     def _post_pago(self, metodo_pago, transaccion_id):
-        """
-        Hook para acciones post-pago.
-        """
+        """Hook opcional para integrar acciones postpago (notificación, logging, etc.)."""
         pass
     
     def puede_pagar_usuario(self, usuario):
+        """Solo el dueño de la multa puede pagarla y si está pendiente."""
         return self._vecino == usuario and self.esta_pendiente
 
     def __str__(self):
@@ -348,10 +361,10 @@ class Multa(models.Model):
 
 
 # ========================
-# BOTON DE PANICO
+# BOTÓN DE PÁNICO
 # ========================
 
-class BotonPanico(models.Model):
+class BotonPanico(models.Model):    
     _usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="alertas_panico")
     _mensaje = models.CharField(max_length=255, default="Alerta de pánico activada")
     _fecha = models.DateTimeField(auto_now_add=True)
@@ -368,26 +381,6 @@ class BotonPanico(models.Model):
     class Meta:
         ordering = ['-_fecha']
         verbose_name_plural = "Botones de Pánico"
-
-    @property
-    def usuario(self):
-        return self._usuario
-
-    @property
-    def mensaje(self):
-        return self._mensaje
-
-    @property
-    def fecha(self):
-        return self._fecha
-
-    @property
-    def activo(self):
-        return self._activo
-    
-    @property
-    def fecha_desactivacion(self):
-        return self._fecha_desactivacion
 
     def desactivar(self, usuario_admin=None):
         if not self._activo:
@@ -410,7 +403,7 @@ class BotonPanico(models.Model):
 # OBJETOS PERDIDOS
 # ========================
 
-class ObjetoPerdido(models.Model):
+class ObjetoPerdido(models.Model):    
     _titulo = models.CharField(max_length=100)
     _descripcion = models.TextField()
     _imagen = models.ImageField(upload_to="objetos_perdidos/", null=True, blank=True)
@@ -422,30 +415,6 @@ class ObjetoPerdido(models.Model):
     class Meta:
         ordering = ['-_fecha']
         verbose_name_plural = "Objetos Perdidos"
-
-    @property
-    def titulo(self):
-        return self._titulo
-
-    @property
-    def descripcion(self):
-        return self._descripcion
-
-    @property
-    def imagen(self):
-        return self._imagen
-    
-    @property
-    def fecha(self):
-        return self._fecha
-
-    @property
-    def usuario(self):
-        return self._usuario
-    
-    @property
-    def encontrado(self):
-        return self._encontrado
 
     def marcar_encontrado(self, usuario=None):
         if self._encontrado:
@@ -465,18 +434,12 @@ class ObjetoPerdido(models.Model):
 # ========================
 
 class DashboardService:
-    """
-    Separa lógica de negocio de las vistas
-    """
+    """Servicio auxiliar para agregar datos al contexto de los dashboards."""
     
     @staticmethod
     def obtener_estadisticas_admin():
-        """
-        Obtiene estadísticas para el dashboard de administrador.
-        
-        Returns:
-            dict: Diccionario con estadísticas del sistema
-        """
+        # Obtiene stats globales del sistema. SOLO ADMINS.
+
         return {
             "reportes_pendientes": Reporte.objects.pendientes().count(),
             "reportes_en_proceso": Reporte.objects.en_proceso().count(),
@@ -491,6 +454,8 @@ class DashboardService:
     
     @staticmethod
     def obtener_resumen_vecino(usuario):
+        # Resume stats personales de cada vecino
+        
         return {
             "mis_reportes": Reporte.objects.del_usuario(usuario).count(),
             "reportes_pendientes": Reporte.objects.del_usuario(usuario).filter(_estado="Recibido").count(),
