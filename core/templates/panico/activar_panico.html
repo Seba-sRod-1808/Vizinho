@@ -1,26 +1,66 @@
 {% extends "base.html" %}
-{% block title %}Botón de Pánico{% endblock %}
+
+{% block title %}botón de pánico{% endblock %}
 
 {% block content %}
-<div class="container mt-5 text-center">
-  <h2 class="fw-bold text-danger mb-4">🚨 Botón de Pánico</h2>
+<div class="container-fluid" style="max-width: 700px;">
+  <!-- Header -->
+  <div class="mb-4 text-center">
+    <h1 class="mb-1">
+      <i class="bi bi-shield-exclamation text-danger"></i>
+      botón de pánico
+    </h1>
+    <p class="text-muted mb-0" style="font-size: 0.875rem;">activa una alerta de emergencia</p>
+  </div>
 
-  <p class="lead mb-4">
-    Este botón debe usarse <strong>únicamente en situaciones de emergencia</strong> 
-    que requieran la atención inmediata de la administración o personal de seguridad.
-  </p>
+  <!-- Card principal -->
+  <div class="card border-danger">
+    <div class="card-body text-center py-5">
+      <i class="bi bi-shield-fill-exclamation text-danger mb-4" style="font-size: 5rem;"></i>
+      
+      <h2 class="mb-3">activar alerta de emergencia</h2>
+      
+      <p class="text-muted mb-4">
+        al presionar este botón se enviará una alerta de emergencia a todos los administradores 
+        de la comunidad con tu ubicación y datos de contacto.
+      </p>
 
-  <form method="post" class="mt-4">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger btn-lg px-5 py-3 shadow">
-      <i class="bi bi-exclamation-triangle"></i> ACTIVAR ALERTA
-    </button>
-  </form>
+      <div class="alert alert-warning mb-4" style="font-size: 0.875rem;">
+        <i class="bi bi-exclamation-triangle"></i>
+        <strong>importante:</strong> solo usa este botón en situaciones de emergencia real
+      </div>
 
-  <div class="mt-5">
-    <a href="{% url 'dashboard' %}" class="btn btn-secondary">
-      <i class="bi bi-arrow-left-circle"></i> Volver al panel principal
-    </a>
+      <!-- Formulario -->
+      <form method="post" onsubmit="return confirmPanic()">
+        {% csrf_token %}
+        
+
+        <button type="submit" class="btn btn-danger btn-lg px-5 py-3" style="font-size: 1.25rem;">
+          <i class="bi bi-shield-exclamation"></i>
+          activar alerta de emergencia
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="card mt-4">
+    <div class="card-header">
+      <i class="bi bi-info-circle"></i> qué sucede al activar
+    </div>
+    <div class="card-body">
+      <ul class="mb-0" style="font-size: 0.875rem;">
+        <li class="mb-2">se enviará una notificación inmediata a todos los administradores</li>
+        <li class="mb-2">se registrará tu nombre de usuario y ubicación</li>
+        <li class="mb-2">se guardará la fecha y hora exacta</li>
+        <li>los administradores podrán contactarte de inmediato</li>
+      </ul>
+    </div>
   </div>
 </div>
+
+<script>
+function confirmPanic() {
+  return confirm('¿estás seguro de que deseas activar la alerta de emergencia?\n\nesto notificará a todos los administradores.');
+}
+</script>
 {% endblock %}

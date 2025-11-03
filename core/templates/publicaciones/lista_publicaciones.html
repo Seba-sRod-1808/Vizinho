@@ -1,480 +1,130 @@
 {% extends "base.html" %}
-{% block title %}Publicaciones{% endblock %}
-{% block extra_head %}
-{% load static %}
-<style>
-  /* Contenedor principal */
-  .publications-wrapper {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
 
-  /* Header de la página */
-  .page-header {
-    background: white;
-    border-radius: 20px;
-    padding: 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-
-  .page-header-content h2 {
-    font-weight: 800;
-    font-size: 2rem;
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .page-header-content p {
-    color: #6b7280;
-    margin: 8px 0 0 0;
-    font-size: 1rem;
-  }
-
-  /* Botón de crear publicación */
-  .btn-create {
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-    color: white;
-    border: none;
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 1rem;
-    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .btn-create:hover {
-    background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
-    color: white;
-  }
-
-  .btn-create i {
-    font-size: 1.2rem;
-  }
-
-  /* Filtros y búsqueda */
-  .filters-section {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 25px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .search-box {
-    flex: 1;
-    min-width: 250px;
-    position: relative;
-  }
-
-  .search-box input {
-    width: 100%;
-    padding: 12px 20px 12px 45px;
-    border: 2px solid #e5e7eb;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
-  }
-
-  .search-box input:focus {
-    outline: none;
-    border-color: #f97316;
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
-  }
-
-  .search-box i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #9ca3af;
-    font-size: 1.1rem;
-  }
-
-  /* Grid de publicaciones */
-  .publications-grid {
-    display: grid;
-    gap: 20px;
-  }
-
-  /* Tarjeta de publicación */
-  .publication-card {
-    background: white;
-    border-radius: 16px;
-    padding: 25px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    transition: all 0.3s ease;
-    border-left: 4px solid transparent;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .publication-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: linear-gradient(180deg, #f97316 0%, #ea580c 100%);
-    transform: scaleY(0);
-    transition: transform 0.3s ease;
-  }
-
-  .publication-card:hover::before {
-    transform: scaleY(1);
-  }
-
-  .publication-card:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-    transform: translateY(-4px);
-  }
-
-  /* Header de la publicación */
-  .publication-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 15px;
-    gap: 15px;
-  }
-
-  .publication-title {
-    flex: 1;
-  }
-
-  .publication-title h5 {
-    font-weight: 700;
-    font-size: 1.3rem;
-    color: #1f2937;
-    margin: 0 0 8px 0;
-    line-height: 1.4;
-  }
-
-  .publication-meta {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
-  }
-
-  .meta-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #6b7280;
-    font-size: 0.9rem;
-  }
-
-  .meta-item i {
-    color: #f97316;
-  }
-
-  .author-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: linear-gradient(135deg, #fef3f2 0%, #fff 100%);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-weight: 600;
-    color: #f97316;
-    font-size: 0.9rem;
-  }
-
-  /* Contenido */
-  .publication-content {
-    color: #4b5563;
-    line-height: 1.7;
-    margin-bottom: 20px;
-    font-size: 1rem;
-  }
-
-  /* Footer de la publicación */
-  .publication-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 15px;
-    border-top: 1px solid #f3f4f6;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .publication-stats {
-    display: flex;
-    gap: 20px;
-  }
-
-  .stat-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #6b7280;
-    font-size: 0.9rem;
-  }
-
-  .stat-item i {
-    color: #9ca3af;
-  }
-
-  /* Botones de acción */
-  .publication-actions {
-    display: flex;
-    gap: 10px;
-  }
-
-  .btn-action {
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border: none;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .btn-edit {
-    background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
-    color: #333;
-    box-shadow: 0 2px 8px rgba(250, 204, 21, 0.3);
-  }
-
-  .btn-edit:hover {
-    background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.4);
-    color: #333;
-  }
-
-  .btn-delete {
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-    color: white;
-    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
-  }
-
-  .btn-delete:hover {
-    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
-    color: white;
-  }
-
-  /* Estado vacío */
-  .empty-state {
-    text-align: center;
-    padding: 80px 40px;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  }
-
-  .empty-state-icon {
-    font-size: 5rem;
-    color: #f97316;
-    margin-bottom: 25px;
-    opacity: 0.8;
-  }
-
-  .empty-state h3 {
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: #1f2937;
-    margin-bottom: 12px;
-  }
-
-  .empty-state p {
-    color: #6b7280;
-    font-size: 1rem;
-    margin-bottom: 30px;
-  }
-
-  /* Badge de admin */
-  .admin-badge {
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-    color: white;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  /* Animaciones */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .fade-in {
-    animation: fadeInUp 0.5s ease-out;
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .page-header {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .page-header-content h2 {
-      font-size: 1.6rem;
-    }
-
-    .btn-create {
-      width: 100%;
-      justify-content: center;
-    }
-
-    .publication-header {
-      flex-direction: column;
-    }
-
-    .publication-footer {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .publication-actions {
-      width: 100%;
-    }
-
-    .btn-action {
-      flex: 1;
-      justify-content: center;
-    }
-  }
-</style>
-{% endblock %}
+{% block title %}publicaciones{% endblock %}
 
 {% block content %}
-<div class="publications-wrapper fade-in">
+<div class="container-fluid" style="max-width: 1400px;">
   <!-- Header -->
-  <div class="page-header">
-    <div class="page-header-content">
-      <h2>
-        <i class="bi bi-chat-left-text-fill"></i>
-        Publicaciones de la Comunidad
-      </h2>
-      <p>Mantente informado con las últimas noticias y anuncios</p>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="mb-1">
+        <i class="bi bi-chat-left-text text-primary"></i>
+        publicaciones de la comunidad
+      </h1>
+      <p class="text-muted mb-0" style="font-size: 0.875rem;">mantente informado sobre lo que pasa en tu comunidad</p>
     </div>
-    <a href="{% url 'crear_publicacion' %}" class="btn-create">
-      <i class="bi bi-plus-circle-fill"></i>
-      Nueva Publicación
+    <a href="{% url 'crear_publicacion' %}" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> nueva publicación
     </a>
   </div>
 
-  <!-- Filtros y búsqueda -->
-  <div class="filters-section">
-    <div class="search-box">
-      <i class="bi bi-search"></i>
-      <input type="text" id="searchInput" placeholder="Buscar publicaciones...">
-    </div>
-    <span class="meta-item">
-      <i class="bi bi-collection"></i>
-      <strong>{{ publicaciones|length }}</strong> publicación{{ publicaciones|length|pluralize:"es" }}
-    </span>
-  </div>
+  <!-- Lista de publicaciones -->
+  {% if publicaciones %}
+    <div class="row g-4">
+      {% for pub in publicaciones %}
+        <div class="col-lg-6 col-xl-4">
+          <div class="card h-100 hover-card">
+            <!-- Imagen si existe -->
+            {% if pub.imagen %}
+            <div style="height: 200px; overflow: hidden; background: var(--bg-main);">
+              <img 
+                src="{{ pub.imagen.url }}" 
+                class="card-img-top" 
+                alt="{{ pub.titulo }}"
+                style="object-fit: cover; width: 100%; height: 100%; cursor: pointer;"
+              >
+            </div>
+            {% endif %}
+            
+            <div class="card-body d-flex flex-column">
+              <!-- Título -->
+              <h5 class="card-title mb-2">{{ pub.titulo }}</h5>
 
-  <!-- Grid de publicaciones -->
-  <div class="publications-grid">
-    {% for p in publicaciones %}
-    <div class="publication-card" data-title="{{ p.titulo|lower }}" data-content="{{ p.contenido|lower }}">
-      <!-- Header -->
-      <div class="publication-header">
-        <div class="publication-title">
-          <h5>{{ p.titulo }}</h5>
-          <div class="publication-meta">
-            <span class="author-badge">
-              <i class="bi bi-person-circle"></i>
-              {{ p.vecino.username }}
-            </span>
-            <span class="meta-item">
-              <i class="bi bi-clock"></i>
-              {{ p.fecha|date:"d/m/Y H:i" }}
-            </span>
+              <!-- Contenido -->
+              <p class="card-text text-muted flex-grow-1" style="font-size: 0.875rem;">
+                {{ pub.contenido|truncatewords:20 }}
+              </p>
+
+              <!-- Footer -->
+              <div class="border-top pt-3 mt-auto">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <small class="text-muted">
+                    <i class="bi bi-person-circle"></i> {{ pub.vecino.username }}
+                  </small>
+                  <small class="text-muted">
+                    <i class="bi bi-clock"></i> {{ pub.fecha|date:"d/m/Y" }}
+                  </small>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-flex gap-2">
+                  {% if es_admin %}
+                    <a href="{% url 'editar_publicacion' pub.id %}" class="btn btn-sm btn-outline-warning">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{% url 'eliminar_publicacion' pub.id %}" class="btn btn-sm btn-outline-danger">
+                      <i class="bi bi-trash"></i>
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        {% if es_admin %}
-          <span class="admin-badge">Admin</span>
-        {% endif %}
-      </div>
-
-      <!-- Contenido -->
-      <div class="publication-content">
-        {{ p.contenido }}
-      </div>
-
-      <!-- Footer -->
-      <div class="publication-footer">
-        <div class="publication-stats">
-          <span class="stat-item">
-            <i class="bi bi-eye"></i>
-            <span>Vista previa</span>
-          </span>
-        </div>
-
-        {% if es_admin %}
-        <div class="publication-actions">
-          <a href="{% url 'editar_publicacion' p.id %}" class="btn-action btn-edit">
-            <i class="bi bi-pencil-fill"></i>
-            Editar
-          </a>
-          <a href="{% url 'eliminar_publicacion' p.id %}" class="btn-action btn-delete">
-            <i class="bi bi-trash-fill"></i>
-            Eliminar
-          </a>
-        </div>
-        {% endif %}
-      </div>
+      {% endfor %}
     </div>
-    {% empty %}
+
+    <!-- Paginación -->
+    {% if is_paginated %}
+    <nav class="mt-4">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page=1"><i class="bi bi-chevron-double-left"></i></a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}"><i class="bi bi-chevron-left"></i></a>
+          </li>
+        {% endif %}
+
+        <li class="page-item active">
+          <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}"><i class="bi bi-chevron-right"></i></a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}"><i class="bi bi-chevron-double-right"></i></a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+
+  {% else %}
     <!-- Estado vacío -->
-    <div class="empty-state">
-      <div class="empty-state-icon">
-        <i class="bi bi-chat-dots"></i>
+    <div class="card">
+      <div class="card-body text-center py-5">
+        <i class="bi bi-chat-left-text text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+        <h3 class="mt-4 mb-2">sin publicaciones todavía</h3>
+        <p class="text-muted mb-4">sé el primero en compartir algo con la comunidad</p>
+        <a href="{% url 'crear_publicacion' %}" class="btn btn-primary">
+          <i class="bi bi-plus-circle"></i> crear primera publicación
+        </a>
       </div>
-      <h3>No hay publicaciones todavía</h3>
-      <p>¡Sé el primero en compartir algo con la comunidad!</p>
-      <a href="{% url 'crear_publicacion' %}" class="btn-create">
-        <i class="bi bi-plus-circle-fill"></i>
-        Crear Primera Publicación
-      </a>
     </div>
-    {% endfor %}
-  </div>
+  {% endif %}
 </div>
 
-<script src="{% static 'js/publicaciones/list.js' %}">
-</script>
+<style>
+.hover-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-card:hover {
+  transform: translateY(-4px);
+}
+</style>
 {% endblock %}

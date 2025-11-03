@@ -1,504 +1,158 @@
 {% extends "base.html" %}
-{% block title %}Nueva Publicación{% endblock %}
-{% block extra_head %}
-{% load static %}
-<style>
-  /* Contenedor principal */
-  .form-wrapper {
-    max-width: 900px;
-    margin: 0 auto;
-  }
 
-  /* Header de la página */
-  .page-header {
-    background: white;
-    border-radius: 20px;
-    padding: 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  }
-
-  .page-header h2 {
-    font-weight: 800;
-    font-size: 2rem;
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 0 0 10px 0;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .page-header p {
-    color: #6b7280;
-    margin: 0;
-    font-size: 1rem;
-  }
-
-  /* Breadcrumb */
-  .breadcrumb-custom {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 25px;
-    font-size: 0.9rem;
-  }
-
-  .breadcrumb-custom a {
-    color: #6b7280;
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-
-  .breadcrumb-custom a:hover {
-    color: #f97316;
-  }
-
-  .breadcrumb-custom i {
-    color: #9ca3af;
-    font-size: 0.8rem;
-  }
-
-  .breadcrumb-custom .current {
-    color: #f97316;
-    font-weight: 600;
-  }
-
-  /* Contenedor del formulario */
-  .form-container {
-    background: white;
-    border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  }
-
-  /* Estilos del formulario */
-  .form-group {
-    margin-bottom: 30px;
-  }
-
-  .form-group label {
-    display: block;
-    font-weight: 700;
-    font-size: 1rem;
-    color: #1f2937;
-    margin-bottom: 10px;
-  }
-
-  .form-group label i {
-    color: #f97316;
-    margin-right: 8px;
-    font-size: 1.1rem;
-  }
-
-  .required-indicator {
-    color: #dc2626;
-    margin-left: 4px;
-  }
-
-  .form-help-text {
-    font-size: 0.85rem;
-    color: #6b7280;
-    margin-top: 6px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .form-help-text i {
-    color: #9ca3af;
-  }
-
-  /* Inputs */
-  .form-control {
-    width: 100%;
-    padding: 14px 18px;
-    border: 2px solid #e5e7eb;
-    border-radius: 12px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    background: #f9fafb;
-  }
-
-  .form-control:focus {
-    outline: none;
-    border-color: #f97316;
-    background: white;
-    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
-  }
-
-  .form-control:hover {
-    border-color: #fca5a5;
-  }
-
-  /* Textarea */
-  textarea.form-control {
-    min-height: 200px;
-    resize: vertical;
-    font-family: inherit;
-    line-height: 1.6;
-  }
-
-  /* Contador de caracteres */
-  .char-counter {
-    text-align: right;
-    font-size: 0.85rem;
-    color: #6b7280;
-    margin-top: 8px;
-  }
-
-  .char-counter.warning {
-    color: #f97316;
-    font-weight: 600;
-  }
-
-  .char-counter.danger {
-    color: #dc2626;
-    font-weight: 600;
-  }
-
-  /* Errores */
-  .error-message {
-    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-    border-left: 4px solid #dc2626;
-    padding: 12px 16px;
-    border-radius: 8px;
-    margin-top: 8px;
-    font-size: 0.9rem;
-    color: #991b1b;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .error-message i {
-    color: #dc2626;
-    font-size: 1.1rem;
-  }
-
-  /* Vista previa */
-  .preview-section {
-    background: linear-gradient(135deg, #fef3f2 0%, #fff 100%);
-    border: 2px dashed #fed7d7;
-    border-radius: 16px;
-    padding: 25px;
-    margin-bottom: 30px;
-  }
-
-  .preview-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-    color: #f97316;
-    font-weight: 700;
-  }
-
-  .preview-content {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    min-height: 100px;
-  }
-
-  .preview-content h5 {
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 12px;
-  }
-
-  .preview-content p {
-    color: #4b5563;
-    line-height: 1.7;
-    margin: 0;
-  }
-
-  .preview-empty {
-    color: #9ca3af;
-    font-style: italic;
-    text-align: center;
-    padding: 20px;
-  }
-
-  /* Botones de acción */
-  .form-actions {
-    display: flex;
-    gap: 15px;
-    padding-top: 30px;
-    border-top: 2px solid #f3f4f6;
-    margin-top: 30px;
-  }
-
-  .btn-submit {
-    flex: 1;
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-    color: white;
-    border: none;
-    padding: 16px 32px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 1.05rem;
-    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    cursor: pointer;
-  }
-
-  .btn-submit:hover {
-    background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
-    color: white;
-  }
-
-  .btn-submit:active {
-    transform: translateY(0);
-  }
-
-  .btn-submit i {
-    font-size: 1.2rem;
-  }
-
-  .btn-cancel {
-    background: white;
-    color: #6b7280;
-    border: 2px solid #e5e7eb;
-    padding: 16px 32px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 1.05rem;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-  }
-
-  .btn-cancel:hover {
-    background: #f9fafb;
-    border-color: #9ca3af;
-    color: #1f2937;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  }
-
-  /* Tips section */
-  .tips-section {
-    background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
-    border-left: 4px solid #facc15;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 30px;
-  }
-
-  .tips-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #854d0e;
-    font-weight: 700;
-    margin-bottom: 12px;
-  }
-
-  .tips-header i {
-    font-size: 1.3rem;
-  }
-
-  .tips-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .tips-list li {
-    color: #854d0e;
-    padding: 8px 0;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 0.95rem;
-  }
-
-  .tips-list li i {
-    color: #facc15;
-    margin-top: 3px;
-    font-size: 0.9rem;
-  }
-
-  /* Animaciones */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .fade-in {
-    animation: fadeInUp 0.5s ease-out;
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .form-container {
-      padding: 25px;
-    }
-
-    .page-header h2 {
-      font-size: 1.6rem;
-    }
-
-    .form-actions {
-      flex-direction: column;
-    }
-
-    .btn-submit,
-    .btn-cancel {
-      width: 100%;
-    }
-  }
-</style>
-{% endblock %}
+{% block title %}nueva publicación{% endblock %}
 
 {% block content %}
-<div class="form-wrapper fade-in">
-  <!-- Breadcrumb -->
-  <div class="breadcrumb-custom">
-    <a href="{% url 'dashboard' %}">
-      <i class="bi bi-house-door"></i> Inicio
-    </a>
-    <i class="bi bi-chevron-right"></i>
-    <a href="{% url 'lista_publicaciones' %}">Publicaciones</a>
-    <i class="bi bi-chevron-right"></i>
-    <span class="current">Nueva Publicación</span>
-  </div>
-
+<div class="container-fluid" style="max-width: 900px;">
   <!-- Header -->
-  <div class="page-header">
-    <h2>
-      <i class="bi bi-plus-circle-fill"></i>
-      Crear Nueva Publicación
-    </h2>
-    <p>Comparte noticias, anuncios o información importante con tu comunidad</p>
-  </div>
-
-  <!-- Tips -->
-  <div class="tips-section">
-    <div class="tips-header">
-      <i class="bi bi-lightbulb-fill"></i>
-      Consejos para una buena publicación
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="mb-1">
+        <i class="bi bi-chat-left-text text-primary"></i>
+        nueva publicación
+      </h1>
+      <p class="text-muted mb-0" style="font-size: 0.875rem;">comparte información con la comunidad</p>
     </div>
-    <ul class="tips-list">
-      <li>
-        <i class="bi bi-check-circle-fill"></i>
-        Usa un título claro y descriptivo que capte la atención
-      </li>
-      <li>
-        <i class="bi bi-check-circle-fill"></i>
-        Sé conciso pero informativo en el contenido
-      </li>
-      <li>
-        <i class="bi bi-check-circle-fill"></i>
-        Verifica la información antes de publicar
-      </li>
-      <li>
-        <i class="bi bi-check-circle-fill"></i>
-        Mantén un tono respetuoso y constructivo
-      </li>
-    </ul>
+    <a href="{% url 'lista_publicaciones' %}" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left"></i> volver
+    </a>
   </div>
 
-  <!-- Formulario -->
-  <div class="form-container">
-    <form method="post" id="publicationForm">
-      {% csrf_token %}
-      
-      {% if form.non_field_errors %}
-        <div class="error-message">
-          <i class="bi bi-exclamation-triangle-fill"></i>
-          {{ form.non_field_errors }}
-        </div>
-      {% endif %}
+  <div class="row g-4">
+    <!-- Formulario -->
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Título -->
+            <div class="mb-3">
+              <label for="id_titulo" class="form-label">título de la publicación</label>
+              <input 
+                type="text" 
+                name="_titulo" 
+                class="form-control" 
+                id="id_titulo" 
+                placeholder="ej: reunión de vecinos el próximo sábado"
+                required
+                maxlength="200"
+              >
+              <small class="text-muted">un título claro y descriptivo</small>
+            </div>
 
-{% for field in form %}
-  <div class="form-group">
-    <label for="{{ field.id_for_label }}" class="custom-label">
-      {% if field.name == "_titulo" %}
-        <i class="bi bi-type"></i>
-        Título de la Publicación
-      {% elif field.name == "_contenido" %}
-        <i class="bi bi-file-text"></i>
-        Contenido
-      {% endif %}
-      {% if field.field.required %}
-        <span class="required-indicator">*</span>
-      {% endif %}
-    </label>
-    
-    {{ field }}
-    
-    {% if field.name == "_titulo" %}
-      <div class="form-help-text">
-        <i class="bi bi-info-circle"></i>
-        Máximo 200 caracteres. Sé claro y directo.
-      </div>
-    {% elif field.name == "_contenido" %}
-      <div class="char-counter" id="charCounter">
-        <span id="charCount">0</span> / 2000 caracteres
-      </div>
-      <div class="form-help-text">
-        <i class="bi bi-info-circle"></i>
-        Proporciona toda la información relevante de manera clara y ordenada.
-      </div>
-    {% endif %}
-    
-    {% if field.errors %}
-      <div class="error-message">
-        <i class="bi bi-exclamation-triangle-fill"></i>
-        {{ field.errors.0 }}
-      </div>
-    {% endif %}
-  </div>
-{% endfor %}
+            <!-- Contenido -->
+            <div class="mb-3">
+              <label for="id_contenido" class="form-label">contenido</label>
+              <textarea 
+                name="_contenido" 
+                class="form-control" 
+                id="id_contenido" 
+                rows="8"
+                placeholder="escribe el contenido de tu publicación..."
+                required
+              ></textarea>
+              <small class="text-muted">comparte detalles, información o anuncios importantes</small>
+            </div>
 
-      <!-- Vista Previa -->
-      <div class="preview-section">
-        <div class="preview-header">
-          <i class="bi bi-eye-fill"></i>
-          Vista Previa
-        </div>
-        <div class="preview-content" id="previewContent">
-          <div class="preview-empty">
-            <i class="bi bi-file-text"></i>
-            Comienza a escribir para ver una vista previa de tu publicación
-          </div>
+            <!-- Imagen -->
+            <div class="mb-4">
+              <label for="id_imagen" class="form-label">imagen (opcional)</label>
+              <input 
+                type="file" 
+                name="_imagen" 
+                class="form-control" 
+                id="id_imagen" 
+                accept="image/*"
+                onchange="previewImage(event)"
+              >
+              <small class="text-muted">agrega una imagen para complementar tu publicación</small>
+              
+              <!-- Vista previa -->
+              <div id="preview-container" class="mt-3" style="display: none;">
+                <img id="preview" class="img-fluid rounded border" style="max-height: 250px;">
+                <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="removeImage()">
+                  <i class="bi bi-trash"></i> quitar
+                </button>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-send"></i> publicar
+              </button>
+              <a href="{% url 'lista_publicaciones' %}" class="btn btn-outline-secondary">
+                cancelar
+              </a>
+            </div>
+          </form>
         </div>
       </div>
+    </div>
 
-      <!-- Botones de acción -->
-      <div class="form-actions">
-        <button type="submit" class="btn-submit">
-          <i class="bi bi-check-circle-fill"></i>
-          Publicar Ahora
-        </button>
-        <a href="{% url 'lista_publicaciones' %}" class="btn-cancel">
-          <i class="bi bi-x-circle"></i>
-          Cancelar
-        </a>
+    <!-- Tips -->
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-header">
+          <i class="bi bi-lightbulb"></i> tips
+        </div>
+        <div class="card-body">
+          <ul class="mb-0" style="font-size: 0.875rem; padding-left: 1.25rem;">
+            <li class="mb-2"><strong>sé claro:</strong> escribe de forma directa y fácil de entender</li>
+            <li class="mb-2"><strong>sé relevante:</strong> comparte información útil para la comunidad</li>
+            <li class="mb-2"><strong>sé respetuoso:</strong> mantén un tono apropiado</li>
+            <li><strong>agrega imágenes:</strong> hacen tu publicación más atractiva</li>
+          </ul>
+        </div>
       </div>
-    </form>
+
+      <div class="card mt-3">
+        <div class="card-header">
+          <i class="bi bi-info-circle"></i> información
+        </div>
+        <div class="card-body">
+          <small class="text-muted d-block mb-2">
+            <i class="bi bi-people"></i> visible para toda la comunidad
+          </small>
+          <small class="text-muted d-block mb-2">
+            <i class="bi bi-clock"></i> se mostrará la fecha de publicación
+          </small>
+          <small class="text-muted d-block">
+            <i class="bi bi-person"></i> tu nombre aparecerá como autor
+          </small>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<script src="{% static 'js/publicaciones/form.js' %}" >
+<script>
+function previewImage(event) {
+  const input = event.target;
+  const preview = document.getElementById('preview');
+  const container = document.getElementById('preview-container');
+  
+  if (input.files && input.files[0]) {
+    if (input.files[0].size > 5 * 1024 * 1024) {
+      alert('la imagen es muy grande. máximo 5MB');
+      input.value = '';
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      preview.src = e.target.result;
+      container.style.display = 'block';
+    }
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function removeImage() {
+  document.getElementById('id_imagen').value = '';
+  document.getElementById('preview-container').style.display = 'none';
+  document.getElementById('preview').src = '';
+}
 </script>
 {% endblock %}

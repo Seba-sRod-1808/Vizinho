@@ -1,28 +1,17 @@
-/**
- * ================================================
- * VIZINHO - Animaciones Minimalistas v2.1
- * ================================================
- * 
- * Animaciones sutiles, smooth y low-profile
- * Sin librerías externas | Vanilla JS puro
- * Optimizado para performance
- */
-
 (function() {
   'use strict';
 
   // ===== CONFIGURACIÓN =====
   const CONFIG = {
-    transitionSpeed: 200,      // ms - Velocidad de transiciones
-    scrollSpeed: 400,          // ms - Velocidad de scroll suave
-    fadeSpeed: 300,            // ms - Velocidad de fade
-    alertDuration: 5000,       // ms - Duración de alertas
-    hoverDelay: 50,            // ms - Delay en hovers
+    transitionSpeed: 200,     
+    scrollSpeed: 400,          
+    fadeSpeed: 300,            
+    alertDuration: 5000,      
+    hoverDelay: 50,            
     rippleColor: 'rgba(255, 255, 255, 0.3)',
-    rippleDuration: 600        // ms - Duración del ripple
+    rippleDuration: 600
   };
 
-  // ===== INIT AL CARGAR =====
   document.addEventListener('DOMContentLoaded', function() {
     initSmoothScroll();
     initActiveLinks();
@@ -39,7 +28,6 @@
     console.log('%c ✓ vizinho.js cargado ', 'background: #2563eb; color: white; padding: 2px 6px; border-radius: 3px;');
   });
 
-  // ===== 1. SMOOTH SCROLL =====
   function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function(e) {
@@ -55,7 +43,6 @@
             block: 'start'
           });
           
-          // Añadir clase temporal de highlight
           target.style.transition = 'background-color 600ms ease';
           const originalBg = target.style.backgroundColor;
           target.style.backgroundColor = 'rgba(37, 99, 235, 0.05)';
@@ -68,7 +55,6 @@
     });
   }
 
-  // ===== 2. ACTIVE LINKS (SIDEBAR) =====
   function initActiveLinks() {
     const currentPath = window.location.pathname;
     const sidebarLinks = document.querySelectorAll('.sidebar a');
@@ -80,7 +66,6 @@
         link.classList.add('active');
       }
       
-      // Smooth hover effect
       link.addEventListener('mouseenter', function() {
         if (!this.classList.contains('active')) {
           this.style.transition = `padding-left ${CONFIG.transitionSpeed}ms ease`;
@@ -89,11 +74,9 @@
     });
   }
 
-  // ===== 3. CARD ANIMATIONS =====
   function initCardAnimations() {
     const cards = document.querySelectorAll('.card, .stat-card');
     
-    // Fade in on load
     cards.forEach((card, index) => {
       card.style.opacity = '0';
       card.style.transform = 'translateY(10px)';
@@ -102,10 +85,9 @@
         card.style.transition = `all ${CONFIG.fadeSpeed}ms ease`;
         card.style.opacity = '1';
         card.style.transform = 'translateY(0)';
-      }, index * 50); // Staggered animation
+      }, index * 50);
     });
     
-    // Subtle hover effect
     cards.forEach(card => {
       card.addEventListener('mouseenter', function() {
         this.style.transition = `transform ${CONFIG.transitionSpeed}ms ease, box-shadow ${CONFIG.transitionSpeed}ms ease`;
@@ -118,17 +100,14 @@
     });
   }
 
-  // ===== 4. BUTTON ANIMATIONS =====
   function initButtonAnimations() {
     const buttons = document.querySelectorAll('.btn');
     
     buttons.forEach(button => {
-      // Ripple effect en click
       button.addEventListener('click', function(e) {
         createRipple(e, this);
       });
       
-      // Subtle scale en hover
       button.addEventListener('mouseenter', function() {
         this.style.transition = `transform ${CONFIG.hoverDelay}ms ease`;
         this.style.transform = 'scale(1.02)';
@@ -138,7 +117,6 @@
         this.style.transform = 'scale(1)';
       });
       
-      // Press effect
       button.addEventListener('mousedown', function() {
         this.style.transform = 'scale(0.98)';
       });
@@ -149,12 +127,10 @@
     });
   }
 
-  // ===== 5. FORM ANIMATIONS =====
   function initFormAnimations() {
     const inputs = document.querySelectorAll('.form-control, .form-select');
     
     inputs.forEach(input => {
-      // Focus animation
       input.addEventListener('focus', function() {
         this.style.transition = `all ${CONFIG.transitionSpeed}ms ease`;
         this.parentElement.style.transform = 'scale(1.01)';
@@ -164,7 +140,6 @@
         this.parentElement.style.transform = 'scale(1)';
       });
       
-      // Label float effect (si existe)
       const label = input.previousElementSibling;
       if (label && label.tagName === 'LABEL') {
         input.addEventListener('focus', () => {
@@ -183,12 +158,10 @@
     });
   }
 
-  // ===== 6. TABLE ANIMATIONS =====
   function initTableAnimations() {
     const tableRows = document.querySelectorAll('.table tbody tr');
     
     tableRows.forEach((row, index) => {
-      // Fade in inicial
       row.style.opacity = '0';
       row.style.transform = 'translateX(-10px)';
       
@@ -198,7 +171,6 @@
         row.style.transform = 'translateX(0)';
       }, index * 30);
       
-      // Hover effect
       row.addEventListener('mouseenter', function() {
         this.style.transition = `background ${CONFIG.hoverDelay}ms ease, transform ${CONFIG.hoverDelay}ms ease`;
         this.style.transform = 'translateX(3px)';
@@ -210,12 +182,10 @@
     });
   }
 
-  // ===== 7. ALERT ANIMATIONS =====
   function initAlertAnimations() {
     const alerts = document.querySelectorAll('.alert');
     
     alerts.forEach(alert => {
-      // Slide in desde arriba
       alert.style.opacity = '0';
       alert.style.transform = 'translateY(-20px)';
       
@@ -225,7 +195,6 @@
         alert.style.transform = 'translateY(0)';
       }, 100);
       
-      // Auto-dismiss con fade out
       setTimeout(() => {
         alert.style.transition = `all ${CONFIG.fadeSpeed}ms ease`;
         alert.style.opacity = '0';
@@ -238,7 +207,6 @@
     });
   }
 
-  // ===== 8. TOOLTIPS SIMPLES =====
   function initTooltips() {
     const elements = document.querySelectorAll('[data-tooltip]');
     
@@ -276,7 +244,6 @@
     });
   }
 
-  // ===== 9. SIDEBAR ANIMATIONS =====
   function initSidebarAnimations() {
     const sidebarLinks = document.querySelectorAll('.sidebar a');
     
@@ -292,7 +259,6 @@
     });
   }
 
-  // ===== 10. LOADING STATES =====
   function initLoadingStates() {
     const forms = document.querySelectorAll('form');
     
@@ -306,13 +272,11 @@
           submitBtn.style.transition = `all ${CONFIG.transitionSpeed}ms ease`;
           submitBtn.style.opacity = '0.6';
           
-          // Spinner simple
           submitBtn.innerHTML = `
             <span class="spinner-border spinner-border-sm me-2" role="status"></span>
             procesando...
           `;
           
-          // Backup: restaurar después de 10 segundos
           setTimeout(() => {
             submitBtn.disabled = false;
             submitBtn.style.opacity = '1';
@@ -323,7 +287,6 @@
     });
   }
 
-  // ===== 11. KEYBOARD SHORTCUTS =====
   function initKeyboardShortcuts() {
     document.addEventListener('keydown', function(e) {
       // ESC para cerrar modales
@@ -335,7 +298,6 @@
         }
       }
       
-      // Ctrl/Cmd + K para buscar
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
         const searchInput = document.querySelector('input[type="search"], input[name="search"]');
@@ -351,9 +313,7 @@
     });
   }
 
-  // ===== UTILIDADES =====
 
-  // Crear efecto ripple
   function createRipple(event, element) {
     const ripple = document.createElement('span');
     const rect = element.getBoundingClientRect();
@@ -380,7 +340,6 @@
     }, CONFIG.rippleDuration);
   }
 
-  // Crear tooltip
   function createTooltip(text) {
     const tooltip = document.createElement('div');
     tooltip.textContent = text;
@@ -401,7 +360,6 @@
     return tooltip;
   }
 
-  // Fade out helper
   function fadeOut(element, callback) {
     element.style.transition = `opacity ${CONFIG.fadeSpeed}ms ease`;
     element.style.opacity = '0';
@@ -412,7 +370,6 @@
     }, CONFIG.fadeSpeed);
   }
 
-  // Fade in helper
   function fadeIn(element, display = 'block') {
     element.style.display = display;
     element.style.opacity = '0';
@@ -423,7 +380,6 @@
     }, 10);
   }
 
-  // ===== CSS INJECTION PARA ANIMACIONES =====
   const style = document.createElement('style');
   style.textContent = `
     @keyframes ripple {
@@ -477,7 +433,6 @@
   `;
   document.head.appendChild(style);
 
-  // ===== EXPONER API GLOBAL =====
   window.vizinho = {
     fadeOut: fadeOut,
     fadeIn: fadeIn,
@@ -485,7 +440,6 @@
     config: CONFIG
   };
 
-  // ===== LAZY LOAD IMAGES =====
   if ('IntersectionObserver' in window) {
     const imageObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -511,18 +465,15 @@
     });
   }
 
-  // ===== PAGE TRANSITION =====
   window.addEventListener('beforeunload', function() {
     document.body.style.transition = `opacity ${CONFIG.fadeSpeed}ms ease`;
     document.body.style.opacity = '0';
   });
 
-  // ===== SCROLL ANIMATIONS =====
   let scrollTimeout;
   window.addEventListener('scroll', function() {
     clearTimeout(scrollTimeout);
     
-    // Añadir clase cuando está scrolleando
     document.body.classList.add('scrolling');
     
     scrollTimeout = setTimeout(() => {
@@ -530,7 +481,6 @@
     }, 150);
   }, { passive: true });
 
-  // ===== LOG EN DESARROLLO =====
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     console.log(`%c⚡ Animaciones: ${Object.keys(CONFIG).length} configuraciones`,
                 'color: #10b981; font-family: monospace;');
@@ -538,7 +488,6 @@
 
 })();
 
-// ===== HELPER GLOBAL PARA CONFIRM =====
 window.confirmAction = function(message = '¿estás seguro?') {
   return new Promise((resolve) => {
     const result = confirm(message);
@@ -546,7 +495,6 @@ window.confirmAction = function(message = '¿estás seguro?') {
   });
 };
 
-// ===== COPY TO CLIPBOARD =====
 window.copyToClipboard = function(text, button) {
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
