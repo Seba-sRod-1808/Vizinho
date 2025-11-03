@@ -10,6 +10,7 @@ from .models import (
 # ========================
 
 class LoginForm(forms.Form):
+    """Formulario de login simple: validación mínima y UX clara."""
     username = forms.CharField(
         label="Usuario", 
         max_length=100,
@@ -27,14 +28,14 @@ class LoginForm(forms.Form):
     )
 
     def clean_username(self):
-        """Valida que el username no esté vacío."""
+        """Valida que el username no esté vacío ni en blanco."""
         data = self.cleaned_data["username"]
         if not data or data.strip() == "":
             raise ValidationError("El nombre de usuario es obligatorio")
         return data.strip()
     
     def clean_password(self):
-        """Valida que la contraseña no esté vacía."""
+        """Valida que la contraseña no esté vacía (evita feedback ambiguo)."""
         data = self.cleaned_data["password"]
         if not data:
             raise ValidationError("La contraseña es obligatoria")
@@ -47,9 +48,9 @@ class LoginForm(forms.Form):
 class ReporteForm(forms.ModelForm):
     """
     NOTA SOBRE ENCAPSULAMIENTO:
-    En Django, los ModelForms necesitan acceder directamente a los campos del modelo
-    Aunque esto expone campos privados, es una limitación del framework. Usamos labels
-    amigables para la UI y validación adicional en clean_* methods.
+    En Django, los ModelForms acceden directamente a los campos del modelo.
+    Aunque la convención interna use nombres con underscore, esto es normal
+    en ModelForms y está soportado por el framework.
     """
     
     class Meta:
@@ -77,38 +78,25 @@ class ReporteForm(forms.ModelForm):
         }
 
     def clean__titulo(self):
+        """Longitud mínima y máxima para evitar spam/títulos vacíos."""
         titulo = self.cleaned_data["_titulo"]
-        
         if not titulo or titulo.strip() == "":
             raise ValidationError("El título no puede estar vacío")
-        
         titulo = titulo.strip()
-        
         if len(titulo) < 5:
-            raise ValidationError(
-                "El título debe tener al menos 5 caracteres."
-            )
-        
+            raise ValidationError("El título debe tener al menos 5 caracteres.")
         if len(titulo) > 200:
-            raise ValidationError(
-                "El título no puede exceder 200 caracteres."
-            )
-        
+            raise ValidationError("El título no puede exceder 200 caracteres.")
         return titulo
     
     def clean__descripcion(self):
+        """Evita descripciones demasiado cortas; mejora la calidad de los reportes."""
         descripcion = self.cleaned_data["_descripcion"]
-        
         if not descripcion or descripcion.strip() == "":
             raise ValidationError("La descripción no puede estar vacía")
-        
         descripcion = descripcion.strip()
-        
         if len(descripcion) < 10:
-            raise ValidationError(
-                "La descripción debe tener al menos 10 caracteres para ser útil."
-            )
-        
+            raise ValidationError("La descripción debe tener al menos 10 caracteres para ser útil.")
         return descripcion
 
 # ========================
@@ -137,20 +125,13 @@ class ProfileForm(forms.ModelForm):
         }
     
     def clean__bio(self):
-        """
-        Valida la biografía.
-        
-        Reglas:
-        - Máximo 500 caracteres
-        """
+        """Valida longitud de biografía (regla duplicada a nivel modelo, aquí por UX)."""
         bio = self.cleaned_data.get("_bio")
-        
         if bio and len(bio) > 500:
             raise ValidationError(
                 "La biografía no puede exceder 500 caracteres. "
                 f"Actualmente tiene {len(bio)} caracteres."
             )
-        
         return bio
 
 # ========================
@@ -178,41 +159,32 @@ class PublicacionForm(forms.ModelForm):
         }
     
     def clean__titulo(self):
-        """Valida el título de la publicación."""
+        """Filtro de títulos triviales para mejorar la calidad del feed."""
         titulo = self.cleaned_data["_titulo"]
-        
         if not titulo or titulo.strip() == "":
             raise ValidationError("El título no puede estar vacío")
-        
         titulo = titulo.strip()
-        
         if len(titulo) < 5:
-            raise ValidationError(
-                "El título debe tener al menos 5 caracteres."
-            )
-        
+            raise ValidationError("El título debe tener al menos 5 caracteres.")
         return titulo
     
     def clean__contenido(self):
-        """Valida el contenido de la publicación."""
+        """Evita publicaciones con contenido demasiado corto."""
         contenido = self.cleaned_data["_contenido"]
-        
         if not contenido or contenido.strip() == "":
             raise ValidationError("El contenido no puede estar vacío")
-        
         contenido = contenido.strip()
-        
         if len(contenido) < 10:
-            raise ValidationError(
-                "El contenido debe tener al menos 10 caracteres."
-            )
-        
+            raise ValidationError("El contenido debe tener al menos 10 caracteres.")
         return contenido
 
 # ========================
 # MULTAS
 # ========================
+
 class MultaForm(forms.ModelForm):
+    # Importante: el queryset filtra SOLO usuarios con rol 'vecino'.
+    # Esto garantiza que no se asigne una multa a un admin por error.
     _vecino = forms.ModelChoiceField(
         queryset=Usuario.objects.filter(_rol="vecino"),
         label="Vecino afectado",
@@ -246,38 +218,29 @@ class MultaForm(forms.ModelForm):
         }
     
     def clean__monto(self):
+        """Reglas de negocio básicas para evitar montos inválidos o absurdos."""
         monto = self.cleaned_data["_monto"]
-        
         if monto <= 0:
             raise ValidationError("El monto debe ser mayor a 0")
-        
         if monto > 10000:
-            raise ValidationError(
-                "El monto parece muy alto. Si es correcto, contacta al supervisor."
-            )
-        
+            raise ValidationError("El monto parece muy alto. Si es correcto, contacta al supervisor.")
         return monto
     
     def clean__motivo(self):
-        """Valida el motivo de la multa."""
+        """Evita motivos vacíos o demasiado breves (mejora trazabilidad)."""
         motivo = self.cleaned_data["_motivo"]
-        
         if not motivo or motivo.strip() == "":
             raise ValidationError("Debes especificar el motivo de la multa")
-        
         motivo = motivo.strip()
-        
         if len(motivo) < 10:
-            raise ValidationError(
-                "El motivo debe ser más descriptivo (mínimo 10 caracteres)."
-            )
-        
+            raise ValidationError("El motivo debe ser más descriptivo (mínimo 10 caracteres).")
         return motivo
 
 
 # ========================
 # OBJETOS PERDIDOS
 # ========================
+
 class ObjetoPerdidoForm(forms.ModelForm):
     class Meta:
         model = ObjetoPerdido
@@ -304,42 +267,35 @@ class ObjetoPerdidoForm(forms.ModelForm):
         }
     
     def clean__titulo(self):
-        """Valida el título del objeto perdido."""
+        """Título mínimo para evitar ítems imposibles de identificar."""
         titulo = self.cleaned_data["_titulo"]
-        
         if not titulo or titulo.strip() == "":
             raise ValidationError("Debes especificar qué objeto perdiste")
-        
         titulo = titulo.strip()
-        
         if len(titulo) < 3:
-            raise ValidationError(
-                "El título debe tener al menos 3 caracteres."
-            )
-        
+            raise ValidationError("El título debe tener al menos 3 caracteres.")
         return titulo
     
     def clean__descripcion(self):
-        """Valida la descripción del objeto perdido."""
+        """Descripción mínima para que sea útil al buscar el objeto."""
         descripcion = self.cleaned_data["_descripcion"]
-        
         if not descripcion or descripcion.strip() == "":
             raise ValidationError("La descripción es necesaria para identificar el objeto")
-        
         descripcion = descripcion.strip()
-        
         if len(descripcion) < 10:
-            raise ValidationError(
-                "La descripción debe ser más detallada (mínimo 10 caracteres)."
-            )
-        
+            raise ValidationError("La descripción debe ser más detallada (mínimo 10 caracteres).")
         return descripcion
 
 
 # ========================
 # GESTIÓN DE USUARIOS
 # ========================
+
 class CrearUsuarioForm(forms.ModelForm):
+    """
+    Form de alta de usuarios por admin (no self-signup).
+    'password' y 'password_confirm' se validan cruzado en clean().
+    """
     password = forms.CharField(
         label="Contraseña",
         widget=forms.PasswordInput(attrs={
@@ -383,91 +339,65 @@ class CrearUsuarioForm(forms.ModelForm):
         }
     
     def clean_username(self):
+        """Formato permitido y unicidad para username."""
         username = self.cleaned_data["username"]
-        
         if len(username) < 4:
-            raise ValidationError(
-                "El nombre de usuario debe tener al menos 4 caracteres."
-            )
-        
+            raise ValidationError("El nombre de usuario debe tener al menos 4 caracteres.")
         if not username.replace('_', '').isalnum():
-            raise ValidationError(
-                "El nombre de usuario solo puede contener letras, números y guiones bajos."
-            )
-        
+            raise ValidationError("El nombre de usuario solo puede contener letras, números y guiones bajos.")
         if Usuario.objects.filter(username=username).exists():
-            raise ValidationError(
-                "Este nombre de usuario ya está en uso."
-            )
-        
+            raise ValidationError("Este nombre de usuario ya está en uso.")
         return username
     
     def clean_email(self):
+        """Evita registros duplicados por email; campo obligatorio."""
         email = self.cleaned_data["email"]
-        
         if not email:
             raise ValidationError("El correo electrónico es obligatorio")
-        
-        # Verificar que no exista ya
         if Usuario.objects.filter(email=email).exists():
-            raise ValidationError(
-                "Este correo electrónico ya está registrado."
-            )
-        
+            raise ValidationError("Este correo electrónico ya está registrado.")
         return email
     
     def clean__telefono(self):
+        """Normaliza y valida número telefónico (solo dígitos, min 8)."""
         telefono = self.cleaned_data.get("_telefono")
-        
         if telefono:
-            # Remover espacios y guiones
             telefono = telefono.replace(" ", "").replace("-", "")
-            
             if not telefono.isdigit():
-                raise ValidationError(
-                    "El teléfono solo debe contener números."
-                )
-            
+                raise ValidationError("El teléfono solo debe contener números.")
             if len(telefono) < 8:
-                raise ValidationError(
-                    "El teléfono debe tener al menos 8 dígitos."
-                )
-        
+                raise ValidationError("El teléfono debe tener al menos 8 dígitos.")
         return telefono
     
     def clean_password(self):
-        # este metodo valida la complejidad de la contraseña, asegurando que tenga al menos 8 caracteres y no sea solo numérica
+        """Complejidad mínima de contraseña."""
         password = self.cleaned_data["password"]
-        
         if len(password) < 8:
-            raise ValidationError(
-                "La contraseña debe tener al menos 8 caracteres."
-            )
-        
+            raise ValidationError("La contraseña debe tener al menos 8 caracteres.")
         if password.isdigit():
-            raise ValidationError(
-                "La contraseña no puede ser solo números."
-            )
-        
+            raise ValidationError("La contraseña no puede ser solo números.")
         return password
     
     def clean(self):
+        """
+        Validación cruzada de contraseñas. 
+        PS. Django propaga **kwargs al constructor del form, peero aquí no es necesario,
+        pero este método centraliza la regla de igualdad entre password y confirmación.
+        """
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
         password_confirm = cleaned_data.get("password_confirm")
-        
         if password and password_confirm and password != password_confirm:
-            raise ValidationError(
-                "Las contraseñas no coinciden. Por favor verifica."
-            )
-        
+            raise ValidationError("Las contraseñas no coinciden. Por favor verifica.")
         return cleaned_data
 
     def save(self, commit=True):
+        """
+        Guarda el usuario seteando contraseña encriptada.
+        commit=True mantiene la firma estándar de ModelForm.save().
+        """
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password"])
-        
         if commit:
             user.save()
-        
         return user
