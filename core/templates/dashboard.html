@@ -1,80 +1,81 @@
 {% extends "base.html" %}
-{% block title %}Panel de Vecinos{% endblock %}
+{% block title %}dashboard | vecino{% endblock %}
 
 {% block content %}
 <div class="dashboard-container">
+  <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h1 class="mb-1">¡Hola, {{ user.username }}! 👋</h1>
-      <p class="text-muted mb-0">Bienvenido a tu panel de vecino</p>
+      <h1 class="mb-1"> hola, {{ user.username }}</h1>
+      <p class="text-muted mb-0" style="font-size: 0.875rem;">panel de vecino</p>
     </div>
     <form method="post" action="{% url 'activar_panico' %}">
       {% csrf_token %}
-      <button type="submit" class="btn btn-danger btn-lg">
-        <i class="bi bi-shield-exclamation"></i>
-        Botón de Pánico
+      <button type="submit" class="btn btn-danger">
+        <i class="bi bi-shield-exclamation"></i> pánico
       </button>
     </form>
   </div>
 
-  <div class="row g-4 mb-4">
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
     <div class="col-md-3 col-sm-6">
-      <div class="card stat-card stat-card-primary">
+      <div class="stat-card">
         <i class="bi bi-file-earmark-text"></i>
-        <h5>Mis Reportes</h5>
+        <h5>reportes</h5>
         <h2>{{ mis_reportes }}</h2>
-        <small>{{ reportes_pendientes }} pendientes</small>
+        <small class="text-muted">{{ reportes_pendientes }} pendientes</small>
       </div>
     </div>
 
     <div class="col-md-3 col-sm-6">
-      <div class="card stat-card stat-card-secondary">
+      <div class="stat-card">
         <i class="bi bi-cash-coin"></i>
-        <h5>Multas</h5>
+        <h5>multas</h5>
         <h2>{{ mis_multas }}</h2>
-        <small>{{ multas_pendientes }} pendientes</small>
+        <small class="text-muted">{{ multas_pendientes }} sin pagar</small>
       </div>
     </div>
 
     <div class="col-md-3 col-sm-6">
-      <div class="card stat-card stat-card-info">
+      <div class="stat-card">
         <i class="bi bi-currency-dollar"></i>
-        <h5>Total Pendiente</h5>
+        <h5>adeudo</h5>
         <h2>Q{{ total_multas_pendientes|floatformat:2 }}</h2>
-        <small>Por pagar</small>
+        <small class="text-muted">total pendiente</small>
       </div>
     </div>
 
     <div class="col-md-3 col-sm-6">
-      <div class="card stat-card stat-card-danger">
-        <i class="bi bi-people"></i>
-        <h5>Comunidad</h5>
+      <div class="stat-card">
+        <i class="bi bi-chat-dots"></i>
+        <h5>comunidad</h5>
         <h2>{{ ultimas_publicaciones|length }}</h2>
-        <small>Publicaciones recientes</small>
+        <small class="text-muted">publicaciones</small>
       </div>
     </div>
   </div>
 
+  <!-- Acciones -->
   <div class="card mb-4">
+    <div class="card-header">
+      <i class="bi bi-lightning-charge"></i> acciones rápidas
+    </div>
     <div class="card-body">
-      <h4 class="mb-3">
-        <i class="bi bi-lightning-charge-fill text-primary"></i>
-        Acciones Rápidas
-      </h4>
-      <div class="row g-3">
-        <div class="col-md-4 col-sm-6">
+      <div class="row g-2">
+        <div class="col-md-4">
           <a href="{% url 'crear_reporte' %}" class="btn btn-outline-primary w-100">
-            <i class="bi bi-plus-circle"></i> Crear Reporte
+            <i class="bi bi-plus-circle"></i> crear reporte
           </a>
         </div>
-        <div class="col-md-4 col-sm-6">
-          <a href="{% url 'crear_publicacion' %}" class="btn btn-outline-primary w-100">
-            <i class="bi bi-chat-dots"></i> Nueva Publicación
+        <div class="col-md-4">
+          <a href="{% url 'lista_reportes' %}" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-list-ul"></i> mis reportes
           </a>
         </div>
-        <div class="col-md-4 col-sm-6">
-          <a href="{% url 'crear_objeto_perdido' %}" class="btn btn-outline-primary w-100">
-            <i class="bi bi-bag-plus"></i> Reportar Objeto Perdido
+        <div class="col-md-4">
+          <a href="{% url 'lista_multas' %}" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-cash-coin"></i> mis multas
           </a>
         </div>
       </div>
@@ -82,98 +83,89 @@
   </div>
 
   <div class="row g-4">
+    <!-- Publicaciones -->
     <div class="col-lg-8">
       <div class="card">
+        <div class="card-header">
+          <i class="bi bi-chat-left-dots"></i> publicaciones recientes
+        </div>
         <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0">
-              <i class="bi bi-chat-left-dots-fill text-primary"></i>
-              Últimas Publicaciones
-            </h4>
-            <a href="{% url 'lista_publicaciones' %}" class="btn btn-sm btn-outline-primary">
-              Ver todas <i class="bi bi-arrow-right"></i>
-            </a>
-          </div>
-
           {% if ultimas_publicaciones %}
             <div class="list-group list-group-flush">
               {% for pub in ultimas_publicaciones %}
-                <div class="list-group-item px-0 border-0 border-bottom py-3">
-                  <div class="d-flex justify-content-between align-items-start">
-                    <div class="flex-grow-1">
-                      <h6 class="mb-1 fw-semibold">{{ pub.titulo }}</h6>
-                      <p class="mb-2 text-muted" style="font-size: 0.9rem;">
-                        {{ pub.contenido|truncatewords:20 }}
-                      </p>
-                      <small class="text-muted">
-                        <i class="bi bi-person-circle"></i> {{ pub.vecino.username }} •
-                        <i class="bi bi-clock"></i> {{ pub.fecha|date:"d/m/Y H:i" }}
-                      </small>
-                    </div>
-                  </div>
+                <div class="list-group-item px-0 border-0 border-bottom py-3" style="background: transparent;">
+                  <h6 class="mb-1" style="font-weight: 600;">
+                      {{ pub.titulo }}
+                    </a>
+                  </h6>
+                  <p class="mb-2 text-muted" style="font-size: 0.875rem;">
+                    {{ pub.contenido|truncatewords:15 }}
+                  </p>
+                  <small class="text-muted" style="font-size: 0.75rem;">
+                    <i class="bi bi-person"></i> {{ pub.vecino.username }} •
+                    <i class="bi bi-clock"></i> {{ pub.fecha|date:"d/m/Y H:i" }} •
+                    <i class="bi bi-chat-dots"></i> {{ pub.total_comentarios }} comentarios
+                  </small>
                 </div>
               {% endfor %}
             </div>
+            <div class="text-end mt-3">
+              <a href="{% url 'lista_publicaciones' %}" class="btn btn-sm btn-outline-primary">
+                ver todas <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
           {% else %}
             <div class="text-center py-5">
-              <i class="bi bi-chat-left-text text-muted" style="font-size: 3rem;"></i>
-              <p class="text-muted mt-3 mb-0">No hay publicaciones todavía</p>
-              <small class="text-muted">Sé el primero en compartir algo con la comunidad</small>
+              <i class="bi bi-chat-left-text text-muted" style="font-size: 3rem; opacity: 0.3;"></i>
+              <p class="text-muted mt-3 mb-0" style="font-size: 0.875rem;">sin publicaciones</p>
             </div>
           {% endif %}
         </div>
       </div>
     </div>
 
+    <!-- sidebar -->
     <div class="col-lg-4">
-      <div class="card mb-4">
+      <!-- Enlaces -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <i class="bi bi-link-45deg"></i> enlaces
+        </div>
         <div class="card-body">
-          <h5 class="mb-3">
-            <i class="bi bi-link-45deg text-primary"></i>
-            Enlaces Rápidos
-          </h5>
           <div class="d-grid gap-2">
-            <a href="{% url 'lista_reportes' %}" class="btn btn-sm btn-outline-secondary text-start">
-              <i class="bi bi-exclamation-triangle"></i> Ver Mis Reportes
-            </a>
-            <a href="{% url 'lista_multas' %}" class="btn btn-sm btn-outline-secondary text-start">
-              <i class="bi bi-cash-coin"></i> Ver Mis Multas
-            </a>
             <a href="{% url 'lista_objetos_perdidos' %}" class="btn btn-sm btn-outline-secondary text-start">
-              <i class="bi bi-bag"></i> Objetos Perdidos
+              <i class="bi bi-bag"></i> objetos perdidos
             </a>
             <a href="{% url 'ver_perfil' %}" class="btn btn-sm btn-outline-secondary text-start">
-              <i class="bi bi-person-circle"></i> Mi Perfil
+              <i class="bi bi-person-circle"></i> mi perfil
             </a>
           </div>
         </div>
       </div>
 
+      <!-- Cuenta -->
       <div class="card">
+        <div class="card-header">
+          <i class="bi bi-info-circle"></i> cuenta
+        </div>
         <div class="card-body">
-          <h5 class="mb-3">
-            <i class="bi bi-info-circle text-primary"></i>
-            Tu Cuenta
-          </h5>
           <div class="mb-2">
-            <small class="text-muted">Usuario</small>
-            <p class="mb-0 fw-semibold">{{ user.username }}</p>
+            <small class="text-muted d-block" style="font-size: 0.75rem;">usuario</small>
+            <p class="mb-0" style="font-weight: 500; font-size: 0.875rem;">{{ user.username }}</p>
           </div>
           <div class="mb-2">
-            <small class="text-muted">Email</small>
-            <p class="mb-0 fw-semibold">{{ user.email }}</p>
+            <small class="text-muted d-block" style="font-size: 0.75rem;">email</small>
+            <p class="mb-0" style="font-weight: 500; font-size: 0.875rem;">{{ user.email }}</p>
           </div>
           {% if user.telefono %}
-          <div class="mb-2">
-            <small class="text-muted">Teléfono</small>
-            <p class="mb-0 fw-semibold">{{ user.telefono }}</p>
+          <div class="mb-3">
+            <small class="text-muted d-block" style="font-size: 0.75rem;">teléfono</small>
+            <p class="mb-0" style="font-weight: 500; font-size: 0.875rem;">{{ user.telefono }}</p>
           </div>
           {% endif %}
-          <div class="mt-3">
-            <a href="{% url 'editar_perfil' %}" class="btn btn-sm btn-primary w-100">
-              <i class="bi bi-pencil"></i> Editar Perfil
-            </a>
-          </div>
+          <a href="{% url 'editar_perfil' %}" class="btn btn-sm btn-primary w-100">
+            <i class="bi bi-pencil"></i> editar
+          </a>
         </div>
       </div>
     </div>
@@ -191,8 +183,7 @@
   }
 
   .list-group-item:hover {
-    background-color: var(--bg-main);
-    transition: all 0.2s ease;
+    background: var(--bg-main) !important;
   }
 </style>
 {% endblock %}

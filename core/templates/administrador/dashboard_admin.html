@@ -1,79 +1,78 @@
 {% extends "base.html" %}
-{% block title %}Panel de Administrador{% endblock %}
+{% block title %}dashboard | admin{% endblock %}
 
 {% block content %}
 <div class="admin-dashboard">
   <!-- Header -->
   <div class="mb-4">
-    <h1 class="mb-1">Panel de Administración</h1>
-    <p class="text-muted mb-0">Vista general del sistema y estadísticas</p>
+    <h1 class="mb-1">// panel de administración</h1>
+    <p class="text-muted mb-0" style="font-size: 0.875rem;">vista general del sistema</p>
   </div>
 
-  <!-- Estadísticas Principales -->
-  <div class="row g-4 mb-4">
+  <!-- Stats principales -->
+  <div class="row g-3 mb-4">
     <div class="col-lg-3 col-md-6">
-      <div class="card stat-card stat-card-danger">
-        <i class="bi bi-exclamation-triangle-fill"></i>
-        <h5>Reportes Pendientes</h5>
+      <div class="stat-card">
+        <i class="bi bi-exclamation-triangle"></i>
+        <h5>pendientes</h5>
         <h2>{{ reportes_pendientes }}</h2>
-        <small>Requieren atención</small>
+        <small class="text-muted">reportes</small>
       </div>
     </div>
 
     <div class="col-lg-3 col-md-6">
-      <div class="card stat-card stat-card-info">
+      <div class="stat-card">
         <i class="bi bi-hourglass-split"></i>
-        <h5>En Proceso</h5>
+        <h5>en proceso</h5>
         <h2>{{ reportes_en_proceso }}</h2>
-        <small>Reportes activos</small>
+        <small class="text-muted">reportes</small>
       </div>
     </div>
 
     <div class="col-lg-3 col-md-6">
-      <div class="card stat-card stat-card-secondary">
+      <div class="stat-card">
         <i class="bi bi-cash-stack"></i>
-        <h5>Multas Pendientes</h5>
+        <h5>multas</h5>
         <h2>{{ multas_pendientes }}</h2>
-        <small>Q{{ monto_multas_pendientes|floatformat:2 }} total</small>
+        <small class="text-muted">Q{{ monto_multas_pendientes|floatformat:2 }}</small>
       </div>
     </div>
 
     <div class="col-lg-3 col-md-6">
-      <div class="card stat-card stat-card-danger">
-        <i class="bi bi-shield-fill-exclamation"></i>
-        <h5>Alertas Activas</h5>
+      <div class="stat-card">
+        <i class="bi bi-shield-exclamation"></i>
+        <h5>alertas</h5>
         <h2>{{ alertas_activas }}</h2>
-        <small>Botones de pánico</small>
+        <small class="text-muted">activas</small>
       </div>
     </div>
   </div>
 
-  <!-- Acciones Administrativas -->
+  <!-- Acciones admin -->
   <div class="card mb-4">
+    <div class="card-header">
+      <i class="bi bi-gear"></i> acciones administrativas
+    </div>
     <div class="card-body">
-      <h4 class="mb-3">
-        <i class="bi bi-gear-fill text-primary"></i>
-        Acciones Administrativas
-      </h4>
-      <div class="row g-3">
-        <div class="col-md-3 col-sm-6">
+      <div class="row g-2">
+        <div class="col-md-3">
           <a href="{% url 'crear_usuario' %}" class="btn btn-primary w-100">
-            <i class="bi bi-person-plus"></i> Crear Usuario
+            <i class="bi bi-person-plus"></i> crear usuario
           </a>
         </div>
-        <div class="col-md-3 col-sm-6">
+        <div class="col-md-3">
           <a href="{% url 'crear_multa' %}" class="btn btn-outline-primary w-100">
-            <i class="bi bi-plus-circle"></i> Crear Multa
+            <i class="bi bi-plus-circle"></i> crear multa
           </a>
         </div>
-        <div class="col-md-3 col-sm-6">
+        <div class="col-md-3">
           <a href="{% url 'historial_panico' %}" class="btn btn-outline-primary w-100">
-            <i class="bi bi-shield-exclamation"></i> Ver Alertas
+            <i class="bi bi-shield-exclamation"></i> ver alertas
           </a>
         </div>
-        <div class="col-md-3 col-sm-6">
-          <a href="/admin/" class="btn btn-outline-primary w-100" target="_blank">
-            <i class="bi bi-gear"></i> Django Admin
+        <div class="col-md-3">
+          <a href="/admin/" class="btn btn-outline-secondary w-100" target="_blank">
+            <i class="bi bi-terminal"></i> django admin
           </a>
         </div>
       </div>
@@ -81,32 +80,25 @@
   </div>
 
   <div class="row g-4">
-    <!-- Actividad Reciente -->
+    <!-- Actividad reciente -->
     <div class="col-lg-8">
       <div class="card">
+        <div class="card-header">
+          <i class="bi bi-activity"></i> publicaciones recientes
+        </div>
         <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0">
-              <i class="bi bi-activity text-primary"></i>
-              Últimas Publicaciones
-            </h4>
-            <a href="{% url 'lista_publicaciones' %}" class="btn btn-sm btn-outline-primary">
-              Ver todas <i class="bi bi-arrow-right"></i>
-            </a>
-          </div>
-
           {% if publicaciones_recientes %}
             <div class="list-group list-group-flush">
               {% for pub in publicaciones_recientes %}
-                <div class="list-group-item px-0 border-0 border-bottom py-3">
+                <div class="list-group-item px-0 border-0 border-bottom py-3" style="background: transparent;">
                   <div class="d-flex justify-content-between align-items-start">
                     <div class="flex-grow-1">
-                      <h6 class="mb-1 fw-semibold">{{ pub.titulo }}</h6>
-                      <p class="mb-2 text-muted" style="font-size: 0.9rem;">
-                        {{ pub.contenido|truncatewords:20 }}
+                      <h6 class="mb-1" style="font-weight: 600;">{{ pub.titulo }}</h6>
+                      <p class="mb-2 text-muted" style="font-size: 0.875rem;">
+                        {{ pub.contenido|truncatewords:15 }}
                       </p>
-                      <small class="text-muted">
-                        <i class="bi bi-person-circle"></i> {{ pub.vecino.username }} •
+                      <small class="text-muted" style="font-size: 0.75rem;">
+                        <i class="bi bi-person"></i> {{ pub.vecino.username }} •
                         <i class="bi bi-clock"></i> {{ pub.fecha|date:"d/m/Y H:i" }}
                       </small>
                     </div>
@@ -122,67 +114,69 @@
                 </div>
               {% endfor %}
             </div>
+            <div class="text-end mt-3">
+              <a href="{% url 'lista_publicaciones' %}" class="btn btn-sm btn-outline-primary">
+                ver todas <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
           {% else %}
             <div class="text-center py-5">
-              <i class="bi bi-chat-left-text text-muted" style="font-size: 3rem;"></i>
-              <p class="text-muted mt-3 mb-0">No hay publicaciones recientes</p>
+              <i class="bi bi-chat-left-text text-muted" style="font-size: 3rem; opacity: 0.3;"></i>
+              <p class="text-muted mt-3 mb-0" style="font-size: 0.875rem;">sin publicaciones</p>
             </div>
           {% endif %}
         </div>
       </div>
     </div>
 
-    <!-- Panel Lateral de Gestión -->
+    <!-- Panel lateral -->
     <div class="col-lg-4">
-      <!-- Estadísticas Adicionales -->
-      <div class="card mb-4">
+      <!-- Stats adicionales -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <i class="bi bi-bar-chart"></i> estadísticas
+        </div>
         <div class="card-body">
-          <h5 class="mb-3">
-            <i class="bi bi-bar-chart-fill text-primary"></i>
-            Estadísticas Adicionales
-          </h5>
-          
           <div class="stat-item mb-3 pb-3 border-bottom">
             <div class="d-flex justify-content-between align-items-center">
               <div>
-                <small class="text-muted d-block">Objetos Perdidos</small>
-                <h5 class="mb-0 fw-bold">{{ objetos_perdidos_activos }}</h5>
+                <small class="text-muted d-block" style="font-size: 0.75rem;">objetos perdidos</small>
+                <h5 class="mb-0" style="font-weight: 600;">{{ objetos_perdidos_activos }}</h5>
               </div>
-              <i class="bi bi-bag text-primary" style="font-size: 2rem;"></i>
+              <i class="bi bi-bag text-muted" style="font-size: 1.75rem;"></i>
             </div>
           </div>
 
           <div class="stat-item">
             <div class="d-flex justify-content-between align-items-center">
               <div>
-                <small class="text-muted d-block">Monto Multas</small>
-                <h5 class="mb-0 fw-bold">Q{{ monto_multas_pendientes|floatformat:2 }}</h5>
+                <small class="text-muted d-block" style="font-size: 0.75rem;">monto multas</small>
+                <h5 class="mb-0" style="font-weight: 600;">Q{{ monto_multas_pendientes|floatformat:2 }}</h5>
               </div>
-              <i class="bi bi-currency-dollar text-warning" style="font-size: 2rem;"></i>
+              <i class="bi bi-currency-dollar text-muted" style="font-size: 1.75rem;"></i>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Enlaces Rápidos -->
+      <!-- Enlaces rápidos -->
       <div class="card">
+        <div class="card-header">
+          <i class="bi bi-speedometer2"></i> gestión
+        </div>
         <div class="card-body">
-          <h5 class="mb-3">
-            <i class="bi bi-speedometer2 text-primary"></i>
-            Gestión Rápida
-          </h5>
           <div class="d-grid gap-2">
             <a href="{% url 'lista_reportes' %}" class="btn btn-sm btn-outline-secondary text-start">
-              <i class="bi bi-file-earmark-text"></i> Ver Todos los Reportes
+              <i class="bi bi-file-earmark-text"></i> reportes
             </a>
             <a href="{% url 'lista_multas' %}" class="btn btn-sm btn-outline-secondary text-start">
-              <i class="bi bi-cash-coin"></i> Gestionar Multas
+              <i class="bi bi-cash-coin"></i> multas
             </a>
             <a href="{% url 'lista_publicaciones' %}" class="btn btn-sm btn-outline-secondary text-start">
-              <i class="bi bi-chat-dots"></i> Gestionar Publicaciones
+              <i class="bi bi-chat-dots"></i> publicaciones
             </a>
             <a href="{% url 'lista_objetos_perdidos' %}" class="btn btn-sm btn-outline-secondary text-start">
-              <i class="bi bi-bag"></i> Objetos Perdidos
+              <i class="bi bi-bag"></i> objetos
             </a>
           </div>
         </div>
@@ -197,20 +191,12 @@
     margin: 0 auto;
   }
 
-  .stat-item {
-    transition: all 0.3s ease;
-  }
-
-  .stat-item:hover {
-    transform: translateX(4px);
-  }
-
   .list-group-item:last-child {
     border-bottom: none !important;
   }
 
   .list-group-item:hover {
-    background-color: var(--bg-main);
+    background: var(--bg-main) !important;
   }
 </style>
 {% endblock %}
