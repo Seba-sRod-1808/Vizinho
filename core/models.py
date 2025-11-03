@@ -93,7 +93,7 @@ class Usuario(AbstractUser):
 
     @telefono.setter
     def telefono(self, value):
-        # Validación inline para evitar setters inseguros
+        # Validación para evitar setters inseguros
         if value and len(value) < 8:
             raise ValidationError("El teléfono debe tener al menos 8 dígitos")
         self._telefono = value
@@ -112,7 +112,7 @@ class Usuario(AbstractUser):
             )
         self._rol = value
     
-    # ===== MÉTODOS DE UTILIDAD =====
+    # ===== METODOS DE UTILIDAD =====
     
     def es_administrador(self):
         """Permite detectar si el usuario tiene rol de administrador o superuser."""
@@ -148,18 +148,6 @@ class Condominio(models.Model):
     _nombre = models.CharField(max_length=100)
     _ubicacion = models.CharField(max_length=200)
     _reglas = models.TextField(null=True, blank=True)
-
-    @property
-    def nombre(self):
-        return self._nombre
-
-    @property
-    def ubicacion(self):
-        return self._ubicacion
-
-    @property
-    def reglas(self):
-        return self._reglas
 
     def __str__(self):
         return f"Condominio: {self._nombre}"
@@ -301,7 +289,7 @@ class PerfilUsuario(models.Model):
         return f"Perfil de {self._usuario.username}"
 
 
-# ===== SIGNAL: CREACIÓN DE PERFIL AUTOMÁTICO =====
+# ===== CREAR E PERFIL AUTOMÁTICO =====
 @receiver(post_save, sender=Usuario)
 def crear_perfil_usuario(sender, instance, created, **kwargs):
     """
@@ -330,12 +318,30 @@ class Multa(models.Model):
     _vecino = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="multas")
 
     objects = MultaManager()
+
+    @property
+    def monto(self):
+        return self._monto
+
+    @property
+    def motivo(self):
+        return self._motivo
+
+    @property
+    def estado(self):
+        return self._estado
+
+    @property
+    def fecha(self):
+        return self._fecha
+
+    @property
+    def vecino(self):
+        return self._vecino
     
     @property
     def esta_pendiente(self):
         return self._estado == "Pendiente"
-
-    # ===== MÉTODOS DE NEGOCIO =====
     
     def pagar(self, metodo_pago=None, transaccion_id=None):
         """ ESTO ES UN METODO SIMULADO, NO INTEGRA CON PASARELAS REALES DE PAGO. """
@@ -378,6 +384,22 @@ class BotonPanico(models.Model):
         related_name="alertas_desactivadas"
     )
 
+    @property
+    def usuario(self):
+        return self._usuario
+
+    @property
+    def mensaje(self):
+        return self._mensaje
+
+    @property
+    def fecha(self):
+        return self._fecha
+
+    @property
+    def activo(self):
+        return self._activo
+
     class Meta:
         ordering = ['-_fecha']
         verbose_name_plural = "Botones de Pánico"
@@ -411,6 +433,30 @@ class ObjetoPerdido(models.Model):
     _usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="objetos_perdidos")
     _encontrado = models.BooleanField(default=False)
     _fecha_encuentro = models.DateTimeField(null=True, blank=True)
+
+    @property
+    def titulo(self):
+        return self._titulo
+
+    @property
+    def descripcion(self):
+        return self._descripcion
+
+    @property
+    def imagen(self):
+        return self._imagen
+
+    @property
+    def fecha(self):
+        return self._fecha
+
+    @property
+    def usuario(self):
+        return self._usuario
+
+    @property
+    def encontrado(self):
+        return self._encontrado
 
     class Meta:
         ordering = ['-_fecha']

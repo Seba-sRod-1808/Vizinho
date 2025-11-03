@@ -398,7 +398,7 @@ class ActivarBotonPanicoView(LoginRequiredMixin, View):
     
     def post(self, request):
         try:
-            # Crear alerta (acciones de notificación pueden conectarse vía signals/hook).
+            # Crear alerta
             BotonPanico.objects.create(_usuario=request.user)
             messages.success(
                 request, 
@@ -421,7 +421,7 @@ class HistorialBotonPanicoView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         """
-        Listado condicional: admins ven todas; usuarios ven solo las propias.
+        Listado condicional, admins ven todas mientras que los usuarios ven solo las propias.
         """
         user = self.request.user
         if user.es_administrador():
@@ -437,7 +437,7 @@ class ListaObjetosPerdidosView(LoginRequiredMixin, ListView):
     model = ObjetoPerdido
     template_name = "objeto-perdido/lista_objetos.html"
     context_object_name = "objetos"
-    paginate_by = 12  # paginación agregada
+    paginate_by = 12
 
     def get_queryset(self):
         # Ordena por encontrados primero, luego por fecha descendente
