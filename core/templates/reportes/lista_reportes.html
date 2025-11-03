@@ -1,626 +1,201 @@
 {% extends "base.html" %}
-{% block title %}Mis Reportes{% endblock %}
-{% block extra_head %}
-<style>
-  .reports-wrapper {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
 
-  /* Header de la página */
-  .page-header {
-    background: white;
-    border-radius: 20px;
-    padding: 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-
-  .page-header-content h2 {
-    font-weight: 800;
-    font-size: 2rem;
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .page-header-content p {
-    color: #6b7280;
-    margin: 8px 0 0 0;
-    font-size: 1rem;
-  }
-
-  /* Botón de crear reporte */
-  .btn-create {
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-    color: white;
-    border: none;
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 1rem;
-    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-  }
-
-  .btn-create:hover {
-    background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
-    color: white;
-  }
-
-  .btn-create i {
-    font-size: 1.2rem;
-  }
-
-  /* Estadísticas rápidas */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-  }
-
-  .stat-card {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    transition: all 0.3s ease;
-  }
-
-  .stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  }
-
-  .stat-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.8rem;
-  }
-
-  .stat-icon-orange {
-    background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
-    color: #ea580c;
-  }
-
-  .stat-icon-green {
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-    color: #059669;
-  }
-
-  .stat-icon-yellow {
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-    color: #d97706;
-  }
-
-  .stat-icon-red {
-    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
-    color: #dc2626;
-  }
-
-  .stat-content h4 {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: #1f2937;
-    margin: 0;
-  }
-
-  .stat-content p {
-    font-size: 0.85rem;
-    color: #6b7280;
-    margin: 0;
-  }
-
-  /* Filtros y búsqueda */
-  .filters-section {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 25px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .search-box {
-    flex: 1;
-    min-width: 250px;
-    position: relative;
-  }
-
-  .search-box input {
-    width: 100%;
-    padding: 12px 20px 12px 45px;
-    border: 2px solid #e5e7eb;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
-  }
-
-  .search-box input:focus {
-    outline: none;
-    border-color: #f97316;
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
-  }
-
-  .search-box i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #9ca3af;
-    font-size: 1.1rem;
-  }
-
-  .filter-dropdown {
-    padding: 12px 20px;
-    border: 2px solid #e5e7eb;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    background: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .filter-dropdown:hover,
-  .filter-dropdown:focus {
-    border-color: #f97316;
-    outline: none;
-  }
-
-  /* Grid de reportes */
-  .reports-grid {
-    display: grid;
-    gap: 20px;
-  }
-
-  /* Tarjeta de reporte */
-  .report-card {
-    background: white;
-    border-radius: 16px;
-    padding: 25px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    transition: all 0.3s ease;
-    border-left: 4px solid transparent;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 20px;
-    align-items: start;
-  }
-
-  .report-card:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-    transform: translateY(-4px);
-  }
-
-  .report-card.status-recibido {
-    border-left-color: #f97316;
-  }
-
-  .report-card.status-en-revision {
-    border-left-color: #facc15;
-  }
-
-  .report-card.status-resuelto {
-    border-left-color: #10b981;
-  }
-
-  .report-card.status-rechazado {
-    border-left-color: #dc2626;
-  }
-
-  /* Contenido del reporte */
-  .report-content {
-    flex: 1;
-  }
-
-  .report-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    gap: 15px;
-  }
-
-  .report-title {
-    flex: 1;
-  }
-
-  .report-title h5 {
-    font-weight: 700;
-    font-size: 1.2rem;
-    color: #1f2937;
-    margin: 0 0 5px 0;
-  }
-
-  .report-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-  }
-
-  .badge-recibido {
-    background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
-    color: #9a3412;
-  }
-
-  .badge-en-revision {
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-    color: #854d0e;
-  }
-
-  .badge-resuelto {
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-    color: #065f46;
-  }
-
-  .badge-rechazado {
-    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
-    color: #991b1b;
-  }
-
-  .report-description {
-    color: #4b5563;
-    line-height: 1.6;
-    margin-bottom: 15px;
-  }
-
-  .report-meta {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    font-size: 0.9rem;
-    color: #6b7280;
-  }
-
-  .meta-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .meta-item i {
-    color: #f97316;
-  }
-
-  /* Acciones */
-  .report-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .btn-action {
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border: none;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
-  .btn-edit {
-    background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
-    color: #333;
-    box-shadow: 0 2px 8px rgba(250, 204, 21, 0.3);
-  }
-
-  .btn-edit:hover {
-    background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.4);
-    color: #333;
-  }
-
-  .btn-delete {
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-    color: white;
-    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
-  }
-
-  .btn-delete:hover {
-    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
-    color: white;
-  }
-
-  /* Estado vacío */
-  .empty-state {
-    text-align: center;
-    padding: 80px 40px;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  }
-
-  .empty-state-icon {
-    font-size: 5rem;
-    color: #f97316;
-    margin-bottom: 25px;
-    opacity: 0.8;
-  }
-
-  .empty-state h3 {
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: #1f2937;
-    margin-bottom: 12px;
-  }
-
-  .empty-state p {
-    color: #6b7280;
-    font-size: 1rem;
-    margin-bottom: 30px;
-  }
-
-  /* Animaciones */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .fade-in {
-    animation: fadeInUp 0.5s ease-out;
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .page-header {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .page-header-content h2 {
-      font-size: 1.6rem;
-    }
-
-    .btn-create {
-      width: 100%;
-      justify-content: center;
-    }
-
-    .stats-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .report-card {
-      grid-template-columns: 1fr;
-    }
-
-    .report-actions {
-      flex-direction: row;
-    }
-
-    .btn-action {
-      flex: 1;
-    }
-  }
-</style>
-{% endblock %}
+{% block title %}reportes{% endblock %}
 
 {% block content %}
-<div class="reports-wrapper fade-in">
+<div class="container-fluid" style="max-width: 1400px;">
   <!-- Header -->
-  <div class="page-header">
-    <div class="page-header-content">
-      <h2>
-        <i class="bi bi-exclamation-triangle-fill"></i>
-        Mis Reportes
-      </h2>
-      <p>Gestiona y da seguimiento a tus reportes de incidencias</p>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="mb-1">
+        <i class="bi bi-exclamation-triangle text-primary"></i>
+        {% if es_admin %}gestión de reportes{% else %}mis reportes{% endif %}
+      </h1>
+      <p class="text-muted mb-0" style="font-size: 0.875rem;">
+        {% if es_admin %}administra todos los reportes{% else %}seguimiento de tus reportes{% endif %}
+      </p>
     </div>
-    <a href="{% url 'crear_reporte' %}" class="btn-create">
-      <i class="bi bi-plus-circle-fill"></i>
-      Nuevo Reporte
+    <a href="{% url 'crear_reporte' %}" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> nuevo reporte
     </a>
   </div>
 
-  <!-- Estadísticas -->
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-icon stat-icon-orange">
-        <i class="bi bi-folder-fill"></i>
-      </div>
-      <div class="stat-content">
-        <h4>{{ reportes|length }}</h4>
-        <p>Total de Reportes</p>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon stat-icon-yellow">
-        <i class="bi bi-clock-fill"></i>
-      </div>
-      <div class="stat-content">
-        <h4 id="pendingCount">0</h4>
-        <p>En Proceso</p>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon stat-icon-green">
-        <i class="bi bi-check-circle-fill"></i>
-      </div>
-      <div class="stat-content">
-        <h4 id="resolvedCount">0</h4>
-        <p>Resueltos</p>
+  {% if es_admin %}
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="d-flex gap-2 flex-wrap">
+        <a href="?estado=todos" class="btn btn-sm {% if not request.GET.estado or request.GET.estado == 'todos' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+          todos
+        </a>
+        <a href="?estado=Recibido" class="btn btn-sm {% if request.GET.estado == 'Recibido' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+          recibidos
+        </a>
+        <a href="?estado=EnProceso" class="btn btn-sm {% if request.GET.estado == 'EnProceso' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+          en proceso
+        </a>
+        <a href="?estado=Resuelto" class="btn btn-sm {% if request.GET.estado == 'Resuelto' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+          resueltos
+        </a>
+        <a href="?estado=Rechazado" class="btn btn-sm {% if request.GET.estado == 'Rechazado' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+          rechazados
+        </a>
       </div>
     </div>
   </div>
+  {% endif %}
 
-  <!-- Filtros y búsqueda -->
-  <div class="filters-section">
-    <div class="search-box">
-      <i class="bi bi-search"></i>
-      <input type="text" id="searchInput" placeholder="Buscar reportes...">
-    </div>
-    <select class="filter-dropdown" id="statusFilter">
-      <option value="">Todos los estados</option>
-      <option value="Recibido">Recibido</option>
-      <option value="En Revisión">En Revisión</option>
-      <option value="Resuelto">Resuelto</option>
-      <option value="Rechazado">Rechazado</option>
-    </select>
-  </div>
-
-  <!-- Grid de reportes -->
-  <div class="reports-grid">
-    {% for r in reportes %}
-    <div class="report-card status-{{ r.estado|lower|cut:' ' }}" 
-         data-title="{{ r.titulo|lower }}" 
-         data-description="{{ r.descripcion|lower }}"
-         data-status="{{ r.estado }}">
-      <div class="report-content">
-        <div class="report-header">
-          <div class="report-title">
-            <h5>{{ r.titulo }}</h5>
-            <span class="report-badge badge-{{ r.estado|lower|cut:' ' }}">
-              {% if r.estado == "Recibido" %}
-                <i class="bi bi-inbox-fill"></i>
-              {% elif r.estado == "En Revisión" %}
-                <i class="bi bi-hourglass-split"></i>
-              {% elif r.estado == "Resuelto" %}
-                <i class="bi bi-check-circle-fill"></i>
-              {% else %}
-                <i class="bi bi-x-circle-fill"></i>
+  <!-- Lista de reportes -->
+  {% if reportes %}
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width: 50px;"></th>
+              <th>título</th>
+              <th style="width: 140px;">estado</th>
+              <th style="width: 150px;">ubicación</th>
+              {% if es_admin %}
+              <th style="width: 120px;">usuario</th>
               {% endif %}
-              {{ r.estado }}
-            </span>
-          </div>
-        </div>
-        
-        <p class="report-description">{{ r.descripcion|truncatewords:20 }}</p>
-        
-        <div class="report-meta">
-          <span class="meta-item">
-            <i class="bi bi-geo-alt-fill"></i>
-            {{ r.ubicacion }}
-          </span>
-          <span class="meta-item">
-            <i class="bi bi-calendar-fill"></i>
-            {{ r.fecha|date:"d/m/Y" }}
-          </span>
-          <span class="meta-item">
-            <i class="bi bi-clock-fill"></i>
-            {{ r.fecha|date:"H:i" }}
-          </span>
-        </div>
-      </div>
-      
-      <div class="report-actions">
-        <a href="{% url 'editar_reporte' r.id %}" class="btn-action btn-edit">
-          <i class="bi bi-pencil-fill"></i>
-          Editar
-        </a>
-        <a href="{% url 'eliminar_reporte' r.id %}" class="btn-action btn-delete">
-          <i class="bi bi-trash-fill"></i>
-          Eliminar
-        </a>
-      </div>
-    </div>
-    {% empty %}
-    <!-- Estado vacío -->
-    <div class="empty-state">
-      <div class="empty-state-icon">
-        <i class="bi bi-clipboard-x"></i>
-      </div>
-      <h3>No tienes reportes aún</h3>
-      <p>Crea tu primer reporte para dar seguimiento a incidencias en tu comunidad</p>
-      <a href="{% url 'crear_reporte' %}" class="btn-create">
-        <i class="bi bi-plus-circle-fill"></i>
-        Crear Primer Reporte
-      </a>
-    </div>
-    {% endfor %}
-  </div>
-</div>
+              <th style="width: 110px;">fecha</th>
+              <th style="width: 150px;" class="text-end">acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for reporte in reportes %}
+              <tr>
+                <!-- Icono -->
+                <td class="text-center">
+                  {% if reporte.imagen %}
+                    <i class="bi bi-image-fill text-primary"></i>
+                  {% else %}
+                    <i class="bi bi-file-text text-muted"></i>
+                  {% endif %}
+                </td>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Calcular estadísticas
-    const cards = document.querySelectorAll('.report-card');
-    let pendingCount = 0;
-    let resolvedCount = 0;
-    
-    cards.forEach(card => {
-      const status = card.dataset.status;
-      if (status === 'Recibido' || status === 'En Revisión') {
-        pendingCount++;
-      } else if (status === 'Resuelto') {
-        resolvedCount++;
-      }
-    });
-    
-    document.getElementById('pendingCount').textContent = pendingCount;
-    document.getElementById('resolvedCount').textContent = resolvedCount;
-    
-    // Funcionalidad de búsqueda
-    const searchInput = document.getElementById('searchInput');
-    const statusFilter = document.getElementById('statusFilter');
-    
-    function filterReports() {
-      const searchTerm = searchInput.value.toLowerCase();
-      const statusValue = statusFilter.value;
-      
-      cards.forEach(card => {
-        const title = card.dataset.title;
-        const description = card.dataset.description;
-        const status = card.dataset.status;
-        
-        const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
-        const matchesStatus = !statusValue || status === statusValue;
-        
-        if (matchesSearch && matchesStatus) {
-          card.style.display = 'grid';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    }
-    
-    searchInput.addEventListener('input', filterReports);
-    statusFilter.addEventListener('change', filterReports);
-  });
-</script>
+                <!-- Titulo -->
+                <td>
+                  <div class="fw-semibold">{{ reporte.titulo }}</div>
+                  <small class="text-muted">{{ reporte.descripcion|truncatewords:8 }}</small>
+                </td>
+
+                <!-- Estado -->
+                <td>
+                  {% if reporte.estado == "Recibido" %}
+                    <span class="badge bg-info">{{ reporte.get_estado_display }}</span>
+                  {% elif reporte.estado == "EnProceso" %}
+                    <span class="badge bg-warning text-dark">{{ reporte.get_estado_display }}</span>
+                  {% elif reporte.estado == "Resuelto" %}
+                    <span class="badge bg-success">{{ reporte.get_estado_display }}</span>
+                  {% elif reporte.estado == "Rechazado" %}
+                    <span class="badge bg-danger">{{ reporte.get_estado_display }}</span>
+                  {% endif %}
+                </td>
+
+                <td>
+                  <small class="text-muted">{{ reporte.ubicacion|truncatewords:3 }}</small>
+                </td>
+
+                {% if es_admin %}
+                <td>
+                  <small>{{ reporte.vecino.username }}</small>
+                </td>
+                {% endif %}
+
+                <td>
+                  <small class="text-muted">
+                    {{ reporte.fecha|date:"d/m/Y" }}<br>
+                    {{ reporte.fecha|date:"H:i" }}
+                  </small>
+                </td>
+
+                <td class="text-end">
+                  <div class="btn-group btn-group-sm">
+                    <a href="{% url 'detalle_reporte' reporte.id %}" class="btn btn-outline-primary" title="ver">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                    
+                    {% if user == reporte.vecino or es_admin %}
+                      <a href="{% url 'editar_reporte' reporte.id %}" class="btn btn-outline-warning" title="editar">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <a href="{% url 'eliminar_reporte' reporte.id %}" class="btn btn-outline-danger" title="eliminar">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% if is_paginated %}
+    <nav class="mt-4">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page=1{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">
+              <i class="bi bi-chevron-double-left"></i>
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">
+              <i class="bi bi-chevron-left"></i>
+            </a>
+          </li>
+        {% endif %}
+
+        <li class="page-item active">
+          <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">
+              <i class="bi bi-chevron-double-right"></i>
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+
+  {% else %}
+    <div class="card">
+      <div class="card-body text-center py-5">
+        <i class="bi bi-exclamation-triangle text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+        <h3 class="mt-4 mb-2">
+          {% if request.GET.estado and request.GET.estado != 'todos' %}
+            sin reportes con este estado
+          {% else %}
+            sin reportes todavía
+          {% endif %}
+        </h3>
+        <p class="text-muted mb-4">
+          {% if not request.GET.estado or request.GET.estado == 'todos' %}
+            crea tu primer reporte para comenzar
+          {% endif %}
+        </p>
+        {% if not request.GET.estado or request.GET.estado == 'todos' %}
+          <a href="{% url 'crear_reporte' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> crear reporte
+          </a>
+        {% else %}
+          <a href="{% url 'lista_reportes' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> ver todos
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

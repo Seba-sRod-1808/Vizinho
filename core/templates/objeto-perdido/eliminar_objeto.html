@@ -1,474 +1,86 @@
 {% extends "base.html" %}
-{% load static %}
-{% block title %}Eliminar Objeto Perdido{% endblock %}
-{% block extra_head %}
-<style>
-  .delete-wrapper {
-    max-width: 700px;
-    margin: 0 auto;
-  }
 
-  .breadcrumb-custom {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 25px;
-    font-size: 0.9rem;
-  }
-
-  .breadcrumb-custom a {
-    color: #6b7280;
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-
-  .breadcrumb-custom a:hover {
-    color: #dc2626;
-  }
-
-  .breadcrumb-custom i {
-    color: #9ca3af;
-    font-size: 0.8rem;
-  }
-
-  .breadcrumb-custom .current {
-    color: #dc2626;
-    font-weight: 600;
-  }
-
-  /* Alerta de peligro */
-  .danger-alert {
-    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-    border: 3px solid #dc2626;
-    border-radius: 20px;
-    padding: 40px;
-    margin-bottom: 30px;
-    text-align: center;
-    box-shadow: 0 8px 30px rgba(220, 38, 38, 0.2);
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% {
-      box-shadow: 0 8px 30px rgba(220, 38, 38, 0.2);
-    }
-    50% {
-      box-shadow: 0 12px 40px rgba(220, 38, 38, 0.3);
-    }
-  }
-
-  .danger-icon {
-    font-size: 5rem;
-    color: #dc2626;
-    margin-bottom: 20px;
-    animation: shake 0.5s;
-  }
-
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-10px); }
-    75% { transform: translateX(10px); }
-  }
-
-  .danger-alert h2 {
-    font-weight: 800;
-    font-size: 1.8rem;
-    color: #991b1b;
-    margin-bottom: 15px;
-  }
-
-  .danger-alert p {
-    color: #7f1d1d;
-    font-size: 1.1rem;
-    margin: 0;
-  }
-
-  /* Tarjeta de vista previa */
-  .preview-card {
-    background: white;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    margin-bottom: 30px;
-    border-left: 5px solid #dc2626;
-  }
-
-  .preview-label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #6b7280;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 20px;
-  }
-
-  .preview-label i {
-    color: #dc2626;
-  }
-
-  .object-preview-content {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 25px;
-    align-items: start;
-  }
-
-  .preview-image-container {
-    width: 200px;
-    height: 200px;
-    border-radius: 12px;
-    overflow: hidden;
-    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-  }
-
-  .preview-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .no-image-preview {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #9ca3af;
-  }
-
-  .no-image-preview i {
-    font-size: 3rem;
-    margin-bottom: 10px;
-  }
-
-  .no-image-preview p {
-    margin: 0;
-    font-size: 0.9rem;
-  }
-
-  .preview-details h3 {
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: #1f2937;
-    margin: 0 0 15px 0;
-    line-height: 1.4;
-  }
-
-  .preview-details p {
-    color: #4b5563;
-    line-height: 1.7;
-    margin-bottom: 20px;
-  }
-
-  .preview-meta {
-    display: flex;
-    gap: 20px;
-    padding-top: 15px;
-    border-top: 2px solid #f3f4f6;
-    font-size: 0.9rem;
-    color: #6b7280;
-    flex-wrap: wrap;
-  }
-
-  .meta-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .meta-item i {
-    color: #dc2626;
-  }
-
-  /* Sección de advertencia */
-  .warning-section {
-    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-    border-left: 4px solid #f59e0b;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 30px;
-  }
-
-  .warning-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #92400e;
-    font-weight: 700;
-    margin-bottom: 12px;
-    font-size: 1.1rem;
-  }
-
-  .warning-header i {
-    font-size: 1.3rem;
-  }
-
-  .warning-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .warning-list li {
-    color: #78350f;
-    padding: 6px 0;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 0.95rem;
-  }
-
-  .warning-list li i {
-    color: #f59e0b;
-    margin-top: 3px;
-    font-size: 0.9rem;
-  }
-
-  /* Botones de acción */
-  .action-container {
-    background: white;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  }
-
-  .form-actions {
-    display: flex;
-    gap: 15px;
-  }
-
-  .btn-delete {
-    flex: 1;
-    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-    color: white;
-    border: none;
-    padding: 18px 32px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    cursor: pointer;
-  }
-
-  .btn-delete:hover {
-    background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
-    color: white;
-  }
-
-  .btn-delete i {
-    font-size: 1.3rem;
-  }
-
-  .btn-cancel {
-    flex: 1;
-    background: white;
-    color: #1f2937;
-    border: 2px solid #e5e7eb;
-    padding: 18px 32px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-  }
-
-  .btn-cancel:hover {
-    background: #f9fafb;
-    border-color: #9ca3af;
-    color: #1f2937;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  }
-
-  .confirmation-text {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  .confirmation-text p {
-    color: #6b7280;
-    font-size: 1rem;
-    margin: 0;
-  }
-
-  .confirmation-text strong {
-    color: #dc2626;
-    font-size: 1.1rem;
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .fade-in {
-    animation: fadeInUp 0.5s ease-out;
-  }
-
-  @media (max-width: 768px) {
-    .danger-alert {
-      padding: 30px 20px;
-    }
-
-    .danger-icon {
-      font-size: 3.5rem;
-    }
-
-    .danger-alert h2 {
-      font-size: 1.4rem;
-    }
-
-    .preview-card {
-      padding: 20px;
-    }
-
-    .object-preview-content {
-      grid-template-columns: 1fr;
-    }
-
-    .preview-image-container {
-      width: 100%;
-      margin: 0 auto;
-    }
-
-    .form-actions {
-      flex-direction: column-reverse;
-    }
-
-    .btn-delete,
-    .btn-cancel {
-      width: 100%;
-    }
-  }
-</style>
-{% endblock %}
+{% block title %}eliminar objeto perdido{% endblock %}
 
 {% block content %}
-<div class="delete-wrapper fade-in">
-  <!-- Breadcrumb -->
-  <div class="breadcrumb-custom">
-    <a href="{% url 'dashboard' %}">
-      <i class="bi bi-house-door"></i> Inicio
-    </a>
-    <i class="bi bi-chevron-right"></i>
-    <a href="{% url 'lista_objetos_perdidos' %}">Objetos Perdidos</a>
-    <i class="bi bi-chevron-right"></i>
-    <span class="current">Eliminar Objeto</span>
+<div class="container-fluid" style="max-width: 700px;">
+  <!-- Header -->
+  <div class="mb-4 text-center">
+    <h1 class="mb-1">
+      <i class="bi bi-trash text-danger"></i>
+      eliminar objeto perdido
+    </h1>
+    <p class="text-muted mb-0" style="font-size: 0.875rem;">confirma la eliminación del registro</p>
   </div>
 
-  <!-- Alerta de Peligro -->
-  <div class="danger-alert">
-    <div class="danger-icon">
-      <i class="bi bi-exclamation-triangle-fill"></i>
-    </div>
-    <h2>¡Acción Irreversible!</h2>
-    <p>Estás a punto de eliminar este objeto reportado permanentemente</p>
+  <!-- Advertencia -->
+  <div class="alert alert-danger">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <strong>advertencia:</strong> esta acción no se puede deshacer
   </div>
 
-  <!-- Vista previa del objeto -->
-  <div class="preview-card">
-    <div class="preview-label">
-      <i class="bi bi-bag-x"></i>
-      Objeto a eliminar
+  <!-- Detalles del objeto -->
+  <div class="card mb-4">
+    <div class="card-header bg-light">
+      <i class="bi bi-bag"></i> objeto a eliminar
     </div>
-    
-    <div class="object-preview-content">
-      <div class="preview-image-container">
-        {% if object.imagen %}
-          <img src="{{ object.imagen.url }}" alt="{{ object.titulo }}" class="preview-image">
-        {% else %}
-          <div class="no-image-preview">
-            <i class="bi bi-image"></i>
-            <p>Sin imagen</p>
-          </div>
-        {% endif %}
-      </div>
+    <div class="card-body">
+      <h5 class="mb-3">{{ objeto.nombre }}</h5>
       
-      <div class="preview-details">
-        <h3>{{ object.titulo }}</h3>
-        <p>{{ object.descripcion|truncatewords:50 }}</p>
+      <div class="mb-3">
+        <label class="text-muted mb-1" style="font-size: 0.8rem;">descripción</label>
+        <p class="mb-0">{{ objeto.descripcion }}</p>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="text-muted mb-1" style="font-size: 0.8rem;">ubicación</label>
+          <p class="mb-0 fw-semibold">{{ objeto.ubicacion }}</p>
+        </div>
         
-        <div class="preview-meta">
-          <span class="meta-item">
-            <i class="bi bi-person-circle"></i>
-            {{ object.usuario.username }}
-          </span>
-          <span class="meta-item">
-            <i class="bi bi-calendar3"></i>
-            {{ object.fecha|date:"d/m/Y" }}
-          </span>
+        <div class="col-md-6">
+          <label class="text-muted mb-1" style="font-size: 0.8rem;">estado</label>
+          <p class="mb-0">
+            {% if objeto.encontrado %}
+              <span class="badge bg-success">encontrado</span>
+            {% else %}
+              <span class="badge bg-warning text-dark">perdido</span>
+            {% endif %}
+          </p>
+        </div>
+
+        <div class="col-md-6">
+          <label class="text-muted mb-1" style="font-size: 0.8rem;">reportado por</label>
+          <p class="mb-0 fw-semibold">{{ objeto.vecino.username }}</p>
+        </div>
+
+        <div class="col-md-6">
+          <label class="text-muted mb-1" style="font-size: 0.8rem;">fecha</label>
+          <p class="mb-0">{{ objeto.fecha|date:"d/m/Y H:i" }}</p>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Advertencias -->
-  <div class="warning-section">
-    <div class="warning-header">
-      <i class="bi bi-shield-exclamation"></i>
-      Ten en cuenta que:
+      {% if objeto.imagen %}
+      <div class="mt-3">
+        <label class="text-muted mb-2" style="font-size: 0.8rem;">imagen del objeto</label>
+        <img src="{{ objeto.imagen.url }}" class="img-fluid rounded border" style="max-height: 200px;">
+      </div>
+      {% endif %}
     </div>
-    <ul class="warning-list">
-      <li>
-        <i class="bi bi-x-circle-fill"></i>
-        Esta acción no se puede deshacer
-      </li>
-      <li>
-        <i class="bi bi-x-circle-fill"></i>
-        El reporte del objeto se eliminará permanentemente de la base de datos
-      </li>
-      <li>
-        <i class="bi bi-x-circle-fill"></i>
-        La imagen y toda la información asociada se perderán
-      </li>
-      <li>
-        <i class="bi bi-x-circle-fill"></i>
-        Otras personas no podrán ver este reporte nuevamente
-      </li>
-    </ul>
   </div>
 
   <!-- Formulario de confirmación -->
-  <div class="action-container">
-    <div class="confirmation-text">
-      <p>¿Estás <strong>completamente seguro</strong> de que deseas continuar?</p>
+  <form method="post">
+    {% csrf_token %}
+    
+    <div class="d-flex gap-2 justify-content-center">
+      <a href="{% url 'lista_objetos_perdidos' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> cancelar
+      </a>
+      <button type="submit" class="btn btn-danger">
+        <i class="bi bi-trash"></i> sí, eliminar objeto
+      </button>
     </div>
-    <form method="post" id="deleteForm">
-      {% csrf_token %}
-      <div class="form-actions">
-        <a href="{% url 'lista_objetos_perdidos' %}" class="btn-cancel">
-          <i class="bi bi-arrow-left-circle"></i>
-          No, Regresar
-        </a>
-        <button type="submit" class="btn-delete" id="deleteButton">
-          <i class="bi bi-trash-fill"></i>
-          Sí, Eliminar Definitivamente
-        </button>
-      </div>
-    </form>
-  </div>
+  </form>
 </div>
-
-<script src="{% static 'js/objetos-perdidos/delete.js' %}"></script>
 {% endblock %}

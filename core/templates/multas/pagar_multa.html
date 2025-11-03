@@ -1,28 +1,202 @@
 {% extends "base.html" %}
-{% block title %}Pagar Multa{% endblock %}
+
+{% block title %}pagar multa{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2>Pagar Multa</h2>
-  <p><strong>Concepto:</strong> {{ multa.concepto }}</p>
-  <p><strong>Monto:</strong> Q {{ multa.monto }}</p>
-  <p><strong>Fecha:</strong> {{ multa.fecha }}</p>
-  <p><strong>Estado:</strong> 
-    {% if multa.pagada %}
-      <span class="badge bg-success">Pagada</span>
-    {% else %}
-      <span class="badge bg-danger">Pendiente</span>
-    {% endif %}
-  </p>
+<div class="container-fluid" style="max-width: 700px;">
+  <!-- Header -->
+  <div class="mb-4 text-center">
+    <h1 class="mb-1">
+      <i class="bi bi-credit-card text-primary"></i>
+      pagar multa
+    </h1>
+    <p class="text-muted mb-0" style="font-size: 0.875rem;">proceder al pago de la multa</p>
+  </div>
 
-  {% if not multa.pagada %}
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-success">Confirmar Pago</button>
-    <a href="{% url 'lista_multas' %}" class="btn btn-secondary">Cancelar</a>
-  </form>
-  {% else %}
-  <a href="{% url 'lista_multas' %}" class="btn btn-primary">Regresar</a>
-  {% endif %}
+  <!-- Detalles de la multa -->
+  <div class="card mb-4">
+    <div class="card-header bg-light">
+      <i class="bi bi-file-text"></i> detalles de la multa
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label class="text-muted mb-1" style="font-size: 0.8rem;">descripción</label>
+        <p class="mb-0">{{ multa.descripcion }}</p>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="text-muted mb-1" style="font-size: 0.8rem;">monto a pagar</label>
+          <h3 class="mb-0 text-danger">Q{{ multa.monto|floatformat:2 }}</h3>
+        </div>
+
+        <div class="col-md-6">
+          <label class="text-muted mb-1" style="font-size: 0.8rem;">fecha de emisión</label>
+          <p class="mb-0">{{ multa.fecha|date:"d/m/Y" }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Información de pago -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <i class="bi bi-info-circle"></i> información de pago
+    </div>
+    <div class="card-body">
+      <div class="alert alert-info mb-3">
+        <i class="bi bi-bank"></i>
+        <strong>datos para transferencia bancaria:</strong>
+      </div>
+
+      <div class="mb-2">
+        <small class="text-muted d-block" style="font-size: 0.75rem;">banco</small>
+        <p class="mb-0 fw-semibold">Banco Industrial</p>
+      </div>
+
+      <div class="mb-2">
+        <small class="text-muted d-block" style="font-size: 0.75rem;">cuenta</small>
+        <div class="d-flex align-items-center gap-2">
+          <code id="cuenta" class="flex-grow-1">1234-5678-9012-3456</code>
+          <button 
+            type="button" 
+            class="btn btn-sm btn-outline-secondary" 
+            onclick="copyToClipboard('1234-5678-9012-3456', this)"
+            data-tooltip="copiar número"
+          >
+            <i class="bi bi-clipboard"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mb-2">
+        <small class="text-muted d-block" style="font-size: 0.75rem;">nombre</small>
+        <p class="mb-0 fw-semibold">Asociación de Vecinos Vizinho</p>
+      </div>
+
+      <div>
+        <small class="text-muted d-block" style="font-size: 0.75rem;">referencia (importante)</small>
+        <div class="d-flex align-items-center gap-2">
+          <code id="referencia" class="flex-grow-1">MULTA-{{ multa.id }}-{{ user.username|upper }}</code>
+          <button 
+            type="button" 
+            class="btn btn-sm btn-outline-secondary" 
+            onclick="copyToClipboard('MULTA-{{ multa.id }}-{{ user.username|upper }}', this)"
+            data-tooltip="copiar referencia"
+          >
+            <i class="bi bi-clipboard"></i>
+          </button>
+        </div>
+        <small class="text-muted">usa esta referencia para que podamos identificar tu pago</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmación de pago -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <i class="bi bi-check-circle"></i> confirmar pago
+    </div>
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="alert alert-warning">
+          <i class="bi bi-exclamation-triangle"></i>
+          <strong>importante:</strong> sube el comprobante de pago para que podamos verificarlo
+        </div>
+
+        <!-- Comprobante -->
+        <div class="mb-3">
+          <label for="id_comprobante" class="form-label">comprobante de pago <span class="text-danger">*</span></label>
+          <input 
+            type="file" 
+            name="comprobante" 
+            class="form-control" 
+            id="id_comprobante" 
+            accept="image/*,.pdf"
+            required
+            onchange="previewComprobante(event)"
+          >
+          <small class="text-muted">foto del comprobante o PDF</small>
+
+          <div id="preview-container" class="mt-3" style="display: none;">
+            <p class="fw-semibold mb-2" style="font-size: 0.875rem;">vista previa:</p>
+            <img id="preview" class="img-fluid rounded border" style="max-height: 200px;">
+          </div>
+        </div>
+
+        <!-- Notas opcionales -->
+        <div class="mb-4">
+          <label for="id_notas" class="form-label">notas adicionales (opcional)</label>
+          <textarea 
+            name="notas" 
+            class="form-control" 
+            id="id_notas" 
+            rows="3"
+            placeholder="ej: pagado el día 15/03/2025 a las 10am"
+          ></textarea>
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-check-circle"></i> confirmar pago realizado
+          </button>
+          <a href="{% url 'lista_multas' %}" class="btn btn-outline-secondary">
+            cancelar
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Info adicional -->
+  <div class="card">
+    <div class="card-body">
+      <small class="text-muted d-block mb-2">
+        <i class="bi bi-clock"></i> el pago será verificado por un administrador
+      </small>
+      <small class="text-muted d-block mb-2">
+        <i class="bi bi-bell"></i> recibirás notificación cuando se confirme
+      </small>
+      <small class="text-muted d-block">
+        <i class="bi bi-hourglass"></i> el proceso de verificación toma de 24 a 48 horas
+      </small>
+    </div>
+  </div>
 </div>
+
+<script>
+function previewComprobante(event) {
+  const input = event.target;
+  const preview = document.getElementById('preview');
+  const container = document.getElementById('preview-container');
+  
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    
+    if (file.size > 5 * 1024 * 1024) {
+      alert('el archivo es muy grande. máximo 5MB');
+      input.value = '';
+      return;
+    }
+    
+    // Si es PDF, no mostrar preview
+    if (file.type === 'application/pdf') {
+      container.innerHTML = '<p class="text-success"><i class="bi bi-file-pdf"></i> PDF seleccionado: ' + file.name + '</p>';
+      container.style.display = 'block';
+      return;
+    }
+    
+    // Si es imagen, mostrar preview
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      preview.src = e.target.result;
+      container.style.display = 'block';
+    }
+    reader.readAsDataURL(file);
+  }
+}
+</script>
 {% endblock %}

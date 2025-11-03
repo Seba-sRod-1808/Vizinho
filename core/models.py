@@ -280,7 +280,7 @@ class PerfilUsuario(models.Model):
     
     @bio.setter
     def bio(self, value):
-        # Setter con validación de longitud; lanza ValidationError si excede el límite.
+        # Setter con validación de longitud, lanza ValidationError si excede
         if value and len(value) > 500:
             raise ValidationError("La biografía no puede exceder 500 caracteres")
         self._bio = value
@@ -353,10 +353,6 @@ class Multa(models.Model):
         self._fecha_pago = timezone.now()
         self.save()
         self._post_pago(metodo_pago, transaccion_id)
-    
-    def _post_pago(self, metodo_pago, transaccion_id):
-        """Hook opcional para integrar acciones postpago (notificación, logging, etc.)."""
-        pass
     
     def puede_pagar_usuario(self, usuario):
         """Solo el dueño de la multa puede pagarla y si está pendiente."""

@@ -4,25 +4,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar Sesión - Vizinho</title>
+  <title>login | vizinho</title>
   
-  <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-  
-  <!-- Google Fonts -->
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+  <!-- Fuentes -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --primary: #FF7B54;
-      --primary-dark: #E85D3A;
-      --bg-gradient-start: #2C3E50;
-      --bg-gradient-end: #1a252f;
-      --text-dark: #2C3E50;
-      --shadow-lg: 0 10px 40px rgba(0,0,0,0.15);
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --text-light: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
     }
 
     * {
@@ -32,207 +32,153 @@
     }
 
     body {
-      font-family: 'Nunito Sans', sans-serif;
-      background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+      font-family: 'IBM Plex Mono', monospace;
+      background: var(--bg-dark);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 20px;
+      color: var(--text-light);
     }
 
     .login-container {
-      background: white;
-      border-radius: 20px;
-      box-shadow: var(--shadow-lg);
-      overflow: hidden;
-      max-width: 900px;
+      max-width: 420px;
       width: 100%;
+    }
+
+    .terminal-header {
+      background: var(--bg-card);
+      padding: 0.5rem 1rem;
+      border-radius: 6px 6px 0 0;
       display: flex;
-      animation: fadeInUp 0.6s ease;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid var(--border);
+      border-bottom: none;
     }
 
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .terminal-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--text-muted);
     }
 
-    .login-left {
-      flex: 1;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      padding: 4rem 3rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      color: white;
-      position: relative;
-      overflow: hidden;
-    }
+    .terminal-dot:nth-child(1) { background: #ef4444; }
+    .terminal-dot:nth-child(2) { background: #f59e0b; }
+    .terminal-dot:nth-child(3) { background: #10b981; }
 
-    .login-left::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-      animation: pulse 15s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-
-    .login-left-content {
-      position: relative;
-      z-index: 1;
+    .login-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0 0 6px 6px;
+      padding: 2rem;
     }
 
     .brand {
-      font-family: 'Poppins', sans-serif;
-      font-size: 2.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
       font-weight: 700;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-light);
     }
 
     .brand i {
-      font-size: 3rem;
+      color: var(--primary);
     }
 
-    .login-left p {
-      font-size: 1.1rem;
-      opacity: 0.95;
-      line-height: 1.7;
+    .prompt {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-bottom: 2rem;
     }
 
-    .features {
-      margin-top: 2rem;
+    .prompt span {
+      color: var(--primary);
     }
 
-    .feature-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 1rem;
-      font-size: 0.95rem;
-    }
-
-    .feature-item i {
-      font-size: 1.5rem;
-      opacity: 0.9;
-    }
-
-    .login-right {
-      flex: 1;
-      padding: 4rem 3rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .login-header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-    }
-
-    .login-header h2 {
-      font-family: 'Poppins', sans-serif;
-      font-size: 1.75rem;
-      font-weight: 600;
-      color: var(--text-dark);
-      margin-bottom: 0.5rem;
-    }
-
-    .login-header p {
-      color: #6C757D;
-      font-size: 0.95rem;
-    }
-
-    .form-floating {
+    .form-group {
       margin-bottom: 1.25rem;
     }
 
-    .form-floating > .form-control {
-      border: 2px solid #E5E8EB;
-      border-radius: 12px;
-      padding: 1.25rem 1rem;
-      font-family: 'Nunito Sans', sans-serif;
-      font-size: 0.95rem;
-      transition: all 0.3s ease;
+    .form-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      display: block;
     }
 
-    .form-floating > .form-control:focus {
+    .form-label::before {
+      content: '> ';
+      color: var(--primary);
+    }
+
+    .form-control {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      color: var(--text-light);
+      padding: 0.75rem;
+      border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.875rem;
+      transition: all 0.15s ease;
+    }
+
+    .form-control:focus {
+      background: var(--bg-dark);
       border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(255,123,84,0.1);
+      color: var(--text-light);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+      outline: none;
     }
 
-    .form-floating > label {
-      font-family: 'Nunito Sans', sans-serif;
-      font-weight: 600;
-      color: #6C757D;
-      padding: 1.25rem 1rem;
+    .form-control::placeholder {
+      color: var(--text-muted);
+      opacity: 0.5;
     }
 
     .btn-login {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      border: none;
-      border-radius: 12px;
-      padding: 1rem;
-      font-family: 'Nunito Sans', sans-serif;
-      font-weight: 600;
-      font-size: 1rem;
+      background: var(--primary);
+      border: 1px solid var(--primary);
       color: white;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(255,123,84,0.3);
+      padding: 0.75rem;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.15s ease;
+      width: 100%;
+      cursor: pointer;
     }
 
     .btn-login:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255,123,84,0.4);
-      background: linear-gradient(135deg, var(--primary-dark) 0%, #C94A2E 100%);
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
     }
 
     .alert {
-      border: none;
-      border-radius: 12px;
-      padding: 1rem;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid #ef4444;
+      border-radius: 4px;
+      padding: 0.75rem;
       margin-bottom: 1.5rem;
-      font-size: 0.9rem;
-      animation: slideIn 0.4s ease;
+      font-size: 0.875rem;
+      color: #fca5a5;
     }
 
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .alert-danger {
-      background: linear-gradient(135deg, #FFF1F0 0%, #FFCCC7 100%);
-      color: #A8071A;
-      border-left: 4px solid #F5222D;
+    .alert i {
+      margin-right: 0.5rem;
     }
 
     .divider {
       text-align: center;
       margin: 1.5rem 0;
       position: relative;
+      color: var(--text-muted);
+      font-size: 0.75rem;
     }
 
     .divider::before {
@@ -242,130 +188,113 @@
       left: 0;
       right: 0;
       height: 1px;
-      background: #E5E8EB;
+      background: var(--border);
     }
 
     .divider span {
-      background: white;
+      background: var(--bg-card);
       padding: 0 1rem;
-      color: #6C757D;
-      font-size: 0.875rem;
       position: relative;
     }
 
+    .footer-text {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    /* Cursor parpadeante */
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 16px;
+      background: var(--primary);
+      animation: blink 1s infinite;
+      margin-left: 2px;
+    }
+
     @media (max-width: 768px) {
-      .login-container {
-        flex-direction: column;
-      }
-
-      .login-left {
-        padding: 2rem 1.5rem;
-      }
-
-      .login-right {
-        padding: 2rem 1.5rem;
+      .login-card {
+        padding: 1.5rem;
       }
 
       .brand {
-        font-size: 2rem;
-      }
-
-      .features {
-        display: none;
+        font-size: 1.25rem;
       }
     }
   </style>
 </head>
 <body>
   <div class="login-container">
-    <!-- Lado Izquierdo  -->
-    <div class="login-left">
-      <div class="login-left-content">
-        <div class="brand">
-          <i class="bi bi-house-heart-fill"></i>
-          Vizinho
-        </div>
-        <p>Sistema de Gestión Comunitaria para mejorar la convivencia y organización de tu comunidad.</p>
-        
-        <div class="features">
-          <div class="feature-item">
-            <i class="bi bi-check-circle-fill"></i>
-            <span>Reporta incidencias fácilmente</span>
-          </div>
-          <div class="feature-item">
-            <i class="bi bi-check-circle-fill"></i>
-            <span>Gestiona multas y pagos</span>
-          </div>
-          <div class="feature-item">
-            <i class="bi bi-check-circle-fill"></i>
-            <span>Comunícate con tus vecinos</span>
-          </div>
-          <div class="feature-item">
-            <i class="bi bi-check-circle-fill"></i>
-            <span>Botón de pánico integrado</span>
-          </div>
-        </div>
-      </div>
+    <div class="terminal-header">
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
     </div>
 
-    <!-- Lado Derecho -->
-    <div class="login-right">
-      <div class="login-header">
-        <h2>Iniciar Sesión</h2>
-        <p>Ingresa tus credenciales para acceder</p>
+    <div class="login-card">
+      <div class="brand">
+        <i class="bi bi-house-heart-fill"></i> vizinho
+      </div>
+      
+      <div class="prompt">
+        <span>$</span> sistema de gestión comunitaria<span class="cursor"></span>
       </div>
 
       {% if form.errors %}
-        <div class="alert alert-danger">
-          <i class="bi bi-exclamation-circle-fill me-2"></i>
-          Usuario o contraseña incorrectos. Por favor, intenta de nuevo.
+        <div class="alert">
+          <i class="bi bi-exclamation-circle-fill"></i>
+          credenciales inválidas. intenta de nuevo.
         </div>
       {% endif %}
 
       <form method="post">
         {% csrf_token %}
         
-        <div class="form-floating">
+        <div class="form-group">
+          <label for="id_username" class="form-label">usuario</label>
           <input 
             type="text" 
             class="form-control" 
             id="id_username" 
             name="username" 
-            placeholder="Usuario"
+            placeholder="tu_usuario"
             required
             autofocus
+            autocomplete="username"
           >
-          <label for="id_username">
-            <i class="bi bi-person-fill me-2"></i>Usuario
-          </label>
         </div>
 
-        <div class="form-floating">
+        <div class="form-group">
+          <label for="id_password" class="form-label">contraseña</label>
           <input 
             type="password" 
             class="form-control" 
             id="id_password" 
             name="password" 
-            placeholder="Contraseña"
+            placeholder="••••••••"
             required
+            autocomplete="current-password"
           >
-          <label for="id_password">
-            <i class="bi bi-lock-fill me-2"></i>Contraseña
-          </label>
         </div>
 
-        <button type="submit" class="btn btn-login w-100">
-          <i class="bi bi-box-arrow-in-right me-2"></i>
-          Ingresar
+        <button type="submit" class="btn-login">
+          <i class="bi bi-arrow-right-circle"></i> iniciar sesión
         </button>
       </form>
 
       <div class="divider">
-        <span>Sistema Vizinho v2.1</span>
+        <span>v2.1</span>
       </div>
 
-      <p class="text-center text-muted mb-0" style="font-size: 0.85rem;">
-        ¿Problemas para acceder? Contacta al administrador
+      <p class="footer-text">
+        contacta al administrador si tienes problemas
       </p>
     </div>
   </div>

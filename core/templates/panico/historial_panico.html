@@ -1,34 +1,264 @@
 {% extends "base.html" %}
-{% block title %}Historial de Botón de Pánico{% endblock %}
+
+{% block title %}historial de alertas{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2>Historial de Alertas de Pánico</h2>
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>Mensaje</th>
-        <th>Fecha</th>
-        <th>Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for alerta in alertas %}
-      <tr>
-        <td>{{ alerta.mensaje }}</td>
-        <td>{{ alerta.fecha }}</td>
-        <td>
-          {% if alerta.activo %}
-            <span class="badge bg-danger">Activa</span>
-          {% else %}
-            <span class="badge bg-secondary">Desactivada</span>
-          {% endif %}
-        </td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="3">No hay alertas registradas.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="container-fluid" style="max-width: 1400px;">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="mb-1">
+        <i class="bi bi-shield-exclamation text-primary"></i>
+        historial de alertas de pánico
+      </h1>
+      <p class="text-muted mb-0" style="font-size: 0.875rem;">registro completo de todas las alertas activadas</p>
+    </div>
+  </div>
+  <div class="row g-3 mb-4">
+    </div>
+  </div>
+
+  <!-- Lista de alertas -->
+  {% if alertas %}
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width: 60px;"></th>
+              <th>vecino</th>
+              <th style="width: 250px;">ubicación</th>
+              <th style="width: 170px;">fecha y hora</th>
+              <th style="width: 140px;">tiempo transcurrido</th>
+              <th style="width: 120px;">estado</th>
+              <th style="width: 150px;" class="text-end">acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for alerta in alertas %}
+              <tr class="{% if not alerta.atendido %}table-danger{% endif %}">
+                <!-- Icono -->
+                <td class="text-center">
+                  {% if not alerta.atendido %}
+                    <i class="bi bi-shield-fill-exclamation text-danger pulse" style="font-size: 1.8rem;"></i>
+                  {% else %}
+                    <i class="bi bi-shield-check text-success" style="font-size: 1.8rem;"></i>
+                  {% endif %}
+                </td>
+
+                <!-- Usuario -->
+                <td>
+                  <div class="fw-semibold mb-1">{{ alert.vecino.usuario }}</div>
+                  <small class="text-muted d-block">
+                    <i class="bi bi-envelope"></i> {{ alerta.vecino.email }}
+                  </small>
+                  {% if alerta.vecino.telefono %}
+                    <small class="text-muted d-block">
+                      <i class="bi bi-telephone-fill"></i> 
+                      <a href="tel:{{ alerta.vecino.telefono }}" class="text-decoration-none">
+                        {{ alerta.vecino.telefono }}
+                      </a>
+                    </small>
+                  {% endif %}
+                </td>
+
+                <!-- Ubicación -->
+                <td>
+                  {% if alerta.ubicacion %}
+                    <i class="bi bi-geo-alt-fill text-danger"></i>
+                    <span class="fw-semibold">{{ alerta.ubicacion }}</span>
+                  {% else %}
+                    <small class="text-muted">
+                      <i class="bi bi-geo-alt"></i> no especificada
+                    </small>
+                  {% endif %}
+                </td>
+
+                <!-- Fecha y hora -->
+                <td>
+                  <div class="fw-semibold">{{ alerta.fecha|date:"d/m/Y" }}</div>
+                  <small class="text-muted">{{ alerta.fecha|date:"H:i:s" }}</small>
+                </td>
+
+                <td>
+                  {% if not alerta.atendido %}
+                    <span class="badge bg-danger">
+                      <i class="bi bi-clock"></i> {{ alerta.tiempo_transcurrido }}
+                    </span>
+                  {% else %}
+                    <small class="text-muted">atendida</small>
+                  {% endif %}
+                </td>
+
+                <!-- Estado -->
+                <td>
+                  {% if alerta.atendido %}
+                    <span class="badge bg-success">
+                      <i class="bi bi-check-circle"></i> atendida
+                    </span>
+                  {% else %}
+                    <span class="badge bg-danger pulse-badge">
+                      <i class="bi bi-exclamation-triangle"></i> activa
+                    </span>
+                  {% endif %}
+                </td>
+
+                <!-- Acciones -->
+                <td class="text-end">
+                  <div class="btn-group btn-group-sm">
+                    {% if not alerta.atendido %}
+                      {% if alerta.vecino.telefono %}
+                        <a 
+                          href="tel:{{ alerta.vecino.telefono }}" 
+                          class="btn btn-outline-primary"
+                          data-tooltip="llamar"
+                        >
+                          <i class="bi bi-telephone"></i>
+                        </a>
+                      {% endif %}
+                      {% if alerta.vecino.email %}
+                        <a 
+                          href="mailto:{{ alerta.vecino.email }}" 
+                          class="btn btn-outline-secondary"
+                          data-tooltip="enviar email"
+                        >
+                          <i class="bi bi-envelope"></i>
+                        </a>
+                      {% endif %}
+                    {% else %}
+                      <small class="text-muted">
+                        <i class="bi bi-check-circle"></i> atendida el {{ alerta.fecha_atencion|date:"d/m/Y H:i" }}
+                      </small>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    {% if is_paginated %}
+    <nav class="mt-4">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page=1{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">
+              <i class="bi bi-chevron-double-left"></i>
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">
+              <i class="bi bi-chevron-left"></i>
+            </a>
+          </li>
+        {% endif %}
+
+        <li class="page-item active">
+          <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">
+              <i class="bi bi-chevron-double-right"></i>
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+
+  {% else %}
+    <!-- Estado vacío -->
+    <div class="card">
+      <div class="card-body text-center py-5">
+        {% if request.GET.estado == 'activas' %}
+          <i class="bi bi-shield-check text-success" style="font-size: 4rem; opacity: 0.3;"></i>
+          <h3 class="mt-4 mb-2">sin alertas activas</h3>
+          <p class="text-muted mb-0">no hay alertas de pánico activas en este momento</p>
+        {% elif request.GET.estado == 'atendidas' %}
+          <i class="bi bi-inbox text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+          <h3 class="mt-4 mb-2">sin alertas atendidas</h3>
+          <p class="text-muted mb-0">no hay registros de alertas atendidas</p>
+        {% else %}
+          <i class="bi bi-shield-check text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+          <h3 class="mt-4 mb-2">sin alertas de pánico</h3>
+          <p class="text-muted mb-0">no se han activado alertas de pánico en el sistema</p>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Info adicional -->
+  <div class="row g-3 mt-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <i class="bi bi-info-circle"></i> protocolo de atención
+        </div>
+        <div class="card-body">
+          <ol class="mb-0" style="font-size: 0.875rem;">
+            <li class="mb-2">contactar inmediatamente al vecino por teléfono</li>
+            <li class="mb-2">verificar la situación y ofrecer asistencia</li>
+            <li class="mb-2">coordinar ayuda si es necesario</li>
+            <li>marcar la alerta como atendida cuando se resuelva</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <i class="bi bi-telephone"></i> contactos de emergencia
+        </div>
+        <div class="card-body">
+          <div class="mb-2">
+            <strong>policía:</strong> <a href="tel:110" class="text-decoration-none">110</a>
+          </div>
+          <div class="mb-2">
+            <strong>bomberos:</strong> <a href="tel:123" class="text-decoration-none">123</a>
+          </div>
+          <div class="mb-2">
+            <strong>ambulancia:</strong> <a href="tel:125" class="text-decoration-none">122</a>
+          </div>
+          <div>
+            <strong>seguridad comunidad:</strong> <a href="tel:1234-5678" class="text-decoration-none">3044-9205</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<style>
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.pulse-badge {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Resaltar filas de alertas activas */
+.table-danger {
+  background-color: rgba(220, 53, 69, 0.08) !important;
+}
+
+.table-danger:hover {
+  background-color: rgba(220, 53, 69, 0.12) !important;
+}
+</style>
 {% endblock %}

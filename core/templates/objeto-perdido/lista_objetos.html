@@ -1,440 +1,175 @@
 {% extends "base.html" %}
-{% load static %}
-{% block title %}Objetos Perdidos{% endblock %}
-{% block extra_head %}
-<style>
-  .objects-wrapper {
-    max-width: 1400px;
-    margin: 0 auto;
-  }
 
-  /* Header de la página */
-  .page-header {
-    background: white;
-    border-radius: 20px;
-    padding: 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-
-  .page-header-content h2 {
-    font-weight: 800;
-    font-size: 2rem;
-    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .page-header-content p {
-    color: #6b7280;
-    margin: 8px 0 0 0;
-    font-size: 1rem;
-  }
-
-  /* Botón de crear */
-  .btn-create {
-    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-    color: white;
-    border: none;
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 1rem;
-    box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-  }
-
-  .btn-create:hover {
-    background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4);
-    color: white;
-  }
-
-  .btn-create i {
-    font-size: 1.2rem;
-  }
-
-  /* Filtros y búsqueda */
-  .filters-section {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 25px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .search-box {
-    flex: 1;
-    min-width: 250px;
-    position: relative;
-  }
-
-  .search-box input {
-    width: 100%;
-    padding: 12px 20px 12px 45px;
-    border: 2px solid #e5e7eb;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
-  }
-
-  .search-box input:focus {
-    outline: none;
-    border-color: #6b7280;
-    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
-  }
-
-  .search-box i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #9ca3af;
-    font-size: 1.1rem;
-  }
-
-  /* Grid de objetos */
-  .objects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 25px;
-    margin-bottom: 30px;
-  }
-
-  /* Tarjeta de objeto */
-  .object-card {
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .object-card:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-    transform: translateY(-8px);
-  }
-
-  .object-image-container {
-    position: relative;
-    width: 100%;
-    height: 220px;
-    overflow: hidden;
-    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-  }
-
-  .object-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-
-  .object-card:hover .object-image {
-    transform: scale(1.05);
-  }
-
-  .no-image-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #9ca3af;
-  }
-
-  .no-image-placeholder i {
-    font-size: 4rem;
-    margin-bottom: 10px;
-  }
-
-  .no-image-placeholder p {
-    margin: 0;
-    font-size: 0.9rem;
-  }
-
-  .object-badge {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: rgba(107, 114, 128, 0.95);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    backdrop-filter: blur(10px);
-  }
-
-  .object-content {
-    padding: 20px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .object-title {
-    font-weight: 700;
-    font-size: 1.2rem;
-    color: #1f2937;
-    margin: 0 0 12px 0;
-    line-height: 1.4;
-  }
-
-  .object-description {
-    color: #4b5563;
-    line-height: 1.6;
-    margin-bottom: 15px;
-    flex: 1;
-  }
-
-  .object-meta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 15px;
-    border-top: 2px solid #f3f4f6;
-    font-size: 0.85rem;
-    color: #6b7280;
-  }
-
-  .meta-user {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .meta-user i {
-    font-size: 1.1rem;
-    color: #9ca3af;
-  }
-
-  .meta-date {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .meta-date i {
-    color: #9ca3af;
-  }
-
-  /* Estado vacío */
-  .empty-state {
-    text-align: center;
-    padding: 80px 40px;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  }
-
-  .empty-state-icon {
-    font-size: 5rem;
-    color: #9ca3af;
-    margin-bottom: 25px;
-    opacity: 0.8;
-  }
-
-  .empty-state h3 {
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: #1f2937;
-    margin-bottom: 12px;
-  }
-
-  .empty-state p {
-    color: #6b7280;
-    font-size: 1rem;
-    margin-bottom: 30px;
-  }
-
-  /* Info banner */
-  .info-banner {
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-    border-left: 4px solid #3b82f6;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 30px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-
-  .info-banner i {
-    font-size: 2rem;
-    color: #1e40af;
-  }
-
-  .info-banner-text {
-    flex: 1;
-  }
-
-  .info-banner-text h4 {
-    margin: 0 0 5px 0;
-    color: #1e40af;
-    font-weight: 700;
-    font-size: 1.1rem;
-  }
-
-  .info-banner-text p {
-    margin: 0;
-    color: #1e3a8a;
-    font-size: 0.95rem;
-  }
-
-  /* Animaciones */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .fade-in {
-    animation: fadeInUp 0.5s ease-out;
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .page-header {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .page-header-content h2 {
-      font-size: 1.6rem;
-    }
-
-    .btn-create {
-      width: 100%;
-      justify-content: center;
-    }
-
-    .objects-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>
-{% endblock %}
+{% block title %}objetos perdidos{% endblock %}
 
 {% block content %}
-<div class="objects-wrapper fade-in">
+<div class="container-fluid" style="max-width: 1400px;">
   <!-- Header -->
-  <div class="page-header">
-    <div class="page-header-content">
-      <h2>
-        <i class="bi bi-bag-fill"></i>
-        Objetos Perdidos
-      </h2>
-      <p>Encuentra objetos extraviados o reporta uno que hayas encontrado</p>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="mb-1">
+        <i class="bi bi-bag text-primary"></i>
+        objetos perdidos
+      </h1>
+      <p class="text-muted mb-0" style="font-size: 0.875rem;">reporta o busca objetos perdidos en la comunidad</p>
     </div>
-    <a href="{% url 'crear_objeto_perdido' %}" class="btn-create">
-      <i class="bi bi-plus-circle-fill"></i>
-      Reportar Objeto
+    <a href="{% url 'crear_objeto_perdido' %}" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> reportar objeto
     </a>
   </div>
 
-  <!-- Info Banner -->
-  <div class="info-banner">
-    <i class="bi bi-info-circle-fill"></i>
-    <div class="info-banner-text">
-      <h4>¿Perdiste algo o encontraste un objeto?</h4>
-      <p>Publica aquí para ayudar a reunir objetos perdidos con sus dueños. Incluye la mayor cantidad de detalles posible.</p>
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="d-flex gap-2 flex-wrap">
+        <a href="?estado=todos" class="btn btn-sm {% if not request.GET.estado or request.GET.estado == 'todos' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+          todos
+        </a>
+        <a href="?estado=perdido" class="btn btn-sm {% if request.GET.estado == 'perdido' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+          perdidos
+        </a>
+        <a href="?estado=encontrado" class="btn btn-sm {% if request.GET.estado == 'encontrado' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+          encontrados
+        </a>
+      </div>
     </div>
   </div>
 
-  <!-- Filtros y búsqueda -->
-  <div class="filters-section">
-    <div class="search-box">
-      <i class="bi bi-search"></i>
-      <input type="text" id="searchInput" placeholder="Buscar objetos perdidos...">
-    </div>
-    <span style="color: #6b7280; font-size: 0.9rem;">
-      <i class="bi bi-collection"></i>
-      <strong>{{ objetos|length }}</strong> objeto{{ objetos|length|pluralize:"s" }} reportado{{ objetos|length|pluralize:"s" }}
-    </span>
-  </div>
+  {% if objetos %}
+    <div class="row g-4">
+      {% for objeto in objetos %}
+        <div class="col-lg-4 col-md-6">
+          <div class="card h-100">
+            <!-- Imagen -->
+            {% if objeto.imagen %}
+            <div style="height: 200px; overflow: hidden; background: var(--bg-main);">
+              <img 
+                src="{{ objeto.imagen.url }}" 
+                class="card-img-top" 
+                alt="{{ objeto.nombre }}"
+                style="width: 100%; height: 100%; object-fit: cover;"
+              >
+            </div>
+            {% else %}
+            <div style="height: 200px; background: var(--bg-main); display: flex; align-items: center; justify-content: center;">
+              <i class="bi bi-bag" style="font-size: 4rem; color: var(--border);"></i>
+            </div>
+            {% endif %}
 
-  <!-- Grid de objetos -->
-  <div class="objects-grid">
-    {% for obj in objetos %}
-    <div class="object-card" data-title="{{ obj.titulo|lower }}" data-description="{{ obj.descripcion|lower }}">
-      <div class="object-image-container">
-        {% if obj.imagen %}
-          <img src="{{ obj.imagen.url }}" alt="{{ obj.titulo }}" class="object-image">
-        {% else %}
-          <div class="no-image-placeholder">
-            <i class="bi bi-image"></i>
-            <p>Sin imagen</p>
+            <div class="card-body d-flex flex-column">
+              <!-- Header -->
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="mb-0">{{ objeto.nombre }}</h5>
+                {% if objeto.encontrado %}
+                  <span class="badge bg-success">encontrado</span>
+                {% else %}
+                  <span class="badge bg-warning text-dark">perdido</span>
+                {% endif %}
+              </div>
+
+              <p class="text-muted mb-2 flex-grow-1" style="font-size: 0.875rem;">
+                {{ objeto.descripcion|truncatewords:15 }}
+              </p>
+
+              <div class="border-top pt-3 mt-auto">
+                <div class="mb-2">
+                  <small class="text-muted d-block">
+                    <i class="bi bi-geo-alt"></i> {{ objeto.ubicacion }}
+                  </small>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                  <small class="text-muted">
+                    <i class="bi bi-person"></i> {{ objeto.vecino.username }}<br>
+                    <i class="bi bi-clock"></i> {{ objeto.fecha|date:"d/m/Y" }}
+                  </small>
+                  
+                  <div class="btn-group btn-group-sm">
+                    {% if user == objeto.vecino or user.es_administrador %}
+                      {% if not objeto.encontrado %}
+                        <a href="{% url 'marcar_encontrado' objeto.id %}" class="btn btn-outline-success" title="marcar encontrado">
+                          <i class="bi bi-check-circle"></i>
+                        </a>
+                      {% endif %}
+                      <a href="{% url 'editar_objeto_perdido' objeto.id %}" class="btn btn-outline-warning" title="editar">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <a href="{% url 'eliminar_objeto_perdido' objeto.id %}" class="btn btn-outline-danger" title="eliminar">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <nav class="mt-4">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page=1{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">
+              <i class="bi bi-chevron-double-left"></i>
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">
+              <i class="bi bi-chevron-left"></i>
+            </a>
+          </li>
         {% endif %}
-        <div class="object-badge">
-          <i class="bi bi-bag-check-fill"></i>
-          Reportado
-        </div>
-      </div>
-      
-      <div class="object-content">
-        <h5 class="object-title">{{ obj.titulo }}</h5>
-        <p class="object-description">{{ obj.descripcion|truncatewords:25 }}</p>
-        
-        <div class="object-meta">
-          <div class="meta-user">
-            <i class="bi bi-person-circle"></i>
-            <span>{{ obj.usuario.username }}</span>
-          </div>
-          <div class="meta-date">
-            <i class="bi bi-calendar3"></i>
-            <span>{{ obj.fecha|date:"d/m/Y" }}</span>
-          </div>
-        </div>
+
+        <li class="page-item active">
+          <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">
+              <i class="bi bi-chevron-double-right"></i>
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+
+  {% else %}
+    <div class="card">
+      <div class="card-body text-center py-5">
+        <i class="bi bi-bag text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+        <h3 class="mt-4 mb-2">sin objetos perdidos</h3>
+        <p class="text-muted mb-4">
+          {% if request.GET.estado == 'encontrado' %}
+            no hay objetos encontrados todavía
+          {% elif request.GET.estado == 'perdido' %}
+            no hay objetos perdidos reportados
+          {% else %}
+            no hay objetos reportados en el sistema
+          {% endif %}
+        </p>
+        <a href="{% url 'crear_objeto_perdido' %}" class="btn btn-primary">
+          <i class="bi bi-plus-circle"></i> reportar objeto
+        </a>
       </div>
     </div>
-    {% empty %}
-    <!-- Estado vacío -->
-    <div class="empty-state" style="grid-column: 1 / -1;">
-      <div class="empty-state-icon">
-        <i class="bi bi-bag-x"></i>
-      </div>
-      <h3>No hay objetos reportados</h3>
-      <p>Sé el primero en reportar un objeto perdido o encontrado en la comunidad</p>
-      <a href="{% url 'crear_objeto_perdido' %}" class="btn-create">
-        <i class="bi bi-plus-circle-fill"></i>
-        Reportar Primer Objeto
-      </a>
-    </div>
-    {% endfor %}
-  </div>
+  {% endif %}
 </div>
 
-<script src="{% static 'js/objetos-perdidos/list.js' %}"></script>
+<style>
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+</style>
 {% endblock %}

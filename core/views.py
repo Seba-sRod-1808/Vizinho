@@ -128,7 +128,6 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Delegamos la agregación al servicio para mantener la vista delgada.
         context.update(DashboardService.obtener_resumen_vecino(self.request.user))
         return context
 
@@ -269,7 +268,7 @@ class MultaDeleteView(LoginRequiredMixin, SoloAdminMixin, DeleteView):
     success_url = reverse_lazy("lista_multas")
     
     def delete(self, request, *args, **kwargs):
-        # kwargs contendrá la pk; mantener firma asegura compatibilidad con DeleteView.
+        # kwargs contendrá la pk, mantener firma asegura compatibilidad con DeleteView.
         messages.success(request, "Multa eliminada exitosamente")
         return super().delete(request, *args, **kwargs)
 
@@ -284,7 +283,7 @@ class PagarMultaView(LoginRequiredMixin, View):
     
     def post(self, request, pk):
         multa = get_object_or_404(Multa, pk=pk)
-        # Revalidación de permisos para evitar pagos indebidos por manipulación del cliente.
+        # revalidamo los permisos para evitar pagos indebidos por manipulacion del cliente.
         if not multa.puede_pagar_usuario(request.user):
             messages.error(request, "No puedes pagar esta multa")
             return redirect("lista_multas")

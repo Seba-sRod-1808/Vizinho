@@ -1,592 +1,178 @@
 {% extends "base.html" %}
-{% load static %}
-{% block title %}Mis Multas{% endblock %}
-{% block extra_head %}
-<style>
-  .multas-wrapper {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
 
-  /* Header de la página */
-  .page-header {
-    background: white;
-    border-radius: 20px;
-    padding: 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-
-  .page-header-content h2 {
-    font-weight: 800;
-    font-size: 2rem;
-    background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .page-header-content p {
-    color: #6b7280;
-    margin: 8px 0 0 0;
-    font-size: 1rem;
-  }
-
-  /* Botón de crear (solo admin) */
-  .btn-create {
-    background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
-    color: #333;
-    border: none;
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 1rem;
-    box-shadow: 0 4px 15px rgba(250, 204, 21, 0.3);
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-  }
-
-  .btn-create:hover {
-    background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(250, 204, 21, 0.4);
-    color: #333;
-  }
-
-  .btn-create i {
-    font-size: 1.2rem;
-  }
-
-  /* Estadísticas */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-  }
-
-  .stat-card {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    transition: all 0.3s ease;
-  }
-
-  .stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  }
-
-  .stat-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.8rem;
-  }
-
-  .stat-icon-yellow {
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-    color: #d97706;
-  }
-
-  .stat-icon-green {
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-    color: #059669;
-  }
-
-  .stat-icon-red {
-    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
-    color: #dc2626;
-  }
-
-  .stat-content h4 {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: #1f2937;
-    margin: 0;
-  }
-
-  .stat-content p {
-    font-size: 0.85rem;
-    color: #6b7280;
-    margin: 0;
-  }
-
-  /* Filtros */
-  .filters-section {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 25px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .search-box {
-    flex: 1;
-    min-width: 250px;
-    position: relative;
-  }
-
-  .search-box input {
-    width: 100%;
-    padding: 12px 20px 12px 45px;
-    border: 2px solid #e5e7eb;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
-  }
-
-  .search-box input:focus {
-    outline: none;
-    border-color: #facc15;
-    box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.1);
-  }
-
-  .search-box i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #9ca3af;
-    font-size: 1.1rem;
-  }
-
-  .filter-dropdown {
-    padding: 12px 20px;
-    border: 2px solid #e5e7eb;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    background: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .filter-dropdown:hover,
-  .filter-dropdown:focus {
-    border-color: #facc15;
-    outline: none;
-  }
-
-  /* Grid de multas */
-  .multas-grid {
-    display: grid;
-    gap: 20px;
-  }
-
-  /* Tarjeta de multa */
-  .multa-card {
-    background: white;
-    border-radius: 16px;
-    padding: 25px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    transition: all 0.3s ease;
-    border-left: 4px solid transparent;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 20px;
-    align-items: center;
-  }
-
-  .multa-card:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-    transform: translateY(-4px);
-  }
-
-  .multa-card.estado-pendiente {
-    border-left-color: #facc15;
-  }
-
-  .multa-card.estado-pagada {
-    border-left-color: #10b981;
-  }
-
-  .multa-card.estado-vencida {
-    border-left-color: #dc2626;
-  }
-
-  /* Contenido de la multa */
-  .multa-content {
-    flex: 1;
-  }
-
-  .multa-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-    gap: 15px;
-  }
-
-  .multa-id {
-    font-size: 0.85rem;
-    color: #6b7280;
-    font-weight: 600;
-  }
-
-  .multa-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-  }
-
-  .badge-pendiente {
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-    color: #854d0e;
-  }
-
-  .badge-pagada {
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-    color: #065f46;
-  }
-
-  .badge-vencida {
-    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
-    color: #991b1b;
-  }
-
-  .multa-monto {
-    font-size: 2rem;
-    font-weight: 800;
-    color: #1f2937;
-    margin: 10px 0;
-  }
-
-  .multa-motivo {
-    color: #4b5563;
-    line-height: 1.6;
-    margin-bottom: 15px;
-  }
-
-  .multa-meta {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    font-size: 0.9rem;
-    color: #6b7280;
-  }
-
-  .meta-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .meta-item i {
-    color: #facc15;
-  }
-
-  /* Acciones */
-  .multa-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .btn-action {
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border: none;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
-  .btn-pay {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-  }
-
-  .btn-pay:hover {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-    color: white;
-  }
-
-  .btn-edit {
-    background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
-    color: #333;
-    box-shadow: 0 2px 8px rgba(250, 204, 21, 0.3);
-  }
-
-  .btn-edit:hover {
-    background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.4);
-    color: #333;
-  }
-
-  .btn-delete {
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-    color: white;
-    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
-  }
-
-  .btn-delete:hover {
-    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
-    color: white;
-  }
-
-  /* Estado vacío */
-  .empty-state {
-    text-align: center;
-    padding: 80px 40px;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  }
-
-  .empty-state-icon {
-    font-size: 5rem;
-    color: #facc15;
-    margin-bottom: 25px;
-    opacity: 0.8;
-  }
-
-  .empty-state h3 {
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: #1f2937;
-    margin-bottom: 12px;
-  }
-
-  .empty-state p {
-    color: #6b7280;
-    font-size: 1rem;
-    margin-bottom: 30px;
-  }
-
-  /* Animaciones */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .fade-in {
-    animation: fadeInUp 0.5s ease-out;
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .page-header {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .page-header-content h2 {
-      font-size: 1.6rem;
-    }
-
-    .btn-create {
-      width: 100%;
-      justify-content: center;
-    }
-
-    .stats-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .multa-card {
-      grid-template-columns: 1fr;
-    }
-
-    .multa-actions {
-      flex-direction: row;
-    }
-
-    .btn-action {
-      flex: 1;
-    }
-  }
-</style>
-{% endblock %}
+{% block title %}multas{% endblock %}
 
 {% block content %}
-<div class="multas-wrapper fade-in">
+<div class="container-fluid" style="max-width: 1400px;">
   <!-- Header -->
-  <div class="page-header">
-    <div class="page-header-content">
-      <h2>
-        <i class="bi bi-cash-coin"></i>
-        {% if es_admin %}Gestión de Multas{% else %}Mis Multas{% endif %}
-      </h2>
-      <p>{% if es_admin %}Administra las multas de los vecinos{% else %}Consulta y paga tus multas pendientes{% endif %}</p>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="mb-1">
+        <i class="bi bi-cash-coin text-primary"></i>
+        {% if es_admin %}gestión de multas{% else %}mis multas{% endif %}
+      </h1>
+      <p class="text-muted mb-0" style="font-size: 0.875rem;">
+        {% if es_admin %}administra todas las multas{% else %}consulta y paga tus multas{% endif %}
+      </p>
     </div>
     {% if es_admin %}
-      <a href="{% url 'crear_multa' %}" class="btn-create">
-        <i class="bi bi-plus-circle-fill"></i>
-        Crear Multa
-      </a>
+    <a href="{% url 'crear_multa' %}" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> nueva multa
+    </a>
     {% endif %}
   </div>
 
-  <!-- Estadísticas -->
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-icon stat-icon-yellow">
-        <i class="bi bi-folder-fill"></i>
-      </div>
-      <div class="stat-content">
-        <h4>{{ multas|length }}</h4>
-        <p>Total de Multas</p>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon stat-icon-red">
-        <i class="bi bi-exclamation-circle-fill"></i>
-      </div>
-      <div class="stat-content">
-        <h4 id="pendingCount">0</h4>
-        <p>Pendientes</p>
+  {% if not es_admin %}
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body text-center">
+          <i class="bi bi-cash-stack text-warning" style="font-size: 2rem;"></i>
+          <h3 class="mt-2 mb-0">{{ multas_pendientes }}</h3>
+          <small class="text-muted">multas pendientes</small>
+        </div>
       </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-icon stat-icon-green">
-        <i class="bi bi-check-circle-fill"></i>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body text-center">
+          <i class="bi bi-currency-dollar text-danger" style="font-size: 2rem;"></i>
+          <h3 class="mt-2 mb-0">Q{{ total_pendiente|floatformat:2 }}</h3>
+          <small class="text-muted">total por pagar</small>
+        </div>
       </div>
-      <div class="stat-content">
-        <h4 id="paidCount">0</h4>
-        <p>Pagadas</p>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body text-center">
+          <i class="bi bi-check-circle text-success" style="font-size: 2rem;"></i>
+          <h3 class="mt-2 mb-0">{{ multas_pagadas }}</h3>
+          <small class="text-muted">multas pagadas</small>
+        </div>
       </div>
     </div>
   </div>
+  {% endif %}
 
-  <!-- Filtros -->
-  <div class="filters-section">
-    <div class="search-box">
-      <i class="bi bi-search"></i>
-      <input type="text" id="searchInput" placeholder="Buscar multas...">
-    </div>
-    <select class="filter-dropdown" id="statusFilter">
-      <option value="">Todos los estados</option>
-      <option value="Pendiente">Pendiente</option>
-      <option value="Pagada">Pagada</option>
-      <option value="Vencida">Vencida</option>
-    </select>
-  </div>
+  <!-- Lista de multas -->
+  {% if multas %}
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th>descripción</th>
+              <th style="width: 120px;">monto</th>
+              {% if es_admin %}
+              <th style="width: 140px;">usuario</th>
+              {% endif %}
+              <th style="width: 110px;">fecha</th>
+              <th style="width: 120px;">estado</th>
+              <th style="width: 120px;" class="text-end">acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for multa in multas %}
+              <tr>
+                <td>
+                  <div class="fw-semibold">{{ multa.descripcion|truncatewords:8 }}</div>
+                  {% if multa.descripcion|length > 50 %}
+                    <small class="text-muted">{{ multa.descripcion|truncatewords:15 }}</small>
+                  {% endif %}
+                </td>
 
-  <!-- Grid de multas -->
-  <div class="multas-grid">
-    {% for multa in multas %}
-    <div class="multa-card estado-{{ multa.estado|lower }}" 
-         data-motivo="{{ multa.motivo|lower }}"
-         data-vecino="{{ multa.vecino.username|lower }}"
-         data-estado="{{ multa.estado }}">
-      <div class="multa-content">
-        <div class="multa-header">
-          <span class="multa-id">#{{ multa.id }}</span>
-          <span class="multa-badge badge-{{ multa.estado|lower }}">
-            {% if multa.estado == "Pendiente" %}
-              <i class="bi bi-hourglass-split"></i>
-            {% elif multa.estado == "Pagada" %}
-              <i class="bi bi-check-circle-fill"></i>
-            {% else %}
-              <i class="bi bi-x-circle-fill"></i>
-            {% endif %}
-            {{ multa.estado }}
-          </span>
-        </div>
-        
-        <div class="multa-monto">Q{{ multa.monto }}</div>
-        
-        <p class="multa-motivo">{{ multa.motivo }}</p>
-        
-        <div class="multa-meta">
-          <span class="meta-item">
-            <i class="bi bi-person-circle"></i>
-            {{ multa.vecino.username }}
-          </span>
-          <span class="meta-item">
-            <i class="bi bi-calendar-fill"></i>
-            {{ multa.fecha|date:"d/m/Y" }}
-          </span>
-        </div>
+                <td>
+                  <span class="fw-bold text-danger">Q{{ multa.monto|floatformat:2 }}</span>
+                </td>
+
+                {% if es_admin %}
+                <td>
+                  <small>{{ multa.vecino.username }}</small>
+                </td>
+                {% endif %}
+
+                <td>
+                  <small class="text-muted">{{ multa.fecha|date:"d/m/Y" }}</small>
+                </td>
+
+                <!-- Estado -->
+                <td>
+                  {% if multa.estado == "Pendiente" %}
+                    <span class="badge bg-warning text-dark">pendiente</span>
+                  {% else %}
+                    <span class="badge bg-success">pagada</span>
+                  {% endif %}
+                </td>
+
+                <!-- Acciones -->
+                <td class="text-end">
+                  <div class="btn-group btn-group-sm">
+                    {% if multa.estado == "Pendiente" %}
+                      {% if es_admin %}
+                        <a href="{% url 'marcar_pagada' multa.id %}" class="btn btn-outline-success" title="marcar pagada">
+                          <i class="bi bi-check-circle"></i>
+                        </a>
+                      {% endif %}
+                      <a href="{% url 'editar_multa' multa.id %}" class="btn btn-outline-warning" title="editar">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                    {% endif %}
+                    {% if es_admin %}
+                      <a href="{% url 'eliminar_multa' multa.id %}" class="btn btn-outline-danger" title="eliminar">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
-      
-      <div class="multa-actions">
-        {% if es_admin %}
-          <a href="{% url 'editar_multa' multa.id %}" class="btn-action btn-edit">
-            <i class="bi bi-pencil-fill"></i>
-            Editar
-          </a>
-          <a href="{% url 'eliminar_multa' multa.id %}" class="btn-action btn-delete">
-            <i class="bi bi-trash-fill"></i>
-            Eliminar
-          </a>
-        {% else %}
-          {% if multa.estado == "Pendiente" %}
-            <form method="post" action="{% url 'pagar_multa' multa.id %}">
-              {% csrf_token %}
-              <button type="submit" class="btn-action btn-pay">
-                <i class="bi bi-credit-card-fill"></i>
-                Pagar Ahora
-              </button>
-            </form>
-          {% endif %}
+    </div>
+
+    {% if is_paginated %}
+    <nav class="mt-4">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page=1"><i class="bi bi-chevron-double-left"></i></a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}"><i class="bi bi-chevron-left"></i></a>
+          </li>
         {% endif %}
-      </div>
-    </div>
-    {% empty %}
-    <!-- Estado vacío -->
-    <div class="empty-state">
-      <div class="empty-state-icon">
-        <i class="bi bi-cash-coin"></i>
-      </div>
-      <h3>{% if es_admin %}No hay multas registradas{% else %}No tienes multas{% endif %}</h3>
-      <p>{% if es_admin %}Crea la primera multa para comenzar{% else %}¡Excelente! No tienes multas pendientes{% endif %}</p>
-      {% if es_admin %}
-        <a href="{% url 'crear_multa' %}" class="btn-create">
-          <i class="bi bi-plus-circle-fill"></i>
-          Crear Primera Multa
-        </a>
-      {% endif %}
-    </div>
-    {% endfor %}
-  </div>
-</div>
 
-<script src="{% static 'js/multas/list.js' %}"></script>
+        <li class="page-item active">
+          <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}"><i class="bi bi-chevron-right"></i></a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}"><i class="bi bi-chevron-double-right"></i></a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+
+  {% else %}
+    <div class="card">
+      <div class="card-body text-center py-5">
+        <i class="bi bi-cash-coin text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+        <h3 class="mt-4 mb-2">sin multas</h3>
+        <p class="text-muted mb-0">
+          {% if es_admin %}
+            las multas registradas aparecerán aquí
+          {% else %}
+            no tienes multas registradas
+          {% endif %}
+        </p>
+      </div>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}
