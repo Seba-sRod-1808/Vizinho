@@ -1,20 +1,19 @@
 {% extends "base.html" %}
-
-{% block title %}reportar objeto{% endblock %}
+{% block title %}Reportar Objeto Perdido{% endblock %}
 
 {% block content %}
 <div class="container-fluid" style="max-width: 900px;">
-  <!-- Header -->
+  <!-- Encabezado -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h1 class="mb-1">
+      <h1 class="mb-1" style="font-family: var(--font-code);">
         <i class="bi bi-bag text-primary"></i>
-        reportar objeto perdido
+        Reportar Objeto Perdido
       </h1>
-      <p class="text-muted mb-0" style="font-size: 0.875rem;">reporta un objeto perdido o encontrado</p>
+      <p class="text-muted mb-0" style="font-size: 0.875rem;">Registra un nuevo objeto perdido en tu comunidad</p>
     </div>
     <a href="{% url 'lista_objetos_perdidos' %}" class="btn btn-outline-secondary">
-      <i class="bi bi-arrow-left"></i> volver
+      <i class="bi bi-arrow-left"></i> Volver
     </a>
   </div>
 
@@ -25,81 +24,44 @@
         <div class="card-body">
           <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            
-            <!-- Nombre del objeto -->
+
+            <!-- Campo: Título -->
             <div class="mb-3">
-              <label for="id_nombre" class="form-label">nombre del objeto</label>
-              <input 
-                type="text" 
-                name="nombre" 
-                class="form-control" 
-                id="id_nombre" 
-                placeholder="ej: billetera café, llaves, celular samsung"
-                required
-                maxlength="100"
-              >
-              <small class="text-muted">describe brevemente qué es</small>
+              <label for="{{ form_safe.titulo.id_for_label }}" class="form-label">Nombre del objeto</label>
+              {{ form_safe.titulo }}
+              <small class="text-muted">Ejemplo: "Llaves con llavero azul"</small>
+              {% if form._titulo.errors %}
+                <div class="text-danger small mt-1">{{ form._titulo.errors.0 }}</div>
+              {% endif %}
             </div>
 
-            <!-- Descripción -->
+            <!-- Campo: Descripción -->
             <div class="mb-3">
-              <label for="id_descripcion" class="form-label">descripción detallada</label>
-              <textarea 
-                name="descripcion" 
-                class="form-control" 
-                id="id_descripcion" 
-                rows="5"
-                placeholder="describe características específicas: colores, marcas, tamaño, contenido..."
-                required
-              ></textarea>
-              <small class="text-muted">cuanto más detalle, mejor</small>
+              <label for="{{ form_safe.descripcion.id_for_label }}" class="form-label">Descripción detallada</label>
+              {{ form_safe.descripcion }}
+              <small class="text-muted">Incluye detalles como color, tamaño, lugar donde se perdió, etc.</small>
+              {% if form._descripcion.errors %}
+                <div class="text-danger small mt-1">{{ form._descripcion.errors.0 }}</div>
+              {% endif %}
             </div>
 
-            <!-- Ubicación -->
-            <div class="mb-3">
-              <label for="id_ubicacion" class="form-label">ubicación</label>
-              <input 
-                type="text" 
-                name="ubicacion" 
-                class="form-control" 
-                id="id_ubicacion" 
-                placeholder="ej: encontrado en parque central, perdido cerca de la entrada"
-                required
-              >
-              <small class="text-muted">dónde se perdió o encontró</small>
-            </div>
-
-            <!-- Imagen -->
+            <!-- Campo: Imagen -->
             <div class="mb-4">
-              <label for="id_imagen" class="form-label">fotografía del objeto <span class="text-danger">*</span></label>
-              <input 
-                type="file" 
-                name="imagen" 
-                class="form-control" 
-                id="id_imagen" 
-                accept="image/*"
-                onchange="previewImage(event)"
-                required
-              >
-              <small class="text-muted">una foto ayuda mucho a identificar el objeto</small>
-              
-              <!-- Vista previa -->
-              <div id="preview-container" class="mt-3" style="display: none;">
-                <p class="fw-semibold mb-2" style="font-size: 0.875rem;">vista previa:</p>
-                <img id="preview" class="img-fluid rounded border" style="max-height: 250px;">
-                <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="removeImage()">
-                  <i class="bi bi-trash"></i> quitar
-                </button>
-              </div>
+              <label for="{{ form_safe.imagen.id_for_label }}" class="form-label">Fotografía del objeto</label>
+              {{ form_safe.imagen }}
+              <small class="text-muted">Opcional, pero ayuda a identificar el objeto</small>
+              {% if form._imagen.errors %}
+                <div class="text-danger small mt-1">{{ form._imagen.errors.0 }}</div>
+              {% endif %}
             </div>
 
             <!-- Botones -->
             <div class="d-flex gap-2">
               <button type="submit" class="btn btn-primary">
-                <i class="bi bi-send"></i> reportar objeto
+                <i class="bi bi-send"></i> Reportar Objeto
               </button>
               <a href="{% url 'lista_objetos_perdidos' %}" class="btn btn-outline-secondary">
-                cancelar
+                Cancelar
               </a>
             </div>
           </form>
@@ -107,69 +69,32 @@
       </div>
     </div>
 
-    <!-- Tips -->
+    <!-- Panel lateral -->
     <div class="col-lg-4">
       <div class="card mb-3">
         <div class="card-header">
-          <i class="bi bi-lightbulb"></i> tips
+          <i class="bi bi-info-circle"></i> Información útil
         </div>
-        <div class="card-body">
-          <ul class="mb-0" style="font-size: 0.875rem; padding-left: 1.25rem;">
-            <li class="mb-2"><strong>foto clara:</strong> toma una buena imagen del objeto</li>
-            <li class="mb-2"><strong>detalles:</strong> color, marca, características únicas</li>
-            <li class="mb-2"><strong>ubicación exacta:</strong> ayuda a encontrarlo más rápido</li>
-            <li class="mb-2"><strong>revisa lista:</strong> alguien más pudo reportarlo</li>
-            <li><strong>actualiza:</strong> marca como encontrado cuando lo recuperes</li>
-          </ul>
+        <div class="card-body small">
+          <div class="mb-2"><i class="bi bi-calendar"></i> La fecha se registra automáticamente</div>
+          <div class="mb-2"><i class="bi bi-person-badge"></i> Tu usuario quedará registrado como reportante</div>
+          <div><i class="bi bi-bag"></i> Podrás marcarlo como encontrado más adelante</div>
         </div>
       </div>
 
       <div class="card">
         <div class="card-header">
-          <i class="bi bi-info-circle"></i> qué sucede después
+          <i class="bi bi-lightbulb"></i> Consejos
         </div>
         <div class="card-body">
-          <small class="text-muted d-block mb-2">
-            <i class="bi bi-eye"></i> será visible para toda la comunidad
-          </small>
-          <small class="text-muted d-block mb-2">
-            <i class="bi bi-clock"></i> aparecerá en la lista de objetos perdidos
-          </small>
-          <small class="text-muted d-block">
-            <i class="bi bi-person"></i> tu nombre quedará registrado como reportante
-          </small>
+          <ul class="mb-0 small" style="padding-left: 1.25rem;">
+            <li class="mb-2"><strong>Sé específico:</strong> describe claramente el objeto</li>
+            <li class="mb-2"><strong>Aporta contexto:</strong> indica dónde o cuándo se perdió</li>
+            <li><strong>Usa fotos nítidas:</strong> facilitará su identificación</li>
+          </ul>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<script>
-function previewImage(event) {
-  const input = event.target;
-  const preview = document.getElementById('preview');
-  const container = document.getElementById('preview-container');
-  
-  if (input.files && input.files[0]) {
-    if (input.files[0].size > 5 * 1024 * 1024) {
-      alert('la imagen es muy grande. máximo 5MB');
-      input.value = '';
-      return;
-    }
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      preview.src = e.target.result;
-      container.style.display = 'block';
-    }
-    reader.readAsDataURL(input.files[0]);
-  }
-}
-
-function removeImage() {
-  document.getElementById('id_imagen').value = '';
-  document.getElementById('preview-container').style.display = 'none';
-  document.getElementById('preview').src = '';
-}
-</script>
 {% endblock %}

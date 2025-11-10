@@ -17,23 +17,7 @@
       <i class="bi bi-plus-circle"></i> reportar objeto
     </a>
   </div>
-
-  <div class="card mb-4">
-    <div class="card-body">
-      <div class="d-flex gap-2 flex-wrap">
-        <a href="?estado=todos" class="btn btn-sm {% if not request.GET.estado or request.GET.estado == 'todos' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
-          todos
-        </a>
-        <a href="?estado=perdido" class="btn btn-sm {% if request.GET.estado == 'perdido' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
-          perdidos
-        </a>
-        <a href="?estado=encontrado" class="btn btn-sm {% if request.GET.estado == 'encontrado' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
-          encontrados
-        </a>
-      </div>
-    </div>
-  </div>
-
+  
   {% if objetos %}
     <div class="row g-4">
       {% for objeto in objetos %}
@@ -82,21 +66,7 @@
                     <i class="bi bi-clock"></i> {{ objeto.fecha|date:"d/m/Y" }}
                   </small>
                   
-                  <div class="btn-group btn-group-sm">
-                    {% if user == objeto.vecino or user.es_administrador %}
-                      {% if not objeto.encontrado %}
-                        <a href="{% url 'marcar_encontrado' objeto.id %}" class="btn btn-outline-success" title="marcar encontrado">
-                          <i class="bi bi-check-circle"></i>
-                        </a>
-                      {% endif %}
-                      <a href="{% url 'editar_objeto_perdido' objeto.id %}" class="btn btn-outline-warning" title="editar">
-                        <i class="bi bi-pencil"></i>
-                      </a>
-                      <a href="{% url 'eliminar_objeto_perdido' objeto.id %}" class="btn btn-outline-danger" title="eliminar">
-                        <i class="bi bi-trash"></i>
-                      </a>
-                    {% endif %}
-                  </div>
+                  
                 </div>
               </div>
             </div>
@@ -155,7 +125,6 @@
             no hay objetos reportados en el sistema
           {% endif %}
         </p>
-        <a href="{% url 'crear_objeto_perdido' %}" class="btn btn-primary">
           <i class="bi bi-plus-circle"></i> reportar objeto
         </a>
       </div>

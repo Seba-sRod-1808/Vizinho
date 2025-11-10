@@ -75,9 +75,9 @@
             {% for multa in multas %}
               <tr>
                 <td>
-                  <div class="fw-semibold">{{ multa.descripcion|truncatewords:8 }}</div>
-                  {% if multa.descripcion|length > 50 %}
-                    <small class="text-muted">{{ multa.descripcion|truncatewords:15 }}</small>
+                  <div class="fw-semibold">{{ multa.motivo|truncatewords:8 }}</div>
+                  {% if multa.motivo|length > 50 %}
+                    <small class="text-muted">{{ multa.motivo|truncatewords:15 }}</small>
                   {% endif %}
                 </td>
 
@@ -108,11 +108,6 @@
                 <td class="text-end">
                   <div class="btn-group btn-group-sm">
                     {% if multa.estado == "Pendiente" %}
-                      {% if es_admin %}
-                        <a href="{% url 'marcar_pagada' multa.id %}" class="btn btn-outline-success" title="marcar pagada">
-                          <i class="bi bi-check-circle"></i>
-                        </a>
-                      {% endif %}
                       <a href="{% url 'editar_multa' multa.id %}" class="btn btn-outline-warning" title="editar">
                         <i class="bi bi-pencil"></i>
                       </a>

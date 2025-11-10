@@ -112,9 +112,6 @@
 
                 <td class="text-end">
                   <div class="btn-group btn-group-sm">
-                    <a href="{% url 'detalle_reporte' reporte.id %}" class="btn btn-outline-primary" title="ver">
-                      <i class="bi bi-eye"></i>
-                    </a>
                     
                     {% if user == reporte.vecino or es_admin %}
                       <a href="{% url 'editar_reporte' reporte.id %}" class="btn btn-outline-warning" title="editar">
