@@ -506,3 +506,47 @@ class DashboardService:
             "total_multas_pendientes": Multa.objects.total_pendiente_usuario(usuario),
             "ultimas_publicaciones": Publicacion.objects.all()[:5],
         }
+
+
+# ========================
+# ÁREA COMÚN
+# ========================
+class AreaComun(models.Model):
+    """
+    Representa un espacio compartido del condominio (ej. piscina, salón social, parque).
+    Solo los administradores pueden crear o modificar áreas comunes.
+    """
+
+    _nombre = models.CharField(max_length=100, unique=True)
+    _descripcion = models.TextField()
+    _capacidad = models.PositiveIntegerField(default=1)
+    _disponible = models.BooleanField(default=True)
+    _imagen = models.ImageField(upload_to="areas_comunes/", null=True, blank=True)
+
+    class Meta:
+        ordering = ['_nombre']
+        verbose_name_plural = "Áreas Comunes"
+
+    # === Properties ===
+    @property
+    def nombre(self):
+        return self._nombre
+
+    @property
+    def descripcion(self):
+        return self._descripcion
+
+    @property
+    def capacidad(self):
+        return self._capacidad
+
+    @property
+    def disponible(self):
+        return self._disponible
+
+    @property
+    def imagen(self):
+        return self._imagen
+
+    def __str(self):
+        return f"{self._nombre} (Capacidad: {self._capacidad})"
