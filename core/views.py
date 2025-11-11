@@ -494,15 +494,16 @@ class CrearUsuarioView(LoginRequiredMixin, SoloAdminMixin, CreateView):
 
 class ListaAreasView(LoginRequiredMixin, ListView):
     model = AreaComun
-    template_name = "areas_comunes/lista_areas.html"
+    template_name = "areas-comunes/lista_areas.html"
     context_object_name = "areas"
+    success_url = reverse_lazy("lista_areas")
 
 
 class CrearAreaView(LoginRequiredMixin, SoloAdminMixin, CreateView):
     model = AreaComun
     form_class = AreaComunForm
     template_name = "areas_comunes/crear_area.html"
-    success_url = reverse_lazy("lista_areas")
+    success_url = reverse_lazy("crear_area")
 
     def form_valid(self, form):
         messages.success(self.request, "Área común creada exitosamente.")
