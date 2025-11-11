@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from .models import (
-    Reporte, PerfilUsuario, Publicacion, Multa, ObjetoPerdido, Usuario
+    Reporte, PerfilUsuario, Publicacion, Multa, ObjetoPerdido, Usuario, AreaComun, ReservaArea
 )
 
 # ========================
@@ -406,3 +406,61 @@ class CrearUsuarioForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+# ========================
+# Áreas Comunes
+# ========================
+
+class AreaComunForm(forms.ModelForm):
+    """Formulario para administradores: crear o editar áreas comunes."""
+    class Meta:
+        model = AreaComun
+        fields = ["_nombre", "_descripcion", "_capacidad", "_imagen", "_disponible"]
+        labels = {
+            "_nombre": "Nombre del área",
+            "_descripcion": "Descripción",
+            "_capacidad": "Capacidad máxima",
+            "_imagen": "Fotografía",
+            "_disponible": "¿Está disponible?"
+        }
+        widgets = {
+            "_descripcion": forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            "_capacidad": forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
+        }
+
+# ========================
+# Reserva de Áreas Comunes
+# ========================
+
+class ReservaAreaForm(forms.ModelForm):
+    """Formulario para vecinos: reservar un área común."""
+    area = forms.ModelChoiceField(
+        queryset=AreaComun.objects.filter(_disponible=True),
+        label="Área a reservar",
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
+    class Meta:
+        model = ReservaArea
+        fields = ["area", "_fecha", "_hora_inicio", "_hora_fin", "_motivo"]
+        labels = {
+            "area": "Área a reservar",
+            "_fecha": "Fecha",
+            "_hora_inicio": "Hora de inicio",
+            "_hora_fin": "Hora de fin",
+            "_motivo": "Motivo del evento"
+        }
+        widgets = {
+            "_fecha": forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            "_hora_inicio": forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
+            "_hora_fin": forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
+            "_motivo": forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+        }
+
+    def save(self, commit=True):
+        """Asigna el área correctamente, sin romper encapsulamiento."""
+        instance = super().save(commit=False)
+        instance._area = self.cleaned_data["area"]
+        if commit:
+            instance.save()
+        return instance
