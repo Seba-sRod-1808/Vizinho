@@ -183,9 +183,7 @@ class PublicacionForm(forms.ModelForm):
 # ========================
 
 class MultaForm(forms.ModelForm):
-    # Importante: el queryset filtra SOLO usuarios con rol 'vecino'.
-    # Esto garantiza que no se asigne una multa a un admin por error.
-    _vecino = forms.ModelChoiceField(
+    vecino = forms.ModelChoiceField(
         queryset=Usuario.objects.filter(_rol="vecino"),
         label="Vecino afectado",
         required=True,
@@ -195,12 +193,11 @@ class MultaForm(forms.ModelForm):
 
     class Meta:
         model = Multa
-        fields = ["_vecino", "_monto", "_motivo", "_estado"]
+        fields = ["vecino", "_monto", "_motivo"]
         labels = {
-            "_vecino": "Vecino afectado",
+            "vecino": "Vecino afectado",
             "_monto": "Monto de la multa (Q)",
             "_motivo": "Motivo de la multa",
-            "_estado": "Estado"
         }
         widgets = {
             "_monto": forms.NumberInput(attrs={
@@ -214,8 +211,17 @@ class MultaForm(forms.ModelForm):
                 'rows': 3,
                 'placeholder': 'Describe el motivo de la multa...'
             }),
-            "_estado": forms.Select(attrs={'class': 'form-control'})
         }
+
+    def save(self, commit=True):
+        """Asigna el vecino y fuerza el estado inicial a 'Pendiente'."""
+        instance = super().save(commit=False)
+        instance._vecino = self.cleaned_data["vecino"]
+        instance._estado = "Pendiente"
+        if commit:
+            instance.save()
+        return instance
+
     
     def clean__monto(self):
         """Reglas de negocio básicas para evitar montos inválidos o absurdos."""
@@ -235,8 +241,7 @@ class MultaForm(forms.ModelForm):
         if len(motivo) < 10:
             raise ValidationError("El motivo debe ser más descriptivo (mínimo 10 caracteres).")
         return motivo
-
-
+    
 # ========================
 # OBJETOS PERDIDOS
 # ========================

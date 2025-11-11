@@ -252,10 +252,8 @@ class MultaCreateView(LoginRequiredMixin, SoloAdminMixin, CreateView):
 
     def get_context_data(self, **kwargs):   
         ctx = super().get_context_data(**kwargs)
-        # Poblamos el <select> manual del template:
         ctx["vecinos"] = Usuario.objects.filter(_rol="vecino").order_by("username")
         return ctx
-
 
 class MultaUpdateView(LoginRequiredMixin, SoloAdminMixin, UpdateView):
     model = Multa
