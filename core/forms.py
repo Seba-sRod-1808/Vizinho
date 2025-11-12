@@ -413,20 +413,81 @@ class CrearUsuarioForm(forms.ModelForm):
 
 class AreaComunForm(forms.ModelForm):
     """Formulario para administradores: crear o editar áreas comunes."""
+    
+    # Definir los campos manualmente
+    nombre = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'ej: Salón de Eventos, Piscina'
+        })
+    )
+    
+    descripcion = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 4,
+            'placeholder': 'Describe las características...'
+        })
+    )
+    
+    capacidad = forms.IntegerField(
+        min_value=1,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'min': 1,
+            'placeholder': '0'
+        })
+    )
+    
+    disponible = forms.BooleanField(
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={
+            'class': 'form-check-input'
+        })
+    )
+    
+    imagen = forms.ImageField(
+        required=False,
+        widget=forms.FileInput(attrs={
+            'class': 'form-control',
+            'accept': 'image/*'
+        })
+    )
+    
     class Meta:
         model = AreaComun
-        fields = ["_nombre", "_descripcion", "_capacidad", "_imagen", "_disponible"]
-        labels = {
-            "_nombre": "Nombre del área",
-            "_descripcion": "Descripción",
-            "_capacidad": "Capacidad máxima",
-            "_imagen": "Fotografía",
-            "_disponible": "¿Está disponible?"
-        }
-        widgets = {
-            "_descripcion": forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            "_capacidad": forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
-        }
+        fields = []  # Vacío porque los definimos manualmente arriba
+        
+    def __init__(self, *args, **kwargs):
+        """Inicializar el formulario con valores existentes"""
+        super().__init__(*args, **kwargs)
+        
+        if self.instance and self.instance.pk:
+            # Si estamos editando, cargar los valores
+            self.fields['nombre'].initial = self.instance.nombre
+            self.fields['descripcion'].initial = self.instance.descripcion
+            self.fields['capacidad'].initial = self.instance.capacidad
+            self.fields['disponible'].initial = self.instance.disponible
+    
+    def save(self, commit=True):
+        """Sobrescribir save para asignar valores a los campos privados"""
+        instance = super().save(commit=False)
+        
+        # Asignar a los campos privados usando las properties
+        instance.nombre = self.cleaned_data['nombre']
+        instance.descripcion = self.cleaned_data['descripcion']
+        instance.capacidad = self.cleaned_data['capacidad']
+        instance.disponible = self.cleaned_data['disponible']
+        
+        if 'imagen' in self.cleaned_data and self.cleaned_data['imagen']:
+            instance.imagen = self.cleaned_data['imagen']
+        
+        if commit:
+            instance.save()
+        
+        return instance
 
 # ========================
 # Reserva de Áreas Comunes

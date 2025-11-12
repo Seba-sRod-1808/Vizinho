@@ -67,6 +67,6 @@ urlpatterns = [
 
     # Areas Comunes
     path("areas-comunes/", ListaAreasView.as_view(), name="lista_areas"),
-    path("arear-comunes/nueva/", CrearAreaView.as_view(), name="crear_area"),
+    path("areas-comunes/nueva/", CrearAreaView.as_view(), name="crear_area"),
     path("reservar/", CrearReservaView.as_view(), name="crear_reserva"),
 ]

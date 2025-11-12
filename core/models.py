@@ -531,22 +531,44 @@ class AreaComun(models.Model):
     @property
     def nombre(self):
         return self._nombre
+    
+    @nombre.setter
+    def nombre(self, value):
+        self._nombre = value
 
     @property
     def descripcion(self):
         return self._descripcion
+    
+    @descripcion.setter
+    def descripcion(self, value):
+        self._descripcion = value
 
     @property
     def capacidad(self):
         return self._capacidad
+    
+    @capacidad.setter
+    def capacidad(self, value):
+        if value < 1:
+            raise ValidationError("La capacidad debe ser al menos 1")
+        self._capacidad = value
 
     @property
     def disponible(self):
         return self._disponible
+    
+    @disponible.setter
+    def disponible(self, value):
+        self._disponible = value
 
     @property
     def imagen(self):
         return self._imagen
+    
+    @imagen.setter
+    def imagen(self, value):
+        self._imagen = value
 
     def __str(self):
         return f"{self._nombre} (Capacidad: {self._capacidad})"

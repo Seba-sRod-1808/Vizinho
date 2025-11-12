@@ -502,7 +502,7 @@ class ListaAreasView(LoginRequiredMixin, ListView):
 class CrearAreaView(LoginRequiredMixin, SoloAdminMixin, CreateView):
     model = AreaComun
     form_class = AreaComunForm
-    template_name = "areas_comunes/crear_area.html"
+    template_name = "areas-comunes/crear_area.html"
     success_url = reverse_lazy("crear_area")
 
     def form_valid(self, form):
@@ -517,7 +517,7 @@ class CrearAreaView(LoginRequiredMixin, SoloAdminMixin, CreateView):
 class CrearReservaView(LoginRequiredMixin, CreateView):
     model = ReservaArea
     form_class = ReservaAreaForm
-    template_name = "areas_comunes/crear_reserva.html"
+    template_name = "areas-comunes/crear_reserva.html"
     success_url = reverse_lazy("lista_areas")
 
     def form_valid(self, form):
