@@ -503,9 +503,9 @@ class ReservaAreaForm(forms.ModelForm):
 
     class Meta:
         model = ReservaArea
-        fields = ["area", "_fecha", "_hora_inicio", "_hora_fin", "_motivo"]
+        fields = ["_area", "_fecha", "_hora_inicio", "_hora_fin", "_motivo"]
         labels = {
-            "area": "Área a reservar",
+            "_area": "Área a reservar",
             "_fecha": "Fecha",
             "_hora_inicio": "Hora de inicio",
             "_hora_fin": "Hora de fin",
@@ -521,7 +521,7 @@ class ReservaAreaForm(forms.ModelForm):
     def save(self, commit=True):
         """Asigna el área correctamente, sin romper encapsulamiento."""
         instance = super().save(commit=False)
-        instance._area = self.cleaned_data["area"]
+        instance._area = self.cleaned_data["_area"]
         if commit:
             instance.save()
         return instance
