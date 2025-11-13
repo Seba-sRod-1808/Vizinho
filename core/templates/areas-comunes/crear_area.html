@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Nueva Área Común{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <!-- Header -->
+  <div class="mb-4">
+    <div class="d-flex align-items-center mb-2">
+      <a href="{% url 'lista_areas' %}" class="btn btn-sm btn-outline-secondary me-3">
+        <i class="bi bi-arrow-left"></i>
+      </a>
+      <div>
+        <h1 class="mb-1" style="font-family: var(--font-code);">
+          <i class="bi bi-plus-circle text-primary"></i> Nueva Área Común
+        </h1>
+        <p class="text-muted mb-0" style="font-size: 0.875rem;">Registra un nuevo espacio para la comunidad</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensajes de éxito/error -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Formulario -->
+  <div class="row">
+    <div class="col-lg-8 col-xl-7">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <form method="post" enctype="multipart/form-data" id="formCrearArea" novalidate>
+            {% csrf_token %}
+            
+            <!-- Errores generales del formulario -->
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger" role="alert">
+                {{ form.non_field_errors }}
+              </div>
+            {% endif %}
+
+            <!-- Nombre del Área -->
+            <div class="mb-4">
+              <label for="{{ form.nombre.id_for_label }}" class="form-label fw-semibold">
+                <i class="bi bi-tag text-primary"></i> Nombre del Área *
+              </label>
+              {{ form.nombre }}
+              {% if form.nombre.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.nombre.errors.0 }}
+                </div>
+              {% else %}
+                <div class="form-text">Nombre identificativo del espacio común</div>
+              {% endif %}
+            </div>
+
+            <!-- Descripción -->
+            <div class="mb-4">
+              <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-semibold">
+                <i class="bi bi-text-left text-primary"></i> Descripción *
+              </label>
+              {{ form.descripcion }}
+              {% if form.descripcion.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.descripcion.errors.0 }}
+                </div>
+              {% else %}
+                <div class="form-text">Incluye detalles importantes como equipamiento, servicios disponibles, etc.</div>
+              {% endif %}
+              <div class="form-text text-end" id="descripcionCounter"></div>
+            </div>
+
+            <!-- Capacidad y Disponibilidad -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <label for="{{ form.capacidad.id_for_label }}" class="form-label fw-semibold">
+                  <i class="bi bi-people text-primary"></i> Capacidad *
+                </label>
+                {{ form.capacidad }}
+                {% if form.capacidad.errors %}
+                  <div class="invalid-feedback d-block">
+                    {{ form.capacidad.errors.0 }}
+                  </div>
+                {% else %}
+                  <div class="form-text">Número máximo de personas</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6">
+                <label for="{{ form.disponible.id_for_label }}" class="form-label fw-semibold">
+                  <i class="bi bi-check-circle text-primary"></i> Estado
+                </label>
+                {{ form.disponible }}
+                {% if form.disponible.errors %}
+                  <div class="invalid-feedback d-block">
+                    {{ form.disponible.errors.0 }}
+                  </div>
+                {% else %}
+                  <div class="form-text">Disponibilidad para reservas</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Horarios de Disponibilidad (si existen en el form) -->
+            {% if form.hora_inicio %}
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <label for="{{ form.hora_inicio.id_for_label }}" class="form-label fw-semibold">
+                  <i class="bi bi-clock text-primary"></i> Hora de Inicio
+                </label>
+                {{ form.hora_inicio }}
+                {% if form.hora_inicio.errors %}
+                  <div class="invalid-feedback d-block">
+                    {{ form.hora_inicio.errors.0 }}
+                  </div>
+                {% else %}
+                  <div class="form-text">Hora de apertura</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6">
+                <label for="{{ form.hora_fin.id_for_label }}" class="form-label fw-semibold">
+                  <i class="bi bi-clock-fill text-primary"></i> Hora de Cierre
+                </label>
+                {{ form.hora_fin }}
+                {% if form.hora_fin.errors %}
+                  <div class="invalid-feedback d-block">
+                    {{ form.hora_fin.errors.0 }}
+                  </div>
+                {% else %}
+                  <div class="form-text">Hora de cierre</div>
+                {% endif %}
+              </div>
+            </div>
+            {% endif %}
+
+            <!-- Costo por Hora (si existe en el form) -->
+            {% if form.costo_hora %}
+            <div class="mb-4">
+              <label for="{{ form.costo_hora.id_for_label }}" class="form-label fw-semibold">
+                <i class="bi bi-cash-coin text-primary"></i> Costo por Hora
+              </label>
+              <div class="input-group">
+                <span class="input-group-text">Q</span>
+                {{ form.costo_hora }}
+              </div>
+              {% if form.costo_hora.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.costo_hora.errors.0 }}
+                </div>
+              {% else %}
+                <div class="form-text">Ingresa 0 si el área es gratuita</div>
+              {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Imagen -->
+            <div class="mb-4">
+              <label for="{{ form.imagen.id_for_label }}" class="form-label fw-semibold">
+                <i class="bi bi-image text-primary"></i> Imagen del Área
+              </label>
+              {{ form.imagen }}
+              {% if form.imagen.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.imagen.errors.0 }}
+                </div>
+              {% else %}
+                <div class="form-text">Formatos aceptados: JPG, PNG, WEBP (máx. 5MB)</div>
+              {% endif %}
+              
+              <!-- Preview de imagen -->
+              <div id="imagePreview" class="mt-3" style="display: none;">
+                <img id="previewImg" src="" alt="Preview" class="img-thumbnail" style="max-width: 300px; max-height: 200px; object-fit: cover;">
+                <button type="button" class="btn btn-sm btn-outline-danger mt-2" id="removeImage">
+                  <i class="bi bi-x-circle"></i> Quitar imagen
+                </button>
+              </div>
+            </div>
+
+            <!-- Reglas y Requisitos (si existe en el form) -->
+            {% if form.reglas %}
+            <div class="mb-4">
+              <label for="{{ form.reglas.id_for_label }}" class="form-label fw-semibold">
+                <i class="bi bi-list-check text-primary"></i> Reglas y Requisitos
+              </label>
+              {{ form.reglas }}
+              {% if form.reglas.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.reglas.errors.0 }}
+                </div>
+              {% else %}
+                <div class="form-text">Reglas específicas para el uso de esta área (opcional)</div>
+              {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Requiere Depósito (si existe en el form) -->
+            {% if form.requiere_deposito %}
+            <div class="mb-4">
+              <div class="form-check">
+                {{ form.requiere_deposito }}
+                <label class="form-check-label fw-semibold" for="{{ form.requiere_deposito.id_for_label }}">
+                  <i class="bi bi-shield-check text-primary"></i> Requiere depósito de garantía
+                </label>
+              </div>
+              {% if form.requiere_deposito.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.requiere_deposito.errors.0 }}
+                </div>
+              {% endif %}
+              
+              {% if form.monto_deposito %}
+              <div id="depositoMonto" class="mt-3" style="display: none;">
+                <label for="{{ form.monto_deposito.id_for_label }}" class="form-label">Monto del depósito</label>
+                <div class="input-group">
+                  <span class="input-group-text">Q</span>
+                  {{ form.monto_deposito }}
+                </div>
+                {% if form.monto_deposito.errors %}
+                  <div class="invalid-feedback d-block">
+                    {{ form.monto_deposito.errors.0 }}
+                  </div>
+                {% endif %}
+              </div>
+              {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Botones de Acción -->
+            <div class="d-flex gap-2 pt-3 border-top">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-circle"></i> Guardar Área
+              </button>
+              <a href="{% url 'lista_areas' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-x-circle"></i> Cancelar
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar de Ayuda -->
+    <div class="col-lg-4 col-xl-5">
+      <div class="card shadow-sm bg-light">
+        <div class="card-body">
+          <h6 class="fw-semibold mb-3">
+            <i class="bi bi-lightbulb text-warning"></i> Consejos
+          </h6>
+          <ul class="small text-muted mb-0" style="line-height: 1.8;">
+            <li>Usa nombres descriptivos y claros para las áreas</li>
+            <li>Incluye fotos de buena calidad para mejor presentación</li>
+            <li>Especifica la capacidad real del espacio</li>
+            <li>Define horarios apropiados según el tipo de área</li>
+            <li>Detalla las reglas para evitar conflictos</li>
+            <li>Actualiza la disponibilidad cuando sea necesario</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mt-3">
+        <div class="card-body">
+          <h6 class="fw-semibold mb-3">
+            <i class="bi bi-info-circle text-info"></i> Información
+          </h6>
+          <p class="small text-muted mb-2">
+            Las áreas comunes registradas estarán disponibles para que los residentes realicen reservas según su disponibilidad.
+          </p>
+          <p class="small text-muted mb-0">
+            Los campos marcados con * son obligatorios.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Agregar clases CSS a los campos del formulario
+  const formControls = document.querySelectorAll('input[type="text"], input[type="number"], input[type="time"], input[type="email"], textarea');
+  formControls.forEach(field => {
+    if (!field.classList.contains('form-check-input') && !field.classList.contains('form-control')) {
+      field.classList.add('form-control');
+    }
+  });
+  
+  // Asegurar que los campos sean editables
+  document.querySelectorAll('input, textarea, select').forEach(field => {
+    field.removeAttribute('readonly');
+    field.removeAttribute('disabled');
+  });
+
+  // Agregar clase al select de disponible
+  const selectDisponible = document.querySelector('select[name="disponible"]');
+  if (selectDisponible) {
+    selectDisponible.classList.add('form-select');
+  }
+
+  // Agregar atributos a campos específicos
+  const nombreInput = document.querySelector('input[name="nombre"]');
+  if (nombreInput) {
+    nombreInput.placeholder = 'ej: Salón de Eventos, Piscina, Cancha de Tenis';
+    nombreInput.maxLength = 100;
+  }
+
+  const descripcionTextarea = document.querySelector('textarea[name="descripcion"]');
+  if (descripcionTextarea) {
+    descripcionTextarea.placeholder = 'Describe las características y servicios del área...';
+    descripcionTextarea.rows = 4;
+  }
+
+  const capacidadInput = document.querySelector('input[name="capacidad"]');
+  if (capacidadInput) {
+    capacidadInput.placeholder = '0';
+    capacidadInput.min = 1;
+  }
+
+  const costoHoraInput = document.querySelector('input[name="costo_hora"]');
+  if (costoHoraInput) {
+    costoHoraInput.placeholder = '0.00';
+    costoHoraInput.step = '0.01';
+    costoHoraInput.min = '0';
+  }
+
+  const reglasTextarea = document.querySelector('textarea[name="reglas"]');
+  if (reglasTextarea) {
+    reglasTextarea.placeholder = 'ej: No fumar, Prohibido el ingreso de mascotas, Máximo 2 horas de uso...';
+    reglasTextarea.rows = 3;
+  }
+
+  // Preview de imagen
+  const imagenInput = document.querySelector('input[name="imagen"]');
+  if (imagenInput) {
+    imagenInput.accept = 'image/*';
+    imagenInput.classList.add('form-control');
+    
+    imagenInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        // Validar tamaño (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          alert('La imagen es demasiado grande. El tamaño máximo es 5MB.');
+          this.value = '';
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          document.getElementById('previewImg').src = event.target.result;
+          document.getElementById('imagePreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // Quitar imagen
+  const removeImageBtn = document.getElementById('removeImage');
+  if (removeImageBtn) {
+    removeImageBtn.addEventListener('click', function() {
+      if (imagenInput) {
+        imagenInput.value = '';
+        document.getElementById('imagePreview').style.display = 'none';
+      }
+    });
+  }
+
+  // Mostrar/ocultar monto de depósito
+  const requiereDepositoCheckbox = document.querySelector('input[name="requiere_deposito"]');
+  const depositoMontoDiv = document.getElementById('depositoMonto');
+  const montoDepositoInput = document.querySelector('input[name="monto_deposito"]');
+  
+  if (requiereDepositoCheckbox && depositoMontoDiv) {
+    requiereDepositoCheckbox.classList.add('form-check-input');
+    
+    requiereDepositoCheckbox.addEventListener('change', function() {
+      if (this.checked) {
+        depositoMontoDiv.style.display = 'block';
+        if (montoDepositoInput) {
+          montoDepositoInput.required = true;
+        }
+      } else {
+        depositoMontoDiv.style.display = 'none';
+        if (montoDepositoInput) {
+          montoDepositoInput.required = false;
+          montoDepositoInput.value = '';
+        }
+      }
+    });
+
+    // Inicializar estado
+    if (requiereDepositoCheckbox.checked) {
+      depositoMontoDiv.style.display = 'block';
+    }
+  }
+
+  if (montoDepositoInput) {
+    montoDepositoInput.placeholder = '0.00';
+    montoDepositoInput.step = '0.01';
+    montoDepositoInput.min = '0';
+  }
+
+  // Validación de horarios
+  const formCrearArea = document.getElementById('formCrearArea');
+  if (formCrearArea) {
+    formCrearArea.addEventListener('submit', function(e) {
+      const horaInicioInput = document.querySelector('input[name="_hora_inicio"]');
+      const horaFinInput = document.querySelector('input[name="_hora_fin"]');
+      
+      if (horaInicioInput && horaFinInput) {
+        const horaInicio = horaInicioInput.value;
+        const horaFin = horaFinInput.value;
+        
+        if (horaInicio && horaFin && horaInicio >= horaFin) {
+          e.preventDefault();
+          alert('La hora de inicio debe ser anterior a la hora de cierre.');
+          return false;
+        }
+      }
+    });
+  }
+
+  // Contador de caracteres para descripción
+  if (descripcionTextarea) {
+    const descripcionCounter = document.getElementById('descripcionCounter');
+    
+    function updateDescripcionCounter() {
+      const length = descripcionTextarea.value.length;
+      descripcionCounter.textContent = `${length} caracteres`;
+    }
+    
+    descripcionTextarea.addEventListener('input', updateDescripcionCounter);
+    updateDescripcionCounter();
+  }
+});
+</script>
+{% endblock %}

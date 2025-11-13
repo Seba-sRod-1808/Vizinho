@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from .models import (
-    Reporte, PerfilUsuario, Publicacion, Multa, ObjetoPerdido, Usuario
+    Reporte, PerfilUsuario, Publicacion, Multa, ObjetoPerdido, Usuario, AreaComun, ReservaArea
 )
 
 # ========================
@@ -183,9 +183,7 @@ class PublicacionForm(forms.ModelForm):
 # ========================
 
 class MultaForm(forms.ModelForm):
-    # Importante: el queryset filtra SOLO usuarios con rol 'vecino'.
-    # Esto garantiza que no se asigne una multa a un admin por error.
-    _vecino = forms.ModelChoiceField(
+    vecino = forms.ModelChoiceField(
         queryset=Usuario.objects.filter(_rol="vecino"),
         label="Vecino afectado",
         required=True,
@@ -195,12 +193,11 @@ class MultaForm(forms.ModelForm):
 
     class Meta:
         model = Multa
-        fields = ["_vecino", "_monto", "_motivo", "_estado"]
+        fields = ["vecino", "_monto", "_motivo"]
         labels = {
-            "_vecino": "Vecino afectado",
+            "vecino": "Vecino afectado",
             "_monto": "Monto de la multa (Q)",
             "_motivo": "Motivo de la multa",
-            "_estado": "Estado"
         }
         widgets = {
             "_monto": forms.NumberInput(attrs={
@@ -214,8 +211,17 @@ class MultaForm(forms.ModelForm):
                 'rows': 3,
                 'placeholder': 'Describe el motivo de la multa...'
             }),
-            "_estado": forms.Select(attrs={'class': 'form-control'})
         }
+
+    def save(self, commit=True):
+        """Asigna el vecino y fuerza el estado inicial a 'Pendiente'."""
+        instance = super().save(commit=False)
+        instance._vecino = self.cleaned_data["vecino"]
+        instance._estado = "Pendiente"
+        if commit:
+            instance.save()
+        return instance
+
     
     def clean__monto(self):
         """Reglas de negocio básicas para evitar montos inválidos o absurdos."""
@@ -235,8 +241,7 @@ class MultaForm(forms.ModelForm):
         if len(motivo) < 10:
             raise ValidationError("El motivo debe ser más descriptivo (mínimo 10 caracteres).")
         return motivo
-
-
+    
 # ========================
 # OBJETOS PERDIDOS
 # ========================
@@ -401,3 +406,122 @@ class CrearUsuarioForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+# ========================
+# Áreas Comunes
+# ========================
+
+class AreaComunForm(forms.ModelForm):
+    """Formulario para administradores: crear o editar áreas comunes."""
+    
+    # Definir los campos manualmente
+    nombre = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'ej: Salón de Eventos, Piscina'
+        })
+    )
+    
+    descripcion = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 4,
+            'placeholder': 'Describe las características...'
+        })
+    )
+    
+    capacidad = forms.IntegerField(
+        min_value=1,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'min': 1,
+            'placeholder': '0'
+        })
+    )
+    
+    disponible = forms.BooleanField(
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={
+            'class': 'form-check-input'
+        })
+    )
+    
+    imagen = forms.ImageField(
+        required=False,
+        widget=forms.FileInput(attrs={
+            'class': 'form-control',
+            'accept': 'image/*'
+        })
+    )
+    
+    class Meta:
+        model = AreaComun
+        fields = []  # Vacío porque los definimos manualmente arriba
+        
+    def __init__(self, *args, **kwargs):
+        """Inicializar el formulario con valores existentes"""
+        super().__init__(*args, **kwargs)
+        
+        if self.instance and self.instance.pk:
+            # Si estamos editando, cargar los valores
+            self.fields['nombre'].initial = self.instance.nombre
+            self.fields['descripcion'].initial = self.instance.descripcion
+            self.fields['capacidad'].initial = self.instance.capacidad
+            self.fields['disponible'].initial = self.instance.disponible
+    
+    def save(self, commit=True):
+        """Sobrescribir save para asignar valores a los campos privados"""
+        instance = super().save(commit=False)
+        
+        # Asignar a los campos privados usando las properties
+        instance.nombre = self.cleaned_data['nombre']
+        instance.descripcion = self.cleaned_data['descripcion']
+        instance.capacidad = self.cleaned_data['capacidad']
+        instance.disponible = self.cleaned_data['disponible']
+        
+        if 'imagen' in self.cleaned_data and self.cleaned_data['imagen']:
+            instance.imagen = self.cleaned_data['imagen']
+        
+        if commit:
+            instance.save()
+        
+        return instance
+
+# ========================
+# Reserva de Áreas Comunes
+# ========================
+
+class ReservaAreaForm(forms.ModelForm):
+    """Formulario para vecinos: reservar un área común."""
+    area = forms.ModelChoiceField(
+        queryset=AreaComun.objects.filter(_disponible=True),
+        label="Área a reservar",
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
+    class Meta:
+        model = ReservaArea
+        fields = ["_area", "_fecha", "_hora_inicio", "_hora_fin", "_motivo"]
+        labels = {
+            "_area": "Área a reservar",
+            "_fecha": "Fecha",
+            "_hora_inicio": "Hora de inicio",
+            "_hora_fin": "Hora de fin",
+            "_motivo": "Motivo del evento"
+        }
+        widgets = {
+            "_fecha": forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            "_hora_inicio": forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
+            "_hora_fin": forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
+            "_motivo": forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+        }
+
+    def save(self, commit=True):
+        """Asigna el área correctamente, sin romper encapsulamiento."""
+        instance = super().save(commit=False)
+        instance._area = self.cleaned_data["_area"]
+        if commit:
+            instance.save()
+        return instance

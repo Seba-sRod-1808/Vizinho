@@ -23,13 +23,25 @@
     <div class="col-lg-8">
       <div class="card">
         <div class="card-body">
-          <form method="post">
+          <form method="post"> 
+            <!-- Mostrar errores generales del formulario -->
+            {% if form.errors %}
+            <div class="alert alert-danger mt-3">
+              <strong>Ocurrió un error al crear la multa:</strong>
+              <ul class="mb-0">
+                {% for field, errors in form.errors.items %}
+                  <li><strong>{{ field }}</strong>: {{ errors.0 }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+         
             {% csrf_token %}
             
             <!-- Vecino -->
             <div class="mb-3">
               <label for="id_vecino" class="form-label">vecino</label>
-              <select name="_vecino" class="form-select" id="id_vecino" required>
+              <select name="vecino" class="form-select" id="id_vecino" required>
                 <option value="">selecciona un vecino...</option>
                 {% for vecino in vecinos %}
                   <option value="{{ vecino.id }}">
@@ -43,11 +55,11 @@
 
             <!-- Descripción -->
             <div class="mb-3">
-              <label for="id_descripcion" class="form-label">descripción</label>
+              <label for="id_motivo" class="form-label">descripción</label>
               <textarea 
-                name="_descripcion" 
+                name="_motivo" 
                 class="form-control" 
-                id="id_descripcion" 
+                id="id_motivo" 
                 rows="5"
                 placeholder="ej: multa por ruido excesivo después de las 10pm del día 15/03/2025"
                 required

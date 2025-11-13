@@ -108,14 +108,20 @@
                 <td class="text-end">
                   <div class="btn-group btn-group-sm">
                     {% if multa.estado == "Pendiente" %}
-                      <a href="{% url 'editar_multa' multa.id %}" class="btn btn-outline-warning" title="editar">
-                        <i class="bi bi-pencil"></i>
-                      </a>
-                    {% endif %}
-                    {% if es_admin %}
-                      <a href="{% url 'eliminar_multa' multa.id %}" class="btn btn-outline-danger" title="eliminar">
-                        <i class="bi bi-trash"></i>
-                      </a>
+                      {% if es_admin %}
+                        <!-- Solo el admin puede editar o eliminar -->
+                        <a href="{% url 'editar_multa' multa.id %}" class="btn btn-outline-warning" title="editar">
+                          <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'eliminar_multa' multa.id %}" class="btn btn-outline-danger" title="eliminar">
+                          <i class="bi bi-trash"></i>
+                        </a>
+                      {% else %}
+                        <!-- El vecino solo puede pagar su propia multa -->
+                          <a href="{% url 'pagar_multa' multa.id %}" class="btn btn-outline-success" title="pagar multa">
+                            <i class="bi bi-wallet2"></i>
+                          </a>
+                      {% endif %}
                     {% endif %}
                   </div>
                 </td>

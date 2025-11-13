@@ -19,6 +19,8 @@ from .views import (
     ListaObjetosPerdidosView, CrearObjetoPerdidoView, 
     #creacion de usuarios por admin
     CrearUsuarioView,
+    # Areas Comunes
+    ListaAreasView, CrearAreaView, CrearReservaView,
 )
 
 urlpatterns = [
@@ -62,4 +64,9 @@ urlpatterns = [
 
     #Creacion de usuarios por admin
     path("administrador/crear-usuario/", CrearUsuarioView.as_view(), name="crear_usuario"),
+
+    # Areas Comunes
+    path("areas-comunes/", ListaAreasView.as_view(), name="lista_areas"),
+    path("areas-comunes/nueva/", CrearAreaView.as_view(), name="crear_area"),
+    path("reservar/", CrearReservaView.as_view(), name="crear_reserva"),
 ]
