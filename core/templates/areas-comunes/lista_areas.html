@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Áreas Comunes{% endblock %}
+{% block content %}
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="mb-1" style="font-family: var(--font-code);">
+        <i class="bi bi-building text-primary"></i> Áreas Comunes
+      </h1>
+      <p class="text-muted mb-0" style="font-size: 0.875rem;">Espacios disponibles en tu comunidad</p>
+    </div>
+    {% if user.es_administrador %}
+      <a href="{% url 'crear_area' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nueva Área
+      </a>
+    {% endif %}
+  </div>
+
+  {% if areas %}
+    <div class="row g-4">
+      {% for area in areas %}
+        <div class="col-md-6 col-lg-4">
+          <div class="card shadow-sm h-100">
+            {% if area.imagen %}
+              <img src="{{ area.imagen.url }}" class="card-img-top" alt="{{ area.nombre }}" style="object-fit: cover; height: 200px;">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="fw-semibold">{{ area.nombre }}</h5>
+              <p class="text-muted small mb-2">{{ area.descripcion|truncatewords:20 }}</p>
+              <p class="text-muted mb-1"><i class="bi bi-people"></i> Capacidad: {{ area.capacidad }}</p>
+              {% if area.disponible %}
+                <span class="badge bg-success">Disponible</span>
+              {% else %}
+                <span class="badge bg-secondary">No disponible</span>
+              {% endif %}
+            </div>
+            <div class="card-footer bg-white border-top">
+              {% if area.disponible %}
+                <a href="{% url 'crear_reserva' %}" class="btn btn-sm btn-outline-primary w-100">
+                  <i class="bi bi-calendar-event"></i> Reservar
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-center py-5">
+      <i class="bi bi-house-slash text-muted" style="font-size: 3rem;"></i>
+      <p class="text-muted mt-3 mb-0">No hay áreas registradas</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

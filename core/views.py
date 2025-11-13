@@ -33,11 +33,13 @@ from django.views.generic import (
 # Local imports
 from .models import (
     Reporte, PerfilUsuario, Publicacion, Multa, 
-    BotonPanico, ObjetoPerdido, Usuario, DashboardService
+    BotonPanico, ObjetoPerdido, Usuario, DashboardService,
+    AreaComun, ReservaArea
 )
 from .forms import (
     LoginForm, ReporteForm, ProfileForm, PublicacionForm, 
-    MultaForm, ObjetoPerdidoForm, CrearUsuarioForm
+    MultaForm, ObjetoPerdidoForm, CrearUsuarioForm,
+    AreaComunForm, ReservaAreaForm
 )
 
 
@@ -484,3 +486,41 @@ class CrearUsuarioView(LoginRequiredMixin, SoloAdminMixin, CreateView):
             "Error al crear usuario. Por favor verifica los datos ingresados."
         )
         return super().form_invalid(form)
+
+
+# ========================
+# ÁREAS COMUNES (ADMIN)
+# ========================
+
+class ListaAreasView(LoginRequiredMixin, ListView):
+    model = AreaComun
+    template_name = "areas-comunes/lista_areas.html"
+    context_object_name = "areas"
+    success_url = reverse_lazy("lista_areas")
+
+
+class CrearAreaView(LoginRequiredMixin, SoloAdminMixin, CreateView):
+    model = AreaComun
+    form_class = AreaComunForm
+    template_name = "areas-comunes/crear_area.html"
+    success_url = reverse_lazy("crear_area")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Área común creada exitosamente.")
+        return super().form_valid(form)
+
+
+# ========================
+# RESERVAS (VECINOS)
+# ========================
+
+class CrearReservaView(LoginRequiredMixin, CreateView):
+    model = ReservaArea
+    form_class = ReservaAreaForm
+    template_name = "areas-comunes/crear_reserva.html"
+    success_url = reverse_lazy("lista_areas")
+
+    def form_valid(self, form):
+        form.instance._usuario = self.request.user
+        messages.success(self.request, "Reserva registrada correctamente.")
+        return super().form_valid(form)
