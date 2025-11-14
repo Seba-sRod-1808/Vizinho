@@ -519,6 +519,14 @@ class CrearReservaView(LoginRequiredMixin, CreateView):
     form_class = ReservaAreaForm
     template_name = "areas-comunes/crear_reserva.html"
     success_url = reverse_lazy("lista_areas")
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        # Pasar el área desde la URL
+        area_id = self.kwargs.get('area_id') or self.request.GET.get('area_id')
+        if area_id:
+            kwargs['area_id'] = area_id
+        return kwargs
 
     def form_valid(self, form):
         form.instance._usuario = self.request.user

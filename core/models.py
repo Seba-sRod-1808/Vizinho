@@ -570,25 +570,21 @@ class AreaComun(models.Model):
     def imagen(self, value):
         self._imagen = value
 
-    def __str(self):
+    def __str__(self):
         return f"{self._nombre} (Capacidad: {self._capacidad})"
 
 # ========================
 # RESERVA DE ÁREA
 # ========================
 class ReservaArea(models.Model):
-    """
-    Registro de reservas hechas por vecinos sobre un área común.
-    """
-
     _area = models.ForeignKey(AreaComun, on_delete=models.CASCADE, related_name="reservas")
     _usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reservas_areas")
     _fecha = models.DateField()
     _hora_inicio = models.TimeField()
-    _hora_fin = models.TimeField()
+    _hora_fin = models.TimeField()  
     _motivo = models.CharField(max_length=255)
     _creado = models.DateTimeField(auto_now_add=True)
-
+    
     class Meta:
         ordering = ['-_creado']
         verbose_name_plural = "Reservas de Áreas"
@@ -598,45 +594,76 @@ class ReservaArea(models.Model):
                 name="unique_reserva_por_horario"
             )
         ]
-
-    # === Properties ===
+    
+    # === Properties con Setters ===
     @property
     def area(self):
         return self._area
-
+    
+    @area.setter
+    def area(self, value):
+        self._area = value
+    
     @property
     def usuario(self):
         return self._usuario
-
+    
+    @usuario.setter
+    def usuario(self, value):
+        self._usuario = value
+    
     @property
     def fecha(self):
         return self._fecha
-
+    
+    @fecha.setter
+    def fecha(self, value):
+        self._fecha = value
+    
     @property
     def hora_inicio(self):
         return self._hora_inicio
-
+    
+    @hora_inicio.setter
+    def hora_inicio(self, value):
+        self._hora_inicio = value
+    
     @property
     def hora_fin(self):
         return self._hora_fin
-
+    
+    @hora_fin.setter
+    def hora_fin(self, value):
+        self._hora_fin = value
+    
     @property
     def motivo(self):
         return self._motivo
-
+    
+    @motivo.setter
+    def motivo(self, value):
+        self._motivo = value
+    
     def clean(self):
         """Valida que no se crucen horarios de reserva."""
+        # Solo validar si los campos ya están asignados
+        if not hasattr(self, '_area') or not self._area:
+            return
+        
+        if not self._fecha or not self._hora_inicio or not self._hora_fin:
+            return
+        
         solapadas = ReservaArea.objects.filter(
             _area=self._area,
             _fecha=self._fecha
         ).exclude(pk=self.pk)
-
+        
         for reserva in solapadas:
             if (self._hora_inicio < reserva._hora_fin and self._hora_fin > reserva._hora_inicio):
                 raise ValidationError("Ya existe una reserva en ese horario.")
-
+        
         if self._hora_inicio >= self._hora_fin:
             raise ValidationError("La hora de inicio debe ser anterior a la hora de fin.")
-
-    def _str_(self):
+    
+    def __str__(self):
         return f"Reserva de {self._area._nombre} por {self._usuario.username} ({self._fecha})"

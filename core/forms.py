@@ -1,6 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
+
 from .models import (
     Reporte, PerfilUsuario, Publicacion, Multa, ObjetoPerdido, Usuario, AreaComun, ReservaArea
 )
@@ -494,34 +495,95 @@ class AreaComunForm(forms.ModelForm):
 # ========================
 
 class ReservaAreaForm(forms.ModelForm):
-    """Formulario para vecinos: reservar un área común."""
     area = forms.ModelChoiceField(
         queryset=AreaComun.objects.filter(_disponible=True),
-        label="Área a reservar",
-        widget=forms.Select(attrs={'class': 'form-select'})
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label='Área a reservar'
     )
-
+    
+    fecha = forms.DateField(
+        widget=forms.DateInput(attrs={
+            'class': 'form-control',
+            'type': 'date'
+        })
+    )
+    
+    hora_inicio = forms.TimeField(
+        widget=forms.TimeInput(attrs={
+            'class': 'form-control',
+            'type': 'time'
+        })
+    )
+    
+    hora_fin = forms.TimeField(
+        widget=forms.TimeInput(attrs={
+            'class': 'form-control',
+            'type': 'time'
+        })
+    )
+    
+    motivo = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 3,
+            'placeholder': 'Describe el motivo de tu reserva...'
+        })
+    )
+    
     class Meta:
         model = ReservaArea
-        fields = ["_area", "_fecha", "_hora_inicio", "_hora_fin", "_motivo"]
-        labels = {
-            "_area": "Área a reservar",
-            "_fecha": "Fecha",
-            "_hora_inicio": "Hora de inicio",
-            "_hora_fin": "Hora de fin",
-            "_motivo": "Motivo del evento"
-        }
-        widgets = {
-            "_fecha": forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            "_hora_inicio": forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
-            "_hora_fin": forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
-            "_motivo": forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
-        }
-
+        fields = []
+    
+    def __init__(self, *args, **kwargs):
+        area_id = kwargs.pop('area_id', None)
+        super().__init__(*args, **kwargs)
+        
+        # Si viene un área específica, ocultarla y pre-seleccionarla
+        if area_id:
+            self.fields['area'].initial = area_id
+            self.fields['area'].widget = forms.HiddenInput()
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        area = cleaned_data.get('area')
+        fecha = cleaned_data.get('fecha')
+        hora_inicio = cleaned_data.get('hora_inicio')
+        hora_fin = cleaned_data.get('hora_fin')
+        
+        if not all([area, fecha, hora_inicio, hora_fin]):
+            return cleaned_data
+        
+        # Validar que hora_inicio sea antes que hora_fin
+        if hora_inicio >= hora_fin:
+            raise ValidationError("La hora de inicio debe ser anterior a la hora de fin.")
+        
+        # Validar que no haya solapamiento con otras reservas
+        solapadas = ReservaArea.objects.filter(
+            _area=area,
+            _fecha=fecha
+        )
+        
+        # Si estamos editando, excluir la reserva actual
+        if self.instance.pk:
+            solapadas = solapadas.exclude(pk=self.instance.pk)
+        
+        for reserva in solapadas:
+            if (hora_inicio < reserva._hora_fin and hora_fin > reserva._hora_inicio):
+                raise ValidationError("Ya existe una reserva en ese horario.")
+        
+        return cleaned_data
+    
     def save(self, commit=True):
-        """Asigna el área correctamente, sin romper encapsulamiento."""
         instance = super().save(commit=False)
-        instance._area = self.cleaned_data["_area"]
+        
+        # Asignar directamente a los campos privados con underscore
+        instance._area = self.cleaned_data['area']
+        instance._fecha = self.cleaned_data['fecha']
+        instance._hora_inicio = self.cleaned_data['hora_inicio']
+        instance._hora_fin = self.cleaned_data['hora_fin']
+        instance._motivo = self.cleaned_data['motivo']
+        
         if commit:
             instance.save()
+        
         return instance
