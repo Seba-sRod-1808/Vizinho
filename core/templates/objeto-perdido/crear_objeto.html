@@ -3,6 +3,7 @@
 
 {% block content %}
 <div class="container-fluid" style="max-width: 900px;">
+
   <!-- Encabezado -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
@@ -10,7 +11,9 @@
         <i class="bi bi-bag text-primary"></i>
         Reportar Objeto Perdido
       </h1>
-      <p class="text-muted mb-0" style="font-size: 0.875rem;">Registra un nuevo objeto perdido en tu comunidad</p>
+      <p class="text-muted mb-0" style="font-size: 0.875rem;">
+        Registra un nuevo objeto perdido en tu comunidad
+      </p>
     </div>
     <a href="{% url 'lista_objetos_perdidos' %}" class="btn btn-outline-secondary">
       <i class="bi bi-arrow-left"></i> Volver
@@ -22,36 +25,48 @@
     <div class="col-lg-8">
       <div class="card">
         <div class="card-body">
+
           <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
             <!-- Campo: Título -->
             <div class="mb-3">
-              <label for="{{ form_safe.titulo.id_for_label }}" class="form-label">Nombre del objeto</label>
+              <label for="{{ form_safe.titulo.id_for_label }}" class="form-label">
+                Nombre del objeto
+              </label>
               {{ form_safe.titulo }}
               <small class="text-muted">Ejemplo: "Llaves con llavero azul"</small>
-              {% if form._titulo.errors %}
-                <div class="text-danger small mt-1">{{ form._titulo.errors.0 }}</div>
+
+              {% if form.titulo.errors %}
+                <div class="text-danger small mt-1">{{ form.titulo.errors.0 }}</div>
               {% endif %}
             </div>
 
             <!-- Campo: Descripción -->
             <div class="mb-3">
-              <label for="{{ form_safe.descripcion.id_for_label }}" class="form-label">Descripción detallada</label>
+              <label for="{{ form_safe.descripcion.id_for_label }}" class="form-label">
+                Descripción detallada
+              </label>
               {{ form_safe.descripcion }}
-              <small class="text-muted">Incluye detalles como color, tamaño, lugar donde se perdió, etc.</small>
-              {% if form._descripcion.errors %}
-                <div class="text-danger small mt-1">{{ form._descripcion.errors.0 }}</div>
+              <small class="text-muted">
+                Incluye detalles como color, tamaño, sitio donde se perdió, etc.
+              </small>
+
+              {% if form.descripcion.errors %}
+                <div class="text-danger small mt-1">{{ form.descripcion.errors.0 }}</div>
               {% endif %}
             </div>
 
             <!-- Campo: Imagen -->
             <div class="mb-4">
-              <label for="{{ form_safe.imagen.id_for_label }}" class="form-label">Fotografía del objeto</label>
+              <label for="{{ form_safe.imagen.id_for_label }}" class="form-label">
+                Fotografía del objeto
+              </label>
               {{ form_safe.imagen }}
-              <small class="text-muted">Opcional, pero ayuda a identificar el objeto</small>
-              {% if form._imagen.errors %}
-                <div class="text-danger small mt-1">{{ form._imagen.errors.0 }}</div>
+              <small class="text-muted">Opcional, pero ayuda muchísimo a identificarlo.</small>
+
+              {% if form.imagen.errors %}
+                <div class="text-danger small mt-1">{{ form.imagen.errors.0 }}</div>
               {% endif %}
             </div>
 
@@ -64,7 +79,9 @@
                 Cancelar
               </a>
             </div>
+
           </form>
+
         </div>
       </div>
     </div>
@@ -76,9 +93,15 @@
           <i class="bi bi-info-circle"></i> Información útil
         </div>
         <div class="card-body small">
-          <div class="mb-2"><i class="bi bi-calendar"></i> La fecha se registra automáticamente</div>
-          <div class="mb-2"><i class="bi bi-person-badge"></i> Tu usuario quedará registrado como reportante</div>
-          <div><i class="bi bi-bag"></i> Podrás marcarlo como encontrado más adelante</div>
+          <div class="mb-2">
+            <i class="bi bi-calendar"></i> La fecha se registra automáticamente
+          </div>
+          <div class="mb-2">
+            <i class="bi bi-person-badge"></i> Tu usuario quedará registrado como reportante
+          </div>
+          <div>
+            <i class="bi bi-bag"></i> Podrás marcarlo como encontrado más adelante
+          </div>
         </div>
       </div>
 
@@ -95,6 +118,8 @@
         </div>
       </div>
     </div>
+
   </div>
+
 </div>
 {% endblock %}

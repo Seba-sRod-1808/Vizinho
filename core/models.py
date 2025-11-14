@@ -381,10 +381,6 @@ class BotonPanico(models.Model):
     )
 
     @property
-    def usuario(self):
-        return self._usuario
-
-    @property
     def mensaje(self):
         return self._mensaje
 
@@ -395,6 +391,22 @@ class BotonPanico(models.Model):
     @property
     def activo(self):
         return self._activo
+    
+    @property
+    def vecino(self):
+        return self._usuario
+
+    @property
+    def atendido(self):
+        return not self._activo
+
+    @property
+    def fecha_atencion(self):
+        return self._fecha_desactivacion
+
+    @property
+    def atendido_por(self):
+        return self._desactivado_por
 
     class Meta:
         ordering = ['-_fecha']

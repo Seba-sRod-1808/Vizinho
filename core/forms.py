@@ -246,51 +246,50 @@ class MultaForm(forms.ModelForm):
 # ========================
 # OBJETOS PERDIDOS
 # ========================
-
 class ObjetoPerdidoForm(forms.ModelForm):
+
+    # Campos públicos para la template
+    titulo = forms.CharField(
+        label="¿Qué objeto perdiste?",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ej: Llaves con llavero azul'
+        })
+    )
+
+    descripcion = forms.CharField(
+        label="Descripción detallada",
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 4,
+            'placeholder': 'Describe el objeto...'
+        })
+    )
+
+    imagen = forms.ImageField(
+        required=False,
+        label="Fotografía",
+        widget=forms.FileInput(attrs={
+            'class': 'form-control',
+            'accept': 'image/*'
+        })
+    )
+
     class Meta:
         model = ObjetoPerdido
-        fields = ["_titulo", "_descripcion", "_imagen"]
-        labels = {
-            "_titulo": "¿Qué objeto perdiste?",
-            "_descripcion": "Descripción detallada",
-            "_imagen": "Fotografía del objeto (opcional)"
-        }
-        widgets = {
-            "_titulo": forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Ej: Llaves con llavero azul'
-            }),
-            "_descripcion": forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 4,
-                'placeholder': 'Describe el objeto con el mayor detalle posible...'
-            }),
-            "_imagen": forms.FileInput(attrs={
-                'class': 'form-control',
-                'accept': 'image/*'
-            })
-        }
-    
-    def clean__titulo(self):
-        """Título mínimo para evitar ítems imposibles de identificar."""
-        titulo = self.cleaned_data["_titulo"]
-        if not titulo or titulo.strip() == "":
-            raise ValidationError("Debes especificar qué objeto perdiste")
-        titulo = titulo.strip()
-        if len(titulo) < 3:
-            raise ValidationError("El título debe tener al menos 3 caracteres.")
-        return titulo
-    
-    def clean__descripcion(self):
-        """Descripción mínima para que sea útil al buscar el objeto."""
-        descripcion = self.cleaned_data["_descripcion"]
-        if not descripcion or descripcion.strip() == "":
-            raise ValidationError("La descripción es necesaria para identificar el objeto")
-        descripcion = descripcion.strip()
-        if len(descripcion) < 10:
-            raise ValidationError("La descripción debe ser más detallada (mínimo 10 caracteres).")
-        return descripcion
+        fields = ["titulo", "descripcion", "imagen"]
+
+    def save(self, commit=True):
+        obj = super().save(commit=False)
+        obj._titulo = self.cleaned_data["titulo"]
+        obj._descripcion = self.cleaned_data["descripcion"]
+
+        if self.cleaned_data.get("imagen"):
+            obj._imagen = self.cleaned_data["imagen"]
+
+        if commit:
+            obj.save()
+        return obj
 
 
 # ========================

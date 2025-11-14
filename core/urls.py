@@ -12,9 +12,9 @@ from .views import (
     # Perfiles
     ProfileDetailView, ProfileUpdateView,
     # Boton Panico
-    ActivarBotonPanicoView, HistorialBotonPanicoView
+    ActivarBotonPanicoView, HistorialBotonPanicoView, DesactivarPanicoView,
     # Admin
-    ,DashboardAdminView,
+    DashboardAdminView,
     # Objeto Perdido
     ListaObjetosPerdidosView, CrearObjetoPerdidoView, 
     #creacion de usuarios por admin
@@ -54,6 +54,7 @@ urlpatterns = [
     #Boton Panico
     path("panico/activar/", ActivarBotonPanicoView.as_view(), name="activar_panico"),
     path("panico/historial/", HistorialBotonPanicoView.as_view(), name="historial_panico"),
+    path("panico/desactivar/<int:pk>/", DesactivarPanicoView.as_view(), name="desactivar_panico"),
 
     #Vista de administracion
     path("administrador/dashboard/", DashboardAdminView.as_view(), name="dashboard_admin"),

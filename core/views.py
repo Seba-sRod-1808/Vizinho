@@ -432,6 +432,19 @@ class HistorialBotonPanicoView(LoginRequiredMixin, ListView):
         if user.es_administrador():
             return BotonPanico.objects.all().order_by("-_fecha")
         return BotonPanico.objects.filter(_usuario=user).order_by("-_fecha")
+    
+class DesactivarPanicoView(LoginRequiredMixin, SoloAdminMixin, View):
+    def post(self, request, pk):
+        alerta = get_object_or_404(BotonPanico, pk=pk)
+
+        try:
+            alerta.desactivar(usuario_admin=request.user)
+            messages.success(request, "La alerta fue desactivada correctamente.")
+        except ValidationError as e:
+            messages.error(request, str(e))
+
+        return redirect("historial_panico")
+
 
 # ========================
 # OBJETOS PERDIDOS
@@ -453,6 +466,11 @@ class CrearObjetoPerdidoView(LoginRequiredMixin, CreateView):
     template_name = "objeto-perdido/crear_objeto.html"
     form_class = ObjetoPerdidoForm
     success_url = reverse_lazy("lista_objetos_perdidos")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_safe"] = context["form"]
+        return context
 
     def form_valid(self, form):
         form.instance._usuario = self.request.user
