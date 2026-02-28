@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../utils/api';
 import { Plus, FileWarning, X, Send, MapPin, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import ImageUpload from '../components/ImageUpload';
 
 const estadoConfig = {
   'Recibido': { color: 'bg-amber-100 text-amber-700', icon: Clock, label: 'Recibido' },
