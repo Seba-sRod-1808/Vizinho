@@ -406,7 +406,7 @@ async def create_publicacion(data: PublicacionCreate, user=Depends(get_current_u
     }
     result = await db.publicaciones.insert_one(doc)
     doc["id"] = str(result.inserted_id)
-    del doc["_id"] if "_id" in doc else None
+    doc.pop("_id", None)
     await manager.broadcast_all({"type": "new_post", "data": {"titulo": data.titulo}})
     return doc
 
