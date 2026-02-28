@@ -36,7 +36,7 @@ export default function ReportesPage() {
     setSubmitting(true);
     try {
       await api.post('/api/reportes', form);
-      setForm({ titulo: '', descripcion: '', ubicacion: '' });
+      setForm({ titulo: '', descripcion: '', ubicacion: '', imagen_url: '' });
       setShowForm(false);
       fetchReportes();
     } catch (err) { setError(err.message); } finally { setSubmitting(false); }
