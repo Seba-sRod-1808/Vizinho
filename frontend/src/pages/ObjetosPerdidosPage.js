@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../utils/api';
 import { Plus, Search, X, Send, CheckCircle, Package } from 'lucide-react';
+import ImageUpload from '../components/ImageUpload';
 
 export default function ObjetosPerdidosPage() {
   const { user, isAdmin } = useAuth();
