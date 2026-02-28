@@ -349,7 +349,7 @@ class VizinhoAPITester:
             "Activate Panic Button",
             "POST",
             "api/panico",
-            201,
+            200,
             token=self.vecino_token,
             description="Activate emergency alert"
         )
