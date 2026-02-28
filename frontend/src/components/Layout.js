@@ -91,12 +91,12 @@ export default function Layout() {
 
       {/* Mobile Side Drawer */}
       {sideOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-[100] md:hidden" style={{ touchAction: 'none' }}>
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-backdrop" onClick={() => setSideOpen(false)} />
-          <div className="absolute left-0 top-0 bottom-0 w-[280px] bg-white shadow-2xl animate-drawer flex flex-col" onClick={e => e.stopPropagation()}>
+          <div className="absolute left-0 top-0 bottom-0 w-[280px] bg-white shadow-2xl animate-drawer flex flex-col" style={{ zIndex: 101 }} onClick={e => e.stopPropagation()}>
             {/* Drawer Header */}
             <div className="p-5 bg-gradient-to-br from-primary-800 to-primary-700 safe-top">
-              <button onClick={() => setSideOpen(false)} className="absolute top-4 right-4 p-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20">
+              <button data-testid="close-drawer-btn" onClick={() => setSideOpen(false)} className="absolute top-4 right-4 p-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 z-10">
                 <X size={18} />
               </button>
               {user?.foto_url ? (
