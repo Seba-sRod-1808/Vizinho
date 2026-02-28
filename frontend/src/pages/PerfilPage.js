@@ -51,9 +51,13 @@ export default function PerfilPage() {
       <div className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden mb-4">
         <div className="bg-gradient-to-r from-primary-700 to-primary-600 h-24 relative">
           <div className="absolute -bottom-10 left-6">
-            <div className="w-20 h-20 rounded-2xl bg-white shadow-lg flex items-center justify-center text-primary-700 font-bold text-2xl font-heading border-4 border-white">
-              {(user?.nombre_completo || user?.username || '?')[0].toUpperCase()}
-            </div>
+            {user?.foto_url ? (
+              <img src={user.foto_url} alt="" className="w-20 h-20 rounded-2xl object-cover shadow-lg border-4 border-white" />
+            ) : (
+              <div className="w-20 h-20 rounded-2xl bg-white shadow-lg flex items-center justify-center text-primary-700 font-bold text-2xl font-heading border-4 border-white">
+                {(user?.nombre_completo || user?.username || '?')[0].toUpperCase()}
+              </div>
+            )}
           </div>
         </div>
         <div className="pt-14 pb-5 px-6">
