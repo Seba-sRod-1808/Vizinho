@@ -28,7 +28,7 @@ export default function ObjetosPerdidosPage() {
     setSubmitting(true);
     try {
       await api.post('/api/objetos-perdidos', form);
-      setForm({ titulo: '', descripcion: '' });
+      setForm({ titulo: '', descripcion: '', imagen_url: '' });
       setShowForm(false);
       fetchItems();
     } catch (err) { setError(err.message); } finally { setSubmitting(false); }
