@@ -15,7 +15,7 @@ export default function ReportesPage() {
   const [reportes, setReportes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ titulo: '', descripcion: '', ubicacion: '' });
+  const [form, setForm] = useState({ titulo: '', descripcion: '', ubicacion: '', imagen_url: '' });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [filtro, setFiltro] = useState('');
