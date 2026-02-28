@@ -892,6 +892,126 @@ async def mark_all_read(user=Depends(get_current_user)):
 
 
 # ========================
+# ENCUESTAS / VOTACIONES
+# ========================
+@app.get("/api/encuestas")
+async def list_encuestas(
+    activa: Optional[bool] = None,
+    user=Depends(get_current_user)
+):
+    db = get_db()
+    query = {}
+    if activa is not None:
+        query["activa"] = activa
+    cursor = db.encuestas.find(query).sort("fecha", -1)
+    items = []
+    async for doc in cursor:
+        doc = str_id(doc)
+        author = await db.users.find_one({"_id": ObjectId(doc["creador_id"])}, {"_id": 0, "username": 1, "nombre_completo": 1})
+        doc["creador"] = author or {}
+        # Check if current user already voted
+        doc["mi_voto"] = None
+        for i, opcion in enumerate(doc.get("opciones", [])):
+            if user["id"] in opcion.get("votantes", []):
+                doc["mi_voto"] = i
+                break
+        # Remove votantes list from response (privacy)
+        for opcion in doc.get("opciones", []):
+            opcion["votos"] = len(opcion.get("votantes", []))
+            opcion.pop("votantes", None)
+        doc["total_votos"] = sum(o.get("votos", 0) for o in doc.get("opciones", []))
+        items.append(doc)
+    return {"items": items}
+
+@app.post("/api/encuestas")
+async def create_encuesta(data: EncuestaCreate, user=Depends(get_current_user)):
+    db = get_db()
+    if len(data.pregunta.strip()) < 5:
+        raise HTTPException(status_code=400, detail="La pregunta debe tener al menos 5 caracteres")
+    if len(data.opciones) < 2:
+        raise HTTPException(status_code=400, detail="Debe haber al menos 2 opciones")
+    if len(data.opciones) > 10:
+        raise HTTPException(status_code=400, detail="Maximo 10 opciones")
+    opciones = [{"texto": o.strip(), "votantes": []} for o in data.opciones if o.strip()]
+    if len(opciones) < 2:
+        raise HTTPException(status_code=400, detail="Debe haber al menos 2 opciones validas")
+    doc = {
+        "pregunta": data.pregunta.strip(),
+        "descripcion": (data.descripcion or "").strip(),
+        "opciones": opciones,
+        "multiple": data.multiple,
+        "activa": True,
+        "creador_id": user["id"],
+        "fecha": datetime.now(timezone.utc).isoformat(),
+        "fecha_cierre": data.fecha_cierre,
+    }
+    result = await db.encuestas.insert_one(doc)
+    doc["id"] = str(result.inserted_id)
+    doc.pop("_id", None)
+    for o in doc["opciones"]:
+        o["votos"] = 0
+        o.pop("votantes", None)
+    doc["total_votos"] = 0
+    doc["mi_voto"] = None
+    doc["creador"] = {"username": user["username"], "nombre_completo": user.get("nombre_completo", "")}
+    await manager.broadcast_all({"type": "new_encuesta", "data": {"pregunta": data.pregunta}})
+    return doc
+
+@app.post("/api/encuestas/{encuesta_id}/votar")
+async def votar_encuesta(encuesta_id: str, data: VotoCreate, user=Depends(get_current_user)):
+    db = get_db()
+    encuesta = await db.encuestas.find_one({"_id": ObjectId(encuesta_id)})
+    if not encuesta:
+        raise HTTPException(status_code=404, detail="Encuesta no encontrada")
+    if not encuesta.get("activa", False):
+        raise HTTPException(status_code=400, detail="Esta encuesta ya esta cerrada")
+    if data.opcion_index < 0 or data.opcion_index >= len(encuesta["opciones"]):
+        raise HTTPException(status_code=400, detail="Opcion invalida")
+    # Check if already voted
+    for i, opcion in enumerate(encuesta["opciones"]):
+        if user["id"] in opcion.get("votantes", []):
+            if i == data.opcion_index:
+                raise HTTPException(status_code=400, detail="Ya votaste por esta opcion")
+            # Remove previous vote
+            await db.encuestas.update_one(
+                {"_id": ObjectId(encuesta_id)},
+                {"$pull": {f"opciones.{i}.votantes": user["id"]}}
+            )
+            break
+    # Add vote
+    await db.encuestas.update_one(
+        {"_id": ObjectId(encuesta_id)},
+        {"$addToSet": {f"opciones.{data.opcion_index}.votantes": user["id"]}}
+    )
+    return {"message": "Voto registrado"}
+
+@app.put("/api/encuestas/{encuesta_id}/cerrar")
+async def cerrar_encuesta(encuesta_id: str, user=Depends(get_current_user)):
+    db = get_db()
+    encuesta = await db.encuestas.find_one({"_id": ObjectId(encuesta_id)})
+    if not encuesta:
+        raise HTTPException(status_code=404, detail="Encuesta no encontrada")
+    if encuesta["creador_id"] != user["id"] and user["rol"] != "admin":
+        raise HTTPException(status_code=403, detail="No tienes permisos para cerrar esta encuesta")
+    await db.encuestas.update_one(
+        {"_id": ObjectId(encuesta_id)},
+        {"$set": {"activa": False}}
+    )
+    return {"message": "Encuesta cerrada"}
+
+@app.delete("/api/encuestas/{encuesta_id}")
+async def delete_encuesta(encuesta_id: str, user=Depends(get_current_user)):
+    db = get_db()
+    encuesta = await db.encuestas.find_one({"_id": ObjectId(encuesta_id)})
+    if not encuesta:
+        raise HTTPException(status_code=404, detail="Encuesta no encontrada")
+    if encuesta["creador_id"] != user["id"] and user["rol"] != "admin":
+        raise HTTPException(status_code=403, detail="No tienes permisos")
+    await db.encuestas.delete_one({"_id": ObjectId(encuesta_id)})
+    return {"message": "Encuesta eliminada"}
+
+
+# ========================
 # CLOUDINARY SIGNATURE
 # ========================
 @app.get("/api/cloudinary/signature")
