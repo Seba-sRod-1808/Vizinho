@@ -102,6 +102,8 @@ async def lifespan(app: FastAPI):
     await db.areas_comunes.create_index("nombre", unique=True)
     await db.reservas.create_index([("area_id", 1), ("fecha", 1)])
     await db.notificaciones.create_index([("usuario_id", 1), ("fecha", -1)])
+    await db.encuestas.create_index([("fecha", -1)])
+    await db.encuestas.create_index("activa")
     # Seed admin if not exists
     admin = await db.users.find_one({"username": "admin"})
     if not admin:
