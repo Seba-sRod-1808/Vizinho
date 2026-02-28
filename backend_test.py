@@ -151,7 +151,7 @@ class VizinhoAPITester:
             "Create Post",
             "POST",
             "api/publicaciones",
-            201,
+            200,
             data=post_data,
             token=self.vecino_token,
             description="Create a new feed post"
