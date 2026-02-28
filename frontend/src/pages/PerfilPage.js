@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../utils/api';
-import { User, Phone, Mail, Edit3, Save, LogOut, Shield, AlertTriangle, Camera } from 'lucide-react';
+import { Phone, Mail, Edit3, Save, LogOut, Shield, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ImageUpload from '../components/ImageUpload';
 
