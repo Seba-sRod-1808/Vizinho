@@ -28,7 +28,7 @@ export default function FeedPage() {
     setSubmitting(true);
     try {
       await api.post('/api/publicaciones', form);
-      setForm({ titulo: '', contenido: '' });
+      setForm({ titulo: '', contenido: '', imagen_url: '' });
       setShowForm(false);
       fetchPosts();
     } catch (err) { setError(err.message); } finally { setSubmitting(false); }
