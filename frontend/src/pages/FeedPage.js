@@ -93,8 +93,12 @@ export default function FeedPage() {
                 className="px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 w-full text-stone-900 placeholder:text-stone-400 resize-none"
                 required
               />
+              <ImageUpload
+                folder="publicaciones"
+                currentUrl={form.imagen_url}
+                onUpload={(url) => setForm({...form, imagen_url: url})}
+              />
               <button
-                data-testid="submit-post-btn"
                 type="submit"
                 disabled={submitting}
                 className="h-12 w-full bg-primary-700 text-white font-semibold rounded-full flex items-center justify-center gap-2 hover:bg-primary-800 transition-colors disabled:opacity-60"
