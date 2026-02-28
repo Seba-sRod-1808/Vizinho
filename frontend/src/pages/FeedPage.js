@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../utils/api';
-import { Plus, Newspaper, Trash2, X, Send, Image } from 'lucide-react';
+import { Plus, Newspaper, Trash2, X, Send } from 'lucide-react';
+import ImageUpload from '../components/ImageUpload';
 
 export default function FeedPage() {
   const { user, isAdmin } = useAuth();
