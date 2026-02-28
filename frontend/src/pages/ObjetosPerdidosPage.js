@@ -9,7 +9,7 @@ export default function ObjetosPerdidosPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ titulo: '', descripcion: '' });
+  const [form, setForm] = useState({ titulo: '', descripcion: '', imagen_url: '' });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
