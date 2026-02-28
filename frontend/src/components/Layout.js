@@ -103,6 +103,9 @@ export default function Layout() {
             <NavLink to="/app/multas" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${isActive ? 'bg-white/15 text-white' : 'text-primary-200 hover:bg-white/10 hover:text-white'}`}>
               <Receipt size={20} />Multas
             </NavLink>
+            <NavLink to="/app/objetos-perdidos" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${isActive ? 'bg-white/15 text-white' : 'text-primary-200 hover:bg-white/10 hover:text-white'}`}>
+              <Search size={20} />Perdidos
+            </NavLink>
             <NavLink to="/app/notificaciones" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors relative ${isActive ? 'bg-white/15 text-white' : 'text-primary-200 hover:bg-white/10 hover:text-white'}`}>
               <Bell size={20} />Notificaciones
               {unreadCount > 0 && <span className="ml-auto w-5 h-5 bg-danger-500 text-[10px] font-bold rounded-full flex items-center justify-center">{unreadCount}</span>}
