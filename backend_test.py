@@ -646,6 +646,20 @@ def main():
     print("\n🔔 NOTIFICATIONS TESTS")
     tester.test_notifications()
     
+    print("\n📊 ENCUESTAS (SURVEYS) TESTS")
+    encuesta_success, encuesta_id = tester.test_create_encuesta()
+    tester.test_get_encuestas()
+    if encuesta_success:
+        tester.test_vote_encuesta(encuesta_id)
+        tester.test_close_encuesta(encuesta_id)
+        # Create another one to test delete
+        delete_success, delete_id = tester.test_create_encuesta()
+        if delete_success:
+            tester.test_delete_encuesta(delete_id)
+    
+    print("\n☁️ CLOUDINARY TESTS")
+    tester.test_cloudinary_signature()
+    
     # Print final results
     print("\n" + "=" * 60)
     print(f"📊 FINAL RESULTS:")
