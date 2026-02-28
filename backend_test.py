@@ -478,6 +478,110 @@ class VizinhoAPITester:
         )
         return success
 
+    def test_cloudinary_signature(self):
+        """Test Cloudinary signature endpoint"""
+        success, response = self.run_test(
+            "Cloudinary Signature",
+            "GET",
+            "api/cloudinary/signature?folder=publicaciones",
+            200,
+            token=self.vecino_token,
+            description="Get Cloudinary upload signature"
+        )
+        if success:
+            required_keys = ['signature', 'timestamp', 'cloud_name', 'api_key', 'folder']
+            missing_keys = [key for key in required_keys if key not in response]
+            if missing_keys:
+                print(f"   ❌ Missing keys: {missing_keys}")
+                return False
+            print(f"   ✅ Signature data complete. Cloud: {response.get('cloud_name')}")
+        return success
+
+    def test_create_encuesta(self):
+        """Test creating an encuesta"""
+        encuesta_data = {
+            "pregunta": "¿Deberíamos permitir mascotas en areas comunes?",
+            "descripcion": "Encuesta de prueba creada via API para validar el sistema de votaciones.",
+            "opciones": ["Si, permitir mascotas", "No, mantener prohibicion", "Solo perros pequeños"]
+        }
+        success, response = self.run_test(
+            "Create Encuesta",
+            "POST",
+            "api/encuestas",
+            200,
+            data=encuesta_data,
+            token=self.vecino_token,
+            description="Create a new survey/poll"
+        )
+        if success:
+            print(f"   Created encuesta: {response.get('pregunta')}")
+            return True, response.get('id')
+        return False, None
+
+    def test_get_encuestas(self):
+        """Test getting encuestas"""
+        success, response = self.run_test(
+            "Get Encuestas",
+            "GET",
+            "api/encuestas",
+            200,
+            token=self.vecino_token,
+            description="Get surveys/polls"
+        )
+        if success:
+            print(f"   Found {len(response.get('items', []))} encuestas")
+        return success
+
+    def test_vote_encuesta(self, encuesta_id):
+        """Test voting on an encuesta"""
+        if not encuesta_id:
+            print("❌ No encuesta ID to vote on")
+            return False
+            
+        vote_data = {"opcion_index": 0}  # Vote for first option
+        success, response = self.run_test(
+            "Vote on Encuesta",
+            "POST",
+            f"api/encuestas/{encuesta_id}/votar",
+            200,
+            data=vote_data,
+            token=self.admin_token,  # Admin votes
+            description="Vote on survey option"
+        )
+        return success
+
+    def test_close_encuesta(self, encuesta_id):
+        """Test closing an encuesta"""
+        if not encuesta_id:
+            print("❌ No encuesta ID to close")
+            return False
+            
+        success, response = self.run_test(
+            "Close Encuesta",
+            "PUT",
+            f"api/encuestas/{encuesta_id}/cerrar",
+            200,
+            token=self.vecino_token,  # Creator closes
+            description="Close survey/poll"
+        )
+        return success
+
+    def test_delete_encuesta(self, encuesta_id):
+        """Test deleting an encuesta"""
+        if not encuesta_id:
+            print("❌ No encuesta ID to delete")
+            return False
+            
+        success, response = self.run_test(
+            "Delete Encuesta",
+            "DELETE",
+            f"api/encuestas/{encuesta_id}",
+            200,
+            token=self.vecino_token,  # Creator deletes
+            description="Delete survey/poll"
+        )
+        return success
+
 def main():
     print("🚀 Starting Vizinho API Tests...")
     print("=" * 60)
