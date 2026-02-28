@@ -46,6 +46,7 @@ function AppRoutes() {
         <Route path="areas" element={<AreasPage />} />
         <Route path="perfil" element={<PerfilPage />} />
         <Route path="notificaciones" element={<NotificacionesPage />} />
+        <Route path="encuestas" element={<EncuestasPage />} />
         <Route path="admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
       </Route>
       <Route path="*" element={<Navigate to={user ? "/app/feed" : "/login"} />} />
