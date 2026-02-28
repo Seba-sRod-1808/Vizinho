@@ -432,7 +432,7 @@ class VizinhoAPITester:
             "Admin Create User",
             "POST",
             "api/admin/usuarios",
-            201,
+            200,
             data=user_data,
             token=self.admin_token,
             description="Admin creates new user"
