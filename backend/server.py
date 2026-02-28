@@ -467,7 +467,7 @@ async def create_reporte(data: ReporteCreate, user=Depends(get_current_user)):
     }
     result = await db.reportes.insert_one(doc)
     doc["id"] = str(result.inserted_id)
-    del doc["_id"] if "_id" in doc else None
+    doc.pop("_id", None)
     await manager.broadcast_to_admins({"type": "new_report", "data": {"titulo": data.titulo}}, db)
     return doc
 
@@ -547,7 +547,7 @@ async def create_multa(data: MultaCreate, user=Depends(require_admin)):
     }
     result = await db.multas.insert_one(doc)
     doc["id"] = str(result.inserted_id)
-    del doc["_id"] if "_id" in doc else None
+    doc.pop("_id", None)
     await create_notification(db, data.vecino_id, "multa", "Nueva multa", f"Se te ha asignado una multa de ${data.monto:.2f} por: {data.motivo}")
     return doc
 
@@ -607,7 +607,7 @@ async def create_objeto_perdido(data: ObjetoPerdidoCreate, user=Depends(get_curr
     }
     result = await db.objetos_perdidos.insert_one(doc)
     doc["id"] = str(result.inserted_id)
-    del doc["_id"] if "_id" in doc else None
+    doc.pop("_id", None)
     return doc
 
 @app.put("/api/objetos-perdidos/{obj_id}/encontrado")
@@ -643,7 +643,7 @@ async def activar_panico(user=Depends(get_current_user)):
     }
     result = await db.alertas_panico.insert_one(doc)
     doc["id"] = str(result.inserted_id)
-    del doc["_id"] if "_id" in doc else None
+    doc.pop("_id", None)
     # Notify all admins
     await manager.broadcast_to_admins({
         "type": "panic_alert",
@@ -723,7 +723,7 @@ async def create_area(data: AreaComunCreate, user=Depends(require_admin)):
     }
     result = await db.areas_comunes.insert_one(doc)
     doc["id"] = str(result.inserted_id)
-    del doc["_id"] if "_id" in doc else None
+    doc.pop("_id", None)
     return doc
 
 
@@ -781,7 +781,7 @@ async def create_reserva(data: ReservaCreate, user=Depends(get_current_user)):
     }
     result = await db.reservas.insert_one(doc)
     doc["id"] = str(result.inserted_id)
-    del doc["_id"] if "_id" in doc else None
+    doc.pop("_id", None)
     return doc
 
 
