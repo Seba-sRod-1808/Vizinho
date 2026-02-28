@@ -78,7 +78,7 @@ export default function AreasScreen() {
         )}
       </View>
 
-      <FlatList data={areas} renderItem={renderArea} keyExtractor={item => item.id} contentContainerStyle={{ padding: 16 }}
+      <FlatList data={areas} renderItem={renderArea} keyExtractor={item => item.id.toString()} contentContainerStyle={{ padding: 16 }}
         ListEmptyComponent={<View style={{ alignItems: 'center', paddingVertical: 60 }}><Text style={{ color: colors.stone[500] }}>No hay areas registradas</Text></View>}
       />
 

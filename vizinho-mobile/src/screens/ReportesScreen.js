@@ -111,7 +111,7 @@ export default function ReportesScreen() {
         <FlatList
           data={reportes}
           renderItem={renderItem}
-          keyExtractor={item => item.id}
+          keyExtractor={item => String(item.id)}
           contentContainerStyle={{ padding: 16 }}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetchReportes(); }} tintColor={colors.primary[700]} />}
           ListEmptyComponent={<View style={{ alignItems: 'center', paddingVertical: 60 }}><Text style={{ color: colors.stone[500] }}>No hay reportes</Text></View>}
