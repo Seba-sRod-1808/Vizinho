@@ -1,6 +1,8 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Vizinho",
+  "name": "Vizinho - Comunidad Conectada",
+  "description": "Plataforma de gestion para comunidades residenciales",
+  "lang": "es",
   "icons": [
     {
       "src": "favicon.ico",
@@ -10,16 +12,35 @@
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "logo512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/app/feed",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "orientation": "portrait",
+  "theme_color": "#047857",
+  "background_color": "#FAFAF9",
+  "categories": ["lifestyle", "social"],
+  "shortcuts": [
+    {
+      "name": "Mural",
+      "short_name": "Mural",
+      "url": "/app/feed",
+      "icons": [{"src": "logo192.png", "sizes": "192x192"}]
+    },
+    {
+      "name": "Reportes",
+      "short_name": "Reportes",
+      "url": "/app/reportes",
+      "icons": [{"src": "logo192.png", "sizes": "192x192"}]
+    }
+  ]
 }
