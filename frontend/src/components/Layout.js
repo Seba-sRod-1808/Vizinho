@@ -1,12 +1,12 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Home, FileWarning, Receipt, Search, Calendar, User, Shield, Bell, LogOut, Menu, X } from 'lucide-react';
+import { Home, FileWarning, Receipt, Search, Calendar, User, Shield, Bell, LogOut, Menu, X, BarChart3 } from 'lucide-react';
 
 const navItems = [
   { path: '/app/feed', icon: Home, label: 'Inicio' },
   { path: '/app/reportes', icon: FileWarning, label: 'Reportes' },
-  { path: '/app/objetos-perdidos', icon: Search, label: 'Perdidos' },
+  { path: '/app/encuestas', icon: BarChart3, label: 'Encuestas' },
   { path: '/app/areas', icon: Calendar, label: 'Areas' },
   { path: '/app/perfil', icon: User, label: 'Perfil' },
 ];
