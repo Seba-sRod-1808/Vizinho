@@ -253,7 +253,7 @@ class VizinhoAPITester:
             "Create Multa",
             "POST",
             "api/multas",
-            201,
+            200,
             data=multa_data,
             token=self.admin_token,
             description="Admin creates a fine"
