@@ -99,6 +99,7 @@ export default function FeedPage() {
                 onUpload={(url) => setForm({...form, imagen_url: url})}
               />
               <button
+                data-testid="submit-post-btn"
                 type="submit"
                 disabled={submitting}
                 className="h-12 w-full bg-primary-700 text-white font-semibold rounded-full flex items-center justify-center gap-2 hover:bg-primary-800 transition-colors disabled:opacity-60"
