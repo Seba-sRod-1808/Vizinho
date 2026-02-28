@@ -11,6 +11,7 @@ import AreasPage from './pages/AreasPage';
 import PerfilPage from './pages/PerfilPage';
 import AdminDashboard from './pages/AdminDashboard';
 import NotificacionesPage from './pages/NotificacionesPage';
+import EncuestasPage from './pages/EncuestasPage';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
