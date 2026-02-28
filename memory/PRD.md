@@ -1,73 +1,69 @@
 # Vizinho - PRD (Product Requirements Document)
 
 ## Original Problem Statement
-Build a production-ready residential community management platform (Vizinho) as a PWA. Migrate from Django demo to FastAPI + MongoDB + React. Support two roles: Vecino (resident) and Administrador. All UI in Spanish.
+Build a production-ready residential community management platform (Vizinho) as a PWA + React Native mobile app. Migrate from Django demo to FastAPI + MongoDB + React. Support two roles: Vecino and Admin. All UI in Spanish.
 
 ## Architecture
-- **Backend**: FastAPI + MongoDB (motor async driver)
-- **Frontend**: React.js + Tailwind CSS (PWA mobile-first)
-- **Auth**: JWT tokens (bcrypt password hashing)
+- **Backend**: FastAPI + MongoDB (motor async driver) + WebSocket
+- **PWA Frontend**: React.js + Tailwind CSS (mobile-first responsive)
+- **Mobile App**: React Native (Expo SDK 52) - iOS & Android
+- **Auth**: JWT tokens (bcrypt, SecureStore for native)
+- **Images**: Cloudinary (Cloud: dfclhvrwb)
 - **Real-time**: WebSocket notifications
-- **Images**: Cloudinary integration (configured, needs API keys)
-- **Database**: MongoDB with indexes for performance
-
-## User Personas
-1. **Vecino (Resident)**: Views feed, creates reports/posts, reports lost items, pays fines, activates panic button, makes reservations
-2. **Administrador**: All vecino capabilities + manage users, create fines, update report statuses, deactivate panic alerts, create common areas, view dashboard stats
-
-## Core Requirements (Implemented)
-- [x] JWT Authentication (login/register)
-- [x] Community Feed (Mural) - create/delete posts
-- [x] Incident Reports - CRUD + status workflow (Recibido → EnProceso → Resuelto)
-- [x] Fines Management - create (admin), view, pay (vecino)
-- [x] Lost & Found - create, mark as found
-- [x] Panic Button - activate with confirmation, admin notification
-- [x] Common Areas & Reservations - view areas, make reservations
-- [x] Profile Management - edit name, phone, bio
-- [x] Admin Dashboard - stats overview, user management, multa creation
-- [x] Notifications Center - real-time via WebSocket
-- [x] Role-based Access Control (vecino/admin)
-- [x] Mobile-first responsive design with bottom navigation
-- [x] Desktop sidebar layout
-- [x] All UI in Spanish
+- **Database**: MongoDB with 12+ indexes
 
 ## What's Been Implemented (Feb 28, 2026)
-- Complete FastAPI backend with 30+ API endpoints
-- MongoDB models with proper indexing
-- JWT auth with token refresh
+
+### Backend (FastAPI)
+- 35+ API endpoints with JWT auth
+- Encuestas/Votaciones system (create, vote, close, delete)
 - WebSocket real-time notifications
-- Full React PWA frontend with 11 pages
-- Mobile-first design with Tailwind CSS
-- Admin dashboard with 8 stat cards
-- Seed data (admin + vecino1 demo accounts)
-- **Cloudinary image upload integration** (Cloud Name: dfclhvrwb) - for posts, reports, lost items, profile photos
-- **Encuestas/Votaciones system** - create polls, vote, close, delete, real-time vote counting with percentages
+- Cloudinary signed upload signatures
+- MongoDB with proper indexing
+- Role-based access control (vecino/admin)
+
+### PWA (React + Tailwind)
+- 11 pages: Login, Feed, Reportes, Encuestas, Multas, Objetos Perdidos, Areas Comunes, Perfil, Admin Dashboard, Notificaciones
+- Enhanced mobile UX: bottom nav with active indicators, side drawer with animations, touch feedback, haptic vibrations, install prompt, page transitions
+- Cloudinary image upload on posts, reports, lost items, profile photos
+- PWA manifest for standalone install
+- Desktop sidebar layout
+- Spanish UI throughout
+
+### React Native (Expo)
+- Complete project at `/app/vizinho-mobile/`
+- 10 screens: Login, Feed, Reportes, Encuestas, Areas, Perfil, Multas, Objetos Perdidos, Notificaciones, Admin
+- React Navigation (bottom tabs + native stack)
+- SecureStore for JWT tokens
+- Pull-to-refresh on all lists
+- Shared API with PWA backend
+- Design tokens (colors, spacing, radius)
+- Dependencies installed and ready for `npx expo start`
 
 ## Testing Results
-- Backend: 100% (34/34 tests passed)
-- Frontend: 99% (minor mobile nav issue only)
+- Backend: 100% (34/34 tests passed across 3 iterations)
+- Frontend: 95-100% (drawer animation minor issue, all core flows working)
 
 ## Prioritized Backlog
-### P0 (Critical)
-- None remaining
+### P0 - None remaining
 
-### P1 (High)
-- Cloudinary API keys configuration for image uploads
+### P1
+- Service Worker for offline caching (PWA)
+- Push notifications via FCM/APNs (React Native)
 - Password reset flow
 - Token refresh mechanism
 
-### P2 (Medium)
-- Biometric authentication
-- Offline-aware behavior (service worker)
-- Push notification integration (FCM/APNs)
-- Audit logging
-- Rate limiting
+### P2
+- Biometric auth (React Native)
+- Image picker integration (React Native - expo-image-picker configured)
+- Rate limiting (backend)
 - API versioning (/api/v1/)
+- Audit logging
 
-### P3 (Nice to have)
+### P3
 - Celery background workers
 - CDN caching strategy
-- Database indexing optimization for 10k+ users
-- Privacy-aware resident directory
+- Resident directory with privacy controls
 - Content moderation tools
 - Financial reports export
+- Dark mode theme
