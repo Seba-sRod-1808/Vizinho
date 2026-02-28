@@ -1,0 +1,195 @@
+{
+  "project_name": "Vizinho",
+  "app_type": "PWA (Mobile-First Residential Community Platform)",
+  "language": "es-419",
+  "design_philosophy": {
+    "archetype": "Organic & Earthy (Trust, Growth, Calm)",
+    "core_principles": [
+      "Mobile-First & Touch-Friendly: All tap targets > 44px. Bottom navigation for primary flows.",
+      "Community Centric: Warm tones, inviting typography, focus on readability.",
+      "Utility & Safety: High contrast for panic/alert features. Clear hierarchy.",
+      "Spanish-First: Interface terminology must be natural for Latin American users."
+    ],
+    "vibe_keywords": ["Seguridad", "Comunidad", "Tranquilidad", "Eficiencia"]
+  },
+  "typography": {
+    "font_family_headings": "Manrope, sans-serif",
+    "font_family_body": "Inter, sans-serif",
+    "scale": {
+      "h1": "text-3xl md:text-4xl font-bold tracking-tight text-emerald-950",
+      "h2": "text-2xl md:text-3xl font-semibold tracking-tight text-emerald-900",
+      "h3": "text-xl font-semibold text-emerald-800",
+      "body_lg": "text-lg leading-relaxed text-stone-700",
+      "body": "text-base leading-relaxed text-stone-600",
+      "small": "text-sm text-stone-500",
+      "tiny": "text-xs font-medium uppercase tracking-wider text-stone-400"
+    }
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "DEFAULT": "#047857",
+        "foreground": "#FFFFFF",
+        "50": "#ECFDF5",
+        "100": "#D1FAE5",
+        "500": "#10B981",
+        "700": "#047857",
+        "900": "#064E3B"
+      },
+      "secondary": {
+        "DEFAULT": "#F5F5F4",
+        "foreground": "#1C1917",
+        "100": "#F5F5F4",
+        "200": "#E7E5E4",
+        "800": "#292524"
+      },
+      "accent": {
+        "DEFAULT": "#F97316",
+        "foreground": "#FFFFFF",
+        "100": "#FFEDD5",
+        "500": "#F97316",
+        "600": "#EA580C"
+      },
+      "danger": {
+        "DEFAULT": "#DC2626",
+        "foreground": "#FFFFFF",
+        "50": "#FEF2F2",
+        "500": "#EF4444",
+        "600": "#DC2626",
+        "900": "#7F1D1D"
+      },
+      "success": {
+        "DEFAULT": "#10B981",
+        "foreground": "#FFFFFF"
+      },
+      "background": "#FAFAF9",
+      "surface": "#FFFFFF",
+      "border": "#E7E5E4",
+      "muted": "#78716C"
+    },
+    "usage_rules": {
+      "panic_button": "bg-danger-600 text-white shadow-red-200 animate-pulse-slow",
+      "primary_action": "bg-primary-700 hover:bg-primary-900 text-white rounded-full shadow-lg hover:shadow-xl transition-all",
+      "secondary_action": "bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-lg",
+      "background_gradient": "bg-gradient-to-b from-stone-50 to-stone-100"
+    }
+  },
+  "layout_strategy": {
+    "type": "Mobile-First PWA",
+    "container": "max-w-md mx-auto min-h-screen bg-stone-50 shadow-2xl relative pb-24 md:pb-0 md:max-w-none md:grid md:grid-cols-[280px_1fr]",
+    "spacing": {
+      "page_padding": "p-4 md:p-8",
+      "card_padding": "p-5",
+      "section_gap": "gap-6",
+      "list_gap": "space-y-4"
+    },
+    "border_radius": {
+      "card": "rounded-2xl",
+      "button": "rounded-full",
+      "input": "rounded-xl"
+    },
+    "navigation": {
+      "mobile": "Fixed bottom bar, h-16 bg-white/90 backdrop-blur-lg border-t border-stone-200 flex justify-around items-center z-50",
+      "desktop": "Sidebar fixed left, h-screen bg-primary-900 text-white p-6 hidden md:flex flex-col"
+    }
+  },
+  "components": {
+    "cards": {
+      "base": "bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden hover:shadow-md transition-shadow duration-200",
+      "interactive": "cursor-pointer active:scale-[0.98] transition-transform",
+      "feed_item": "bg-white rounded-2xl p-5 shadow-sm border border-stone-100 mb-4"
+    },
+    "buttons": {
+      "primary": "h-12 px-6 bg-primary-700 text-white font-semibold rounded-full hover:bg-primary-800 transition-colors flex items-center justify-center gap-2 w-full md:w-auto shadow-sm",
+      "panic": "h-16 w-16 rounded-full bg-red-600 text-white shadow-xl shadow-red-200 flex items-center justify-center fixed bottom-20 right-4 z-40 active:scale-90 transition-transform md:static md:w-full md:h-12 md:rounded-xl",
+      "ghost": "h-10 px-4 text-stone-600 hover:bg-stone-100 rounded-lg font-medium transition-colors"
+    },
+    "inputs": {
+      "base": "h-12 px-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none w-full transition-all text-stone-900 placeholder:text-stone-400",
+      "search": "pl-11"
+    }
+  },
+  "visual_assets": {
+    "images": [
+      {
+        "category": "auth_background",
+        "url": "https://images.unsplash.com/photo-1760192019665-ec3576e19921?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "Modern apartment facade, used for login screen background with overlay"
+      },
+      {
+        "category": "amenity_pool",
+        "url": "https://images.unsplash.com/photo-1720206811600-3dbd96208a63?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "Pool area for reservations demo"
+      },
+      {
+        "category": "welcome_sign",
+        "url": "https://images.unsplash.com/photo-1570723668901-7b46a860ac84?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "Welcome sign for home feed header"
+      },
+      {
+        "category": "lost_item_demo",
+        "url": "https://images.unsplash.com/photo-1533696848654-6bdf438edea4?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "Keys in hand for lost and found demo"
+      }
+    ],
+    "icons": {
+      "library": "lucide-react",
+      "mapping": {
+        "home": "Home",
+        "feed": "Newspaper",
+        "panic": "AlertTriangle",
+        "profile": "User",
+        "menu": "Menu",
+        "report": "FileWarning",
+        "lost_found": "Search",
+        "fines": "Receipt",
+        "reservations": "Calendar"
+      }
+    }
+  },
+  "translations": {
+    "roles": {
+      "resident": "Vecino",
+      "admin": "Administrador"
+    },
+    "nav": {
+      "home": "Inicio",
+      "feed": "Mural",
+      "reports": "Reportes",
+      "profile": "Perfil",
+      "admin": "Admin"
+    },
+    "actions": {
+      "login": "Iniciar Sesión",
+      "logout": "Cerrar Sesión",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "panic_active": "¡AYUDA EN CAMINO!",
+      "reserve": "Reservar"
+    }
+  },
+  "motion": {
+    "page_transition": "initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}",
+    "micro_interactions": {
+      "tap": "active:scale-95 transition-transform duration-100",
+      "hover": "hover:bg-stone-50 transition-colors duration-200"
+    }
+  },
+  "instructions_to_main_agent": [
+    "1. IMPLEMENTATION: Build components first in /components/ui, then pages.",
+    "2. LANGUAGE: Ensure ALL user-facing text is in Spanish (es-419).",
+    "3. PWA FEEL: Use 'fixed bottom-0' for navigation on mobile. Ensure 'safe-area-inset-bottom' support.",
+    "4. PANIC BUTTON: This is a critical feature. Make it accessible but prevent accidental clicks (e.g., long press or confirm modal). For this MVP, use a distinct red FAB.",
+    "5. MOCK DATA: Create realistic Latin American mock data (Names: Juan Pérez, María González. Currency: $ or Bs depending on context, default to generic $).",
+    "6. NOTIFICATIONS: Use 'sonner' for toast notifications (e.g., 'Reporte enviado con éxito').",
+    "7. IMAGES: Use the provided Unsplash URLs for demo content.",
+    "8. ROUTING: Use 'react-router-dom'. Structure: /login, /app/feed, /app/reservations, /app/profile, /admin/dashboard.",
+    "9. RESPONSIVENESS: Mobile view is priority. Desktop view should use a sidebar layout for Admin, but Vecino view can remain centered mobile-app style on desktop."
+  ],
+  "universal_guidelines": [
+    "Do not use generic gradients. Use flat colors or subtle noise textures.",
+    "Avoid 'Inter' for headings. Use 'Manrope'.",
+    "Ensure 3:1 contrast for all text.",
+    "Use data-testid for all interactive elements."
+  ]
+}
