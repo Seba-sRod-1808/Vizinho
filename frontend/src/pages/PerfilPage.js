@@ -13,6 +13,7 @@ export default function PerfilPage() {
     nombre_completo: user?.nombre_completo || '',
     telefono: user?.telefono || '',
     bio: user?.bio || '',
+    foto_url: user?.foto_url || '',
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
