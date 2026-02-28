@@ -32,19 +32,20 @@ Build a production-ready residential community management platform (Vizinho) as 
 - [x] All UI in Spanish
 
 ## What's Been Implemented (Feb 28, 2026)
-- Complete FastAPI backend with 25+ API endpoints
+- Complete FastAPI backend with 30+ API endpoints
 - MongoDB models with proper indexing
 - JWT auth with token refresh
 - WebSocket real-time notifications
-- Full React PWA frontend with 10 pages
+- Full React PWA frontend with 11 pages
 - Mobile-first design with Tailwind CSS
 - Admin dashboard with 8 stat cards
 - Seed data (admin + vecino1 demo accounts)
-- Cloudinary signature endpoint (needs API keys)
+- **Cloudinary image upload integration** (Cloud Name: dfclhvrwb) - for posts, reports, lost items, profile photos
+- **Encuestas/Votaciones system** - create polls, vote, close, delete, real-time vote counting with percentages
 
 ## Testing Results
-- Backend: 100% (27/27 tests passed)
-- Frontend: 98% (minor UI issues only)
+- Backend: 100% (34/34 tests passed)
+- Frontend: 99% (minor mobile nav issue only)
 
 ## Prioritized Backlog
 ### P0 (Critical)
