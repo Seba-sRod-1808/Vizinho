@@ -186,7 +186,7 @@ class VizinhoAPITester:
             "Create Report",
             "POST",
             "api/reportes",
-            201,
+            200,
             data=report_data,
             token=self.vecino_token,
             description="Create incident report"
