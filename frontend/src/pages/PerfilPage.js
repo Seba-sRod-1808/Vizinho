@@ -24,7 +24,7 @@ export default function PerfilPage() {
     setError('');
     setSaving(true);
     try {
-      const updated = await api.put('/api/profile', form);
+      await api.put('/api/profile', form);
       updateUser({ ...user, ...form });
       setEditing(false);
     } catch (err) { setError(err.message); } finally { setSaving(false); }
