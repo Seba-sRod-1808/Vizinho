@@ -64,6 +64,9 @@ export default function Layout() {
               <NavLink to="/app/multas" onClick={() => setSideOpen(false)} className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${isActive ? 'bg-primary-50 text-primary-700' : 'text-stone-600 hover:bg-stone-50'}`}>
                 <Receipt size={20} />Multas
               </NavLink>
+              <NavLink to="/app/objetos-perdidos" onClick={() => setSideOpen(false)} className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${isActive ? 'bg-primary-50 text-primary-700' : 'text-stone-600 hover:bg-stone-50'}`}>
+                <Search size={20} />Objetos Perdidos
+              </NavLink>
               {isAdmin && (
                 <NavLink to="/app/admin" onClick={() => setSideOpen(false)} className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${isActive ? 'bg-primary-50 text-primary-700' : 'text-stone-600 hover:bg-stone-50'}`}>
                   <Shield size={20} />Panel Admin
