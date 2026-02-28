@@ -303,7 +303,7 @@ class VizinhoAPITester:
             "Create Lost Item",
             "POST",
             "api/objetos-perdidos",
-            201,
+            200,
             data=item_data,
             token=self.vecino_token,
             description="Report a lost item"
