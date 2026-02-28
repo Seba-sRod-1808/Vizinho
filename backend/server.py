@@ -267,6 +267,16 @@ class CreateUserRequest(BaseModel):
     telefono: Optional[str] = ""
     nombre_completo: Optional[str] = ""
 
+class EncuestaCreate(BaseModel):
+    pregunta: str
+    descripcion: Optional[str] = ""
+    opciones: List[str]
+    multiple: bool = False
+    fecha_cierre: Optional[str] = None
+
+class VotoCreate(BaseModel):
+    opcion_index: int
+
 
 # ========================
 # AUTH
