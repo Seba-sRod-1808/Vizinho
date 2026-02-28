@@ -10,7 +10,7 @@ const estadoConfig = {
 };
 
 export default function ReportesPage() {
-  const { user, isAdmin } = useAuth();
+  const { isAdmin } = useAuth();
   const [reportes, setReportes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
