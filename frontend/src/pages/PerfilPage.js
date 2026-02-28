@@ -78,6 +78,10 @@ export default function PerfilPage() {
           {editing ? (
             <div className="space-y-3">
               <div>
+                <label className="text-xs font-medium text-stone-500 mb-1 block">Foto de perfil</label>
+                <ImageUpload folder="perfiles" currentUrl={form.foto_url || user?.foto_url} onUpload={(url) => setForm({...form, foto_url: url})} />
+              </div>
+              <div>
                 <label className="text-xs font-medium text-stone-500 mb-1 block">Nombre completo</label>
                 <input data-testid="profile-name-input" type="text" value={form.nombre_completo} onChange={e => setForm({...form, nombre_completo: e.target.value})} className="h-11 px-4 bg-stone-50 border border-stone-200 rounded-xl w-full text-sm text-stone-900 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500" />
               </div>
