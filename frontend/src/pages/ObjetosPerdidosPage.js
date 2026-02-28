@@ -69,6 +69,7 @@ export default function ObjetosPerdidosPage() {
             <form onSubmit={handleCreate} className="space-y-4">
               <input data-testid="lost-item-title" type="text" value={form.titulo} onChange={e => setForm({...form, titulo: e.target.value})} placeholder="Que perdiste?" className="h-12 px-4 bg-stone-50 border border-stone-200 rounded-xl w-full text-stone-900 placeholder:text-stone-400 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500" required />
               <textarea data-testid="lost-item-desc" value={form.descripcion} onChange={e => setForm({...form, descripcion: e.target.value})} placeholder="Describe el objeto con detalle..." rows={3} className="px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl w-full text-stone-900 placeholder:text-stone-400 resize-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500" required />
+              <ImageUpload folder="objetos_perdidos" currentUrl={form.imagen_url} onUpload={(url) => setForm({...form, imagen_url: url})} />
               <button data-testid="submit-lost-item" type="submit" disabled={submitting} className="h-12 w-full bg-primary-700 text-white font-semibold rounded-full flex items-center justify-center gap-2 hover:bg-primary-800 transition-colors disabled:opacity-60">
                 {submitting ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <><Send size={18} />Reportar</>}
               </button>
