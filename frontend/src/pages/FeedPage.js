@@ -9,7 +9,7 @@ export default function FeedPage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ titulo: '', contenido: '' });
+  const [form, setForm] = useState({ titulo: '', contenido: '', imagen_url: '' });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
