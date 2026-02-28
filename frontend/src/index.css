@@ -2,70 +2,267 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --nav-height: 4rem;
+  --header-height: 3.5rem;
+}
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior-y: none;
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: #FAFAF9;
+  font-family: 'DM Sans', sans-serif;
+  background-color: #F5F5F4;
   color: #1C1917;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  overscroll-behavior-y: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Manrope', sans-serif;
 }
 
-::-webkit-scrollbar {
-  width: 4px;
+/* Hide scrollbar for mobile */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar { display: none; }
+  * { scrollbar-width: none; }
 }
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #D6D3D1;
-  border-radius: 4px;
+
+/* Desktop scrollbar */
+@media (min-width: 769px) {
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #D6D3D1; border-radius: 4px; }
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
 }
 
+/* ===== ANIMATIONS ===== */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(24px); }
+  from { opacity: 0; transform: translateY(100%); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes pulseGlow {
   0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
-  50% { box-shadow: 0 0 0 12px rgba(220, 38, 38, 0); }
+  50% { box-shadow: 0 0 0 14px rgba(220, 38, 38, 0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes drawerSlide {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
+  animation: fadeIn 0.25s ease-out forwards;
 }
 
 .animate-slide-up {
-  animation: slideUp 0.4s ease-out forwards;
+  animation: slideUp 0.35s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.animate-slide-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.25s ease-out forwards;
 }
 
 .animate-pulse-glow {
   animation: pulseGlow 2s infinite;
 }
 
+.animate-drawer {
+  animation: drawerSlide 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.animate-backdrop {
+  animation: backdropIn 0.2s ease-out forwards;
+}
+
+/* Skeleton loading */
+.skeleton {
+  background: linear-gradient(90deg, #E7E5E4 25%, #D6D3D1 50%, #E7E5E4 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 12px;
+}
+
+/* ===== MOBILE NATIVE FEEL ===== */
+.safe-top {
+  padding-top: var(--safe-top);
+}
+
 .safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-bottom: calc(var(--safe-bottom) + 4px);
+}
+
+/* Touch feedback */
+.touch-active {
+  transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+.touch-active:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+}
+
+/* Card press effect */
+.card-press {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-press:active {
+  transform: scale(0.985);
+  box-shadow: none;
+}
+
+/* Bottom nav active indicator */
+.nav-indicator {
+  position: relative;
+}
+
+.nav-indicator::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 20px;
+  height: 3px;
+  background: #047857;
+  border-radius: 3px;
+  transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.nav-indicator.active::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* Pull to refresh indicator */
+.pull-indicator {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+/* Page transition wrapper */
+.page-enter {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+/* Modal sheet */
+.modal-sheet {
+  border-radius: 24px 24px 0 0;
+  max-height: 90vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 768px) {
+  .modal-sheet {
+    border-radius: 20px;
+    max-height: 85vh;
+  }
+}
+
+/* Modal handle bar */
+.modal-handle {
+  width: 36px;
+  height: 4px;
+  background: #D6D3D1;
+  border-radius: 4px;
+  margin: 8px auto 16px;
+}
+
+/* Install PWA banner */
+.install-banner {
+  animation: slideUp 0.4s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+/* Haptic-like button feedback */
+@media (hover: none) {
+  button:active, a:active {
+    transform: scale(0.97);
+  }
+}
+
+/* Status bar spacer for iOS standalone */
+@media all and (display-mode: standalone) {
+  .status-bar-spacer {
+    padding-top: var(--safe-top);
+    background: white;
+  }
+}
+
+/* Image load transition */
+img {
+  transition: opacity 0.3s ease;
+}
+
+img[loading] {
+  opacity: 0;
+}
+
+/* Prevent text selection on UI elements */
+nav, button, header {
+  user-select: none;
+  -webkit-user-select: none;
 }
